@@ -89,7 +89,6 @@
       position: absolute;
       top: 0;
       right: 0;
-      z-index: 55;
       transform: translateY(-100%);
 
       align-items: center;

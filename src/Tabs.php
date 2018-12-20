@@ -2,8 +2,9 @@
 namespace Eminiarts\Tabs;
 
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Contracts\ListableField;
 
-class Tabs extends Field
+class Tabs extends Field implements ListableField
 {
     /**
      * @var string

@@ -27,6 +27,7 @@ class TabsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Bind our own FieldController in order to allow Tabs to get the correct fields from tabs
+        $this->app->bind('Laravel\Nova\Http\Controllers\FieldController', 'Eminiarts\Tabs\FieldController');
     }
 }
