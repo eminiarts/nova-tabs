@@ -19,15 +19,13 @@
     :label="tab.name || tab.field.resourceName.toLocaleUpperCase()"
     :key="'related-tabs-fields' + index"
     :name="tab.field.resourceName">
-    <resource-index
-    class="resource-index-holder"
-    :resource-name="tab.field.resourceName"
-    :via-resource="resourceName"
-    :via-resource-id="resourceId"
-    :via-relationship="tab.targetRelation"
-    :relationship-type="tab.relationType"
-    @actionExecuted="actionExecuted"
-    :load-cards="false"
+    <component
+    :is="'detail-' + tab.field.component"
+    :resource-name="resourceName"
+    :resource-id="resourceId"
+    :resource="resource"
+    :field="tab.field"
+    @actionExecuted="actionExecuted" 
     />
   </div>
 </div>
