@@ -5,6 +5,13 @@
         "laravel",
         "nova"
     ],
+    "authors": [
+        {
+            "name": "Emini Arts GmbH",
+            "email": "support@eminiarts.ch",
+            "homepage": "https://eminiarts.ch"
+        }
+    ],
     "license": "MIT",
     "require": {
         "php": ">=7.1.0"
