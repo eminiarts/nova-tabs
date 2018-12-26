@@ -35,13 +35,12 @@ class TabsPanel extends Panel implements \JsonSerializable
      * @param  \Closure|array $fields
      * @return void
      */
-    public function __construct($name, $tabs = [])
+    public function __construct($name, $tabs = [], $showToolbar = false)
     {
-        $this->name = $name;
-
-        $data = $this->prepareFields($tabs);
-
-        $this->data = $data instanceof Collection ? $data->all() : $data;
+        $this->name        = $name;
+        $this->showToolbar = $showToolbar;
+        $data              = $this->prepareFields($tabs);
+        $this->data        = $data instanceof Collection ? $data->all() : $data;
     }
 
     /**

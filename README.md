@@ -43,6 +43,39 @@ public function fields()
 }
 ```
 
+### Tabs Panel with Toolbar
+
+If you are only using a TabsPanel without another default Panel, you can set the third argument `showToolbar` to `true`.
+
+![image](https://user-images.githubusercontent.com/3426944/50448780-608efe00-0923-11e9-9d55-3dc3d8d896e1.png)
+
+
+```php
+// in app/Nova/Resource.php
+
+use Eminiarts\Tabs\TabsPanel;
+
+public function fields(Request $request)
+    {
+        return [
+            new TabsPanel('Contact Details', [
+                'Address'   => [
+                    ID::make('Id', 'id')->rules('required'),
+                    Text::make('Email', 'email')->sortable(),
+                    Text::make('Phone', 'phone')->sortable(),
+                ],
+                'Relations' => [
+                    BelongsTo::make('User'),
+                    MorphTo::make('Contactable')->types([
+                        Client::class,
+                        Invoice::class,
+                    ]),
+                ],
+            ], true), // Third argument is $showToolbar = true
+        ];
+    }
+```
+
 ### Relationship Tabs
 
 ![image](https://user-images.githubusercontent.com/3426944/50060715-a3b8d680-0197-11e9-8f98-1cac8cf3fd83.png)
