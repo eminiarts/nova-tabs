@@ -1,17 +1,7 @@
 <template>
   <div>
-    <div
-      v-if="field.extraAttributes && field.extraAttributes.useSelect"
-      class="mb-3 flex items-center"
-    >
-      <h1 class="text-90 font-normal text-2xl flex-no-shrink">{{ activeTab }}</h1>
-      <div class="ml-3 w-full flex items-center"></div>
-      <select v-model="activeTab" class="form-control form-select">
-        <option v-for="(tab, key) in tabs" :key="key" :value="tab.name">{{ tab.name }}</option>
-      </select>
-    </div>
     <div class="relationship-tabs-panel card overflow-hidden">
-      <div class="flex flex-row" v-if="!field.extraAttributes ||!field.extraAttributes.useSelect">
+      <div class="flex flex-row">
         <button
           class="py-5 px-8 border-b-2 focus:outline-none tab"
           :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"

@@ -94,16 +94,4 @@ class Tabs extends Field implements ListableField
             'listable'  => true,
         ], $this->meta);
     }
-
-    /**
-     * @return mixed
-     */
-    public function useSelect()
-    {
-        return $this->withMeta(['extraAttributes' => [
-            'useSelect'     => true,
-            'defaultSearch' => true,
-        ],
-        ]);
-    }
 }
