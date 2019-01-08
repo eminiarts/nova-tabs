@@ -113,21 +113,28 @@ By default, the Tabs component moves the search input and the create button to t
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\AvailableTabFields;
 
-public function fields(Request $request)
+class User extends Resource
 {
-    return [
         
-        // ...
-        
-        Tabs::make('Relations')
-            ->addTab(__('Invoices'), HasMany::make('Invoices'))
-            ->defaultSearch(true),
-        ,
+    use AvailableTabFields;
 
-        // ...
-        
-    ];
+    public function fields(Request $request)
+    {
+        return [
+            
+            // ...
+            
+            Tabs::make('Relations')
+                ->addTab(__('Invoices'), HasMany::make('Invoices'))
+                ->defaultSearch(true),
+            ,
+
+            // ...
+            
+        ];
+    }
 }
 ```
 
