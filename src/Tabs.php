@@ -72,6 +72,18 @@ class Tabs extends Field implements ListableField
     }
 
     /**
+     * @return mixed
+     */
+    public function availableFields()
+    {
+        return collect($this->tabs)->map(function ($item, $key) {
+            $item['field']->hideFromDetail();
+
+            return $item['field'];
+        });
+    }
+
+    /**
      * @param $value
      */
     public function defaultSearch()
