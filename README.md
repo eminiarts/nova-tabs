@@ -86,22 +86,30 @@ You can also group Relations into Tabs.
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\AvailableTabFields;
 
-public function fields(Request $request)
+class User extends Resource
 {
-    return [
         
-        // ...
-        
-        Tabs::make('Relations')
-            ->addTab(__('Invoices'), HasMany::make('Invoices'))
-            ->addTab(__('Notes'), HasMany::make('Notes'))
-            ->addTab(__('Contacts'), HasMany::make('Contacts'))
-        ,
+    use AvailableTabFields;
+    
+    public function fields(Request $request)
+    {
+        return [
+            
+            // ...
+            
+            Tabs::make('Relations')
+                ->addTab(__('Invoices'), HasMany::make('Invoices'))
+                ->addTab(__('Notes'), HasMany::make('Notes'))
+                ->addTab(__('Contacts'), HasMany::make('Contacts'))
+            ,
 
-        // ...
-        
-    ];
+            // ...
+            
+        ];
+    }
+
 }
 ```
 
