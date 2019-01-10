@@ -11,9 +11,7 @@
         >{{ tab.name }}</button>
         <div class="flex-1 border-b-2 border-40"></div>
       </div>
-
       <div
-        class
         :class="[(field.extraAttributes && field.extraAttributes.defaultSearch) ? 'default-search': 'tab-content']"
         v-for="(tab, index) in tabs"
         v-show="tab.name == activeTab"

@@ -24,13 +24,6 @@ class Tabs extends Field implements ListableField
     public $data;
 
     /**
-     * Indicates whether the detail toolbar should be visible on this panel.
-     *
-     * @var bool
-     */
-    public $showToolbar = false;
-
-    /**
      * @var array
      */
     public $tabs = [];
@@ -95,16 +88,6 @@ class Tabs extends Field implements ListableField
     }
 
     /**
-     * Create a new element.
-     *
-     * @return static
-     */
-    public static function make(...$arguments)
-    {
-        return new static(...$arguments);
-    }
-
-    /**
      * Get additional meta information to merge with the field payload.
      *
      * @return array
@@ -117,17 +100,5 @@ class Tabs extends Field implements ListableField
             'tabs'      => $this->tabs,
             'listable'  => false,
         ], $this->meta);
-    }
-
-    /**
-     * Display the toolbar when showing this panel.
-     *
-     * @return $this
-     */
-    public function withToolbar()
-    {
-        return $this->withMeta(['extraAttributes' => [
-            'showToolbar' => true],
-        ]);
     }
 }

@@ -14,6 +14,7 @@
         />
       </div>
     </div>
+
     <div class="card overflow-hidden" v-else>
       <div class="flex flex-row">
         <button
@@ -23,10 +24,8 @@
           :key="key"
           @click="activeTab=tab"
         >{{ tab }}</button>
-
         <div class="flex-1 border-b-2 border-40"></div>
       </div>
-
       <card
         class="py-3 px-6"
         v-for="(fields, key) in groupedFields"
