@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="flex items-center mb-3">
-      <h4 class="text-90 font-normal text-2xl mb-3">Test</h4>
+    <div class="flex items-center mb-3" v-if="field.extraAttributes.showToolbar">
+      <h4 class="text-90 font-normal text-2xl mb-3">{{ field.name }}</h4>
     </div>
 
     <div class="relationship-tabs-panel card overflow-hidden">

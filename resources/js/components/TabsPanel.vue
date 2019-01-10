@@ -3,75 +3,73 @@
     <slot></slot>
 
     <div class="card overflow-hidden">
-      
       <div class="flex flex-row">
         <button
-        class="py-5 px-8 border-b-2 focus:outline-none tab"
-        :class="[activeTab == tab ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
-        v-for="(tab, key) in tabs"
-        :key="key"
-        @click="activeTab=tab"
+          class="py-5 px-8 border-b-2 focus:outline-none tab"
+          :class="[activeTab == tab ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
+          v-for="(tab, key) in tabs"
+          :key="key"
+          @click="activeTab=tab"
         >{{ tab }}</button>
 
         <div class="flex-1 border-b-2 border-40"></div>
       </div>
 
       <card
-      class="py-3 px-6"
-      v-for="(fields, key) in groupedFields"
-      :key="key"
-      v-if="activeTab == key"
+        class="py-3 px-6"
+        v-for="(fields, key) in groupedFields"
+        :key="key"
+        v-if="activeTab == key"
       >
-      <component
-      :class="{'remove-bottom-border': index == fields.length - 1}"
-      :key="index"
-      v-for="(field, index) in fields"
-      :is="resolveComponentName(field)"
-      :resource-name="resourceName"
-      :resource-id="resourceId"
-      :resource="resource"
-      :field="field"
-      @actionExecuted="actionExecuted"
-      />
-    </card>
+        <component
+          :class="{'remove-bottom-border': index == fields.length - 1}"
+          :key="index"
+          v-for="(field, index) in fields"
+          :is="resolveComponentName(field)"
+          :resource-name="resourceName"
+          :resource-id="resourceId"
+          :resource="resource"
+          :field="field"
+          @actionExecuted="actionExecuted"
+        />
+      </card>
+    </div>
   </div>
-</div>
-
 </template>
 
 <script>
-  import { BehavesAsPanel } from "laravel-nova";
+import { BehavesAsPanel } from "laravel-nova";
 
-  export default {
-    mixins: [BehavesAsPanel],
+export default {
+  mixins: [BehavesAsPanel],
 
-    mounted() {
-      this.activeTab = this.tabs[0];
+  mounted() {
+    this.activeTab = this.tabs[0];
+  },
+
+  data() {
+    return {
+      activeTab: null
+    };
+  },
+
+  computed: {
+    tabs() {
+      return _.uniq(this.panel.fields.map(o => o["tab"]));
     },
+    groupedFields() {
+      return _.groupBy(this.panel.fields, "tab");
+    }
+  },
 
-    data() {
-      return {
-        activeTab: null
-      };
-    },
-
-    computed: {
-      tabs() {
-        return _.uniq(this.panel.fields.map(o => o["tab"]));
-      },
-      groupedFields() {
-        return _.groupBy(this.panel.fields, "tab");
-      }
-    },
-
-    methods: {
+  methods: {
     /**
      * Resolve the component name.
      */
-     resolveComponentName(field) {
+    resolveComponentName(field) {
       return field.prefixComponent
-      ? "detail-" + field.component
-      : field.component;
+        ? "detail-" + field.component
+        : field.component;
     }
   }
 };

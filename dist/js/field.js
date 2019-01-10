@@ -717,7 +717,13 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
+    _vm.field.extraAttributes.showToolbar
+      ? _c("div", { staticClass: "flex items-center mb-3" }, [
+          _c("h4", { staticClass: "text-90 font-normal text-2xl mb-3" }, [
+            _vm._v(_vm._s(_vm.field.name))
+          ])
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
@@ -821,18 +827,7 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "flex items-center mb-3" }, [
-      _c("h4", { staticClass: "text-90 font-normal text-2xl mb-3" }, [
-        _vm._v("Test")
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -941,8 +936,6 @@ exports.push([module.i, "\n.card .card {\n  -webkit-box-shadow: none;\n         
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_laravel_nova__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_laravel_nova___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_laravel_nova__);
-//
-//
 //
 //
 //

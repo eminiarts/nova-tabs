@@ -1,15 +1,20 @@
 <?php
 namespace Eminiarts\Tabs;
 
-use Laravel\Nova\Panel;
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Contracts\ListableField;
 
-class Tabs extends Panel implements \JsonSerializable
+class Tabs extends Field implements ListableField
 {
     /**
      * @var string
      */
     public $activeTab = '';
+
+    /**
+     * @var string
+     */
+    public $component = 'tabs';
 
     /**
      * The panel fields.
@@ -81,25 +86,6 @@ class Tabs extends Panel implements \JsonSerializable
     }
 
     /**
-     * Prepare the panel for JSON serialization.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        $this->data = $this->tabs;
-
-        //dd($this);
-
-        return [
-            'component'   => 'tabs',
-            'name'        => $this->name,
-            'showToolbar' => $this->showToolbar,
-            'tabs'        => $this->tabs,
-        ];
-    }
-
-    /**
      * Create a new element.
      *
      * @return static
@@ -118,6 +104,7 @@ class Tabs extends Panel implements \JsonSerializable
     {
         return array_merge([
             'activeTab' => $this->activeTab,
+            'name'      => $this->name,
             'tabs'      => $this->tabs,
             'listable'  => true,
         ], $this->meta);
@@ -130,8 +117,8 @@ class Tabs extends Panel implements \JsonSerializable
      */
     public function withToolbar()
     {
-        $this->showToolbar = true;
-
-        return $this;
+        return $this->withMeta(['extraAttributes' => [
+            'showToolbar' => true],
+        ]);
     }
 }
