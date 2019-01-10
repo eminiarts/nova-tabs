@@ -36,6 +36,16 @@ class Tabs extends Field implements ListableField
     public $tabs = [];
 
     /**
+     * @param $name
+     * @param $attribute
+     * @param null          $resolveCallback
+     */
+    public function __construct($name = "Tabs", $attribute = null, $resolveCallback = null)
+    {
+        parent::__construct($name, $attribute, $resolveCallback);
+    }
+
+    /**
      * @param  $name
      * @return mixed
      */
@@ -67,7 +77,6 @@ class Tabs extends Field implements ListableField
      */
     public function availableFields()
     {
-
         return collect($this->tabs)->map(function ($item, $key) {
             is_array($item['fields']) ? collect($item['fields'])->each->hideFromDetail() : $item['fields']->hideFromDetail();
 
@@ -106,7 +115,7 @@ class Tabs extends Field implements ListableField
             'activeTab' => $this->activeTab,
             'name'      => $this->name,
             'tabs'      => $this->tabs,
-            'listable'  => true,
+            'listable'  => false,
         ], $this->meta);
     }
 

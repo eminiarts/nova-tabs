@@ -1,9 +1,5 @@
 <template>
   <div>
-    <div class="flex items-center mb-3" v-if="field.extraAttributes.showToolbar">
-      <h4 class="text-90 font-normal text-2xl mb-3">{{ field.name }}</h4>
-    </div>
-
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
         <button
@@ -92,7 +88,7 @@ export default {
     padding-bottom: 1.25rem;
   }
 
-  > .default-search > .relative > .flex {
+  .default-search > div > .relative > .flex {
     justify-content: flex-end;
     padding-left: 1.25rem;
     padding-right: 1.25rem;

@@ -35,7 +35,7 @@ class TabsPanel extends Panel implements \JsonSerializable
      * @param  \Closure|array $fields
      * @return void
      */
-    public function __construct($name, $tabs = [], $showToolbar = false)
+    public function __construct($name = "Tabs", $tabs = [], $showToolbar = false)
     {
         $this->name        = $name;
         $this->showToolbar = $showToolbar;
@@ -88,13 +88,18 @@ class TabsPanel extends Panel implements \JsonSerializable
      */
     protected function prepareFields($tabs)
     {
-        return collect($tabs)->each(function ($fields, $tab) {
+
+        $tabs = collect($tabs)->each(function ($fields, $tab) {
+            if ($fields instanceof Tabs) {
+                return $fields->panel = $this->name;
+            }
+
             collect(is_callable($fields) ? $fields() : $fields)->each(function ($field) use ($tab) {
-                $field->panel = $this->name;
-
+                $field->panel       = $this->name;
                 $field->meta['tab'] = $tab;
-
             })->all();
         })->flatten()->all();
+
+        return $tabs;
     }
 }

@@ -2,7 +2,19 @@
   <div>
     <slot></slot>
 
-    <div class="card overflow-hidden">
+    <div v-if="combinedTabs.length > 0">
+      <div v-for="(tab, index) in combinedTabs" :key="index">
+        <component
+          :is="'detail-' + tab.component"
+          :resource-name="resourceName"
+          :resource-id="resourceId"
+          :resource="resource"
+          :field="tab"
+          @actionExecuted="actionExecuted"
+        />
+      </div>
+    </div>
+    <div class="card overflow-hidden" v-else>
       <div class="flex flex-row">
         <button
           class="py-5 px-8 border-b-2 focus:outline-none tab"
@@ -59,6 +71,9 @@ export default {
     },
     groupedFields() {
       return _.groupBy(this.panel.fields, "tab");
+    },
+    combinedTabs() {
+      return _.filter(this.panel.fields, { component: "tabs" });
     }
   },
 
