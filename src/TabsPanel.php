@@ -41,6 +41,8 @@ class TabsPanel extends Panel implements \JsonSerializable
         $this->showToolbar = $showToolbar;
         $data              = $this->prepareFields($tabs);
         $this->data        = $data instanceof Collection ? $data->all() : $data;
+
+        dd('hier', $this);
     }
 
     /**

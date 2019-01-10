@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="flex items-center mb-3">
+      <h4 class="text-90 font-normal text-2xl mb-3">Test</h4>
+    </div>
+
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
         <button
@@ -17,18 +21,32 @@
         :class="[(field.extraAttributes && field.extraAttributes.defaultSearch) ? 'default-search': 'tab-content']"
         v-for="(tab, index) in tabs"
         v-show="tab.name == activeTab"
-        :label="tab.name || tab.field.resourceName.toLocaleUpperCase()"
+        :label="tab.name"
         :key="'related-tabs-fields' + index"
-        :name="tab.field.resourceName"
       >
-        <component
-          :is="'detail-' + tab.field.component"
-          :resource-name="resourceName"
-          :resource-id="resourceId"
-          :resource="resource"
-          :field="tab.field"
-          @actionExecuted="actionExecuted"
-        />
+        <div v-if="tab.fields.length > 1" class="px-6 py-3">
+          <component
+            v-for="(field, index) in tab.fields"
+            :class="{'remove-bottom-border': index == tab.fields.length - 1}"
+            :key="'tab-' + index"
+            :is="'detail-' + field.component"
+            :resource-name="resourceName"
+            :resource-id="resourceId"
+            :resource="resource"
+            :field="field"
+            @actionExecuted="actionExecuted"
+          />
+        </div>
+        <div v-else>
+          <component
+            :is="'detail-' + tab.fields.component"
+            :resource-name="resourceName"
+            :resource-id="resourceId"
+            :resource="resource"
+            :field="tab.fields"
+            @actionExecuted="actionExecuted"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -58,7 +76,8 @@ export default {
   }
 };
 </script>
-  <style lang="scss">
+
+<style lang="scss">
 .relationship-tabs-panel {
   .card {
     box-shadow: none;
@@ -84,7 +103,7 @@ export default {
     }
   }
 
-  > .tab-content > .relative > .flex {
+  .tab-content > div > .relative > .flex {
     justify-content: flex-end;
     padding-left: 0.75rem;
     padding-right: 0.75rem;

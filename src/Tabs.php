@@ -1,10 +1,10 @@
 <?php
 namespace Eminiarts\Tabs;
 
+use Laravel\Nova\Panel;
 use Laravel\Nova\Fields\Field;
-use Laravel\Nova\Contracts\ListableField;
 
-class Tabs extends Field implements ListableField
+class Tabs extends Panel implements \JsonSerializable
 {
     /**
      * @var string
@@ -12,31 +12,18 @@ class Tabs extends Field implements ListableField
     public $activeTab = '';
 
     /**
-     * The field's component.
+     * The panel fields.
      *
-     * @var string
+     * @var array
      */
-    public $component = 'tabs';
+    public $data;
 
     /**
-     * @var mixed
+     * Indicates whether the detail toolbar should be visible on this panel.
+     *
+     * @var bool
      */
-    public $showOnCreation = false;
-
-    /**
-     * @var mixed
-     */
-    public $showOnDetail = true;
-
-    /**
-     * @var mixed
-     */
-    public $showOnIndex = false;
-
-    /**
-     * @var mixed
-     */
-    public $showOnUpdate = false;
+    public $showToolbar = false;
 
     /**
      * @var array
@@ -60,12 +47,11 @@ class Tabs extends Field implements ListableField
      * @param  $relationType
      * @return mixed
      */
-    public function addTab($name, $field, $relationType = '')
+    public function addTab($name, $fields)
     {
         $this->tabs[] = [
-            'name'           => $name,
-            'field'          => $field,
-            'targetRelation' => $field->attribute,
+            'name'   => $name,
+            'fields' => $fields,
         ];
 
         return $this;
@@ -76,10 +62,11 @@ class Tabs extends Field implements ListableField
      */
     public function availableFields()
     {
-        return collect($this->tabs)->map(function ($item, $key) {
-            $item['field']->hideFromDetail();
 
-            return $item['field'];
+        return collect($this->tabs)->map(function ($item, $key) {
+            is_array($item['fields']) ? collect($item['fields'])->each->hideFromDetail() : $item['fields']->hideFromDetail();
+
+            return $item['fields'];
         });
     }
 
@@ -94,6 +81,35 @@ class Tabs extends Field implements ListableField
     }
 
     /**
+     * Prepare the panel for JSON serialization.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $this->data = $this->tabs;
+
+        //dd($this);
+
+        return [
+            'component'   => 'tabs',
+            'name'        => $this->name,
+            'showToolbar' => $this->showToolbar,
+            'tabs'        => $this->tabs,
+        ];
+    }
+
+    /**
+     * Create a new element.
+     *
+     * @return static
+     */
+    public static function make(...$arguments)
+    {
+        return new static(...$arguments);
+    }
+
+    /**
      * Get additional meta information to merge with the field payload.
      *
      * @return array
@@ -105,5 +121,17 @@ class Tabs extends Field implements ListableField
             'tabs'      => $this->tabs,
             'listable'  => true,
         ], $this->meta);
+    }
+
+    /**
+     * Display the toolbar when showing this panel.
+     *
+     * @return $this
+     */
+    public function withToolbar()
+    {
+        $this->showToolbar = true;
+
+        return $this;
     }
 }
