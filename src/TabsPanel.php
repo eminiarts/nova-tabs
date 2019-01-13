@@ -91,7 +91,10 @@ class TabsPanel extends Panel implements \JsonSerializable
 
         $tabs = collect($tabs)->each(function ($fields, $tab) {
             if ($fields instanceof Tabs) {
-                return $fields->panel = $this->name;
+                $fields->meta['listable'] = false;
+                $fields->panel            = $this->name;
+
+                return;
             }
 
             collect(is_callable($fields) ? $fields() : $fields)->each(function ($field) use ($tab) {

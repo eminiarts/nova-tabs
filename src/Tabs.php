@@ -98,7 +98,7 @@ class Tabs extends Field implements ListableField
             'activeTab' => $this->activeTab,
             'name'      => $this->name,
             'tabs'      => $this->tabs,
-            'listable'  => false,
+            'listable'  => true,
         ], $this->meta);
     }
 }
