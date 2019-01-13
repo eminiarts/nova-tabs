@@ -1,5 +1,13 @@
 # Laravel Nova Tabs Package
 
+1. [Installation](#Installation)
+2. [Usage](#Usage)
+    1. [Tabs Panel](#tabs-panel)
+    2. [Tabs Panel with Toolbar](#tabs-panel-with-toolbar)
+    3. [Relationship Tabs](#relationship-tabs)
+    4. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
+3. [Customization](#customization)
+
 ## Installation
 
 You can install the package in to a Laravel app that uses [Nova](https://nova.laravel.com) via composer:
@@ -110,6 +118,56 @@ class User extends Resource
         ];
     }
 
+}
+```
+
+### Combine Fields and Relations in Tabs
+
+![image](https://user-images.githubusercontent.com/3426944/51089909-b3b2de80-1774-11e9-9100-d323accda7db.png)
+
+![image](https://user-images.githubusercontent.com/3426944/51089905-aa297680-1774-11e9-9611-4446ca13ab4a.png)
+
+With this markup, it is possible to wrap tabs and show the toolbar:
+
+```php
+use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\TabsPanel;
+
+public function fields(Request $request)
+{
+    return [
+        (new TabsPanel(__('Client Custom Details'), [
+            Tabs::make()
+                ->addTab(__('Details'), [
+                    ID::make('Id', 'id')->rules('required')->hideFromIndex(),
+                    Text::make('Name', 'name'),
+                ])
+                ->addTab(__('Invoices'), HasMany::make('Invoices'))
+            ,
+        ]))->withToolbar(),
+    ];
+}
+```
+
+If you don't need the Toolbar and want to combine Fields with Relation, you can use:
+
+```php
+use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\TabsPanel;
+
+public function fields(Request $request)
+{
+    return [
+       
+           Tabs::make()
+                ->addTab(__('Details'), [
+                    ID::make('Id', 'id')->rules('required')->hideFromIndex(),
+                    Text::make('Name', 'name'),
+                ])
+                ->addTab(__('Invoices'), HasMany::make('Invoices'))
+            ,
+       
+    ];
 }
 ```
 
