@@ -66,10 +66,10 @@ export default {
 
   computed: {
     tabs() {
-      return _.uniq(this.panel.fields.map(o => o["tab"]));
+      return _.compact(_.uniq(this.panel.fields.map(o => o["tab"])));
     },
     groupedFields() {
-      return _.groupBy(this.panel.fields, "tab");
+      return _.compact(_.groupBy(this.panel.fields, "tab"));
     },
     combinedTabs() {
       return _.filter(this.panel.fields, { component: "tabs" });
