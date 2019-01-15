@@ -71,10 +71,11 @@ class Tabs extends Field implements ListableField
     public function availableFields()
     {
         return collect($this->tabs)->map(function ($item, $key) {
-            is_array($item['fields']) ? collect($item['fields'])->each->hideFromDetail() : $item['fields']->hideFromDetail();
-
             return $item['fields'];
-        });
+        })->flatten()->each(function ($item, $key) {
+            $item->showOnTabs = $item->showOnDetail;
+            $item->hideFromDetail();
+        })->all();
     }
 
     /**
