@@ -18,7 +18,7 @@
         :label="tab.name"
         :key="'related-tabs-fields' + index"
       >
-        <div v-if="tab.fields.length > 1" class="px-6 py-3">
+        <div v-if="Array.isArray(tab.fields)" class="px-6 py-3">
           <component
             v-for="(field, index) in tab.fields"
             :class="{'remove-bottom-border': index == tab.fields.length - 1}"
