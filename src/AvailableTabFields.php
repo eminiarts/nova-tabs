@@ -34,13 +34,14 @@ trait AvailableTabFields
                             return !$field->showOnTabs || !$field->authorize(request());
                         });
                     } else {
-                        // Not sure if needed, will have to see. $item['fields'] should always be an array.
-                        // if (!$item['fields']->showOnDetail || !$item['fields']->authorize(request())) {
-                        //     $item['fields'] = null;
-                        // }
+                        if (!$item['fields']->showOnTabs || !$item['fields']->authorize(request())) {
+                            return;
+                        }
                     }
 
                     return $item;
+                })->reject(function ($tab) {
+                    return empty($tab);
                 });
             }
 
