@@ -932,7 +932,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 1.25rem;\n  padding-right: 1.25rem;\n  margin-top: 1.25rem;\n  margin-bottom: 0;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translateY(-100%);\n          transform: translateY(-100%);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
+exports.push([module.i, "\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translateY(-100%);\n          transform: translateY(-100%);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
 
 // exports
 
@@ -949,6 +949,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["resource", "resourceName", "resourceId", "field"],
@@ -959,8 +993,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     };
   },
   mounted: function mounted() {
-    this.tabs = this.field.tabs;
-    this.activeTab = this.tabs[0].name;
+    var tabs = {};
+    _.toArray(this.field.fields).forEach(function (field) {
+      if (!tabs.hasOwnProperty(field.tab)) {
+        tabs[field.tab] = {
+          name: field.tab,
+          listable: field.listableTab,
+          fields: []
+        };
+      }
+      tabs[field.tab].fields.push(field);
+    });
+    this.tabs = tabs;
+    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
   },
 
   methods: {
@@ -970,7 +1015,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     actionExecuted: function actionExecuted() {
       this.$emit("actionExecuted");
     },
-    handleTabClick: function handleTabClick(tab, event) {}
+    handleTabClick: function handleTabClick(tab, event) {
+      this.activeTab = tab.name;
+    }
   }
 });
 
@@ -982,7 +1029,91 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n  FORM TABS\n")])
+  return _c(
+    "div",
+    [
+      _vm._t("default"),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "relationship-tabs-panel card overflow-hidden" },
+        [
+          _c(
+            "div",
+            { staticClass: "flex flex-row" },
+            [
+              _vm._l(_vm.tabs, function(tab, key) {
+                return _c(
+                  "button",
+                  {
+                    key: key,
+                    staticClass: "py-5 px-8 border-b-2 focus:outline-none tab",
+                    class: [
+                      _vm.activeTab == tab.name
+                        ? "text-grey-black font-bold border-primary"
+                        : "text-grey font-semibold border-40"
+                    ],
+                    on: {
+                      click: function($event) {
+                        _vm.handleTabClick(tab, $event)
+                      }
+                    }
+                  },
+                  [_vm._v(_vm._s(tab.name))]
+                )
+              }),
+              _vm._v(" "),
+              _c("div", { staticClass: "flex-1 border-b-2 border-40" })
+            ],
+            2
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.tabs, function(tab, index) {
+            return _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: tab.name == _vm.activeTab,
+                    expression: "tab.name == activeTab"
+                  }
+                ],
+                key: "related-tabs-fields" + index,
+                attrs: { label: tab.name }
+              },
+              [
+                _c(
+                  "div",
+                  { class: { "px-6 py-3": !tab.listable } },
+                  _vm._l(tab.fields, function(field, index) {
+                    return _c("form-" + field.component, {
+                      key: "tab-" + index,
+                      tag: "component",
+                      class: {
+                        "remove-bottom-border": index == tab.fields.length - 1
+                      },
+                      attrs: {
+                        "resource-name": _vm.resourceName,
+                        "resource-id": _vm.resourceId,
+                        resource: _vm.resource,
+                        field: field
+                      },
+                      on: { actionExecuted: _vm.actionExecuted }
+                    })
+                  }),
+                  1
+                )
+              ]
+            )
+          })
+        ],
+        2
+      )
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
