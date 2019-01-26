@@ -6,6 +6,7 @@
     2. [Tabs Panel with Toolbar](#tabs-panel-with-toolbar)
     3. [Relationship Tabs](#relationship-tabs)
     4. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
+    4. [Actions in Tabs](#actions-in-tabs)
 3. [Customization](#customization)
 4. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
 
@@ -33,9 +34,7 @@ use Eminiarts\Tabs\TabsPanel;
 public function fields()
 {
     return [
-        
-        // ...
-        
+
         new Tabs('Tabs', [
             'Balance'    => [
                 Number::make('Balance', 'balance'),
@@ -45,9 +44,7 @@ public function fields()
                 Number::make('Paid To Date', 'paid_to_date'),
             ],
         ]),
-        
-        // ...
-        
+
     ];
 }
 ```
@@ -67,6 +64,7 @@ use Eminiarts\Tabs\TabsPanel;
 public function fields(Request $request)
     {
         return [
+
             (new Tabs('Contact Details', [
                 'Address' => [
                     ID::make('Id', 'id')->rules('required'),
@@ -82,6 +80,7 @@ public function fields(Request $request)
                     ]),
                 ]
             ]))->withToolbar(),
+
         ];
     }
 ```
@@ -103,16 +102,12 @@ class User extends Resource
     {
         return [
             
-            // ...
-            
            new Tabs('Relations', [
                 HasMany::make('Invoices'),
                 HasMany::make('Notes'),
                 HasMany::make('Contacts')
             ]),
 
-            // ...
-            
         ];
     }
 
@@ -131,6 +126,7 @@ use Eminiarts\Tabs\Tabs;
 public function fields(Request $request)
 {
     return [
+
         (new Tabs(__('Client Custom Details'), [
             new Panel(__('Details'), [
                     ID::make('Id', 'id')->rules('required')->hideFromIndex(),
@@ -138,7 +134,45 @@ public function fields(Request $request)
             ]),
             HasMany::make('Invoices')
         ])
+
     ];
+}
+```
+
+### Actions in Tabs
+
+If your Model uses the `Laravel\Nova\Actions\Actionable` Trait you can put the Actions into a Tab like this:
+
+```php
+// in app/Nova/Resource.php
+
+use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\ActionsInTabs; // Add this Trait
+use Laravel\Nova\Actions\ActionResource; // Import the Resource
+
+class Client extends Resource
+{
+    use ActionsInTabs; // Use this Trait
+
+    public function fields(Request $request)
+    {
+        return [
+            
+            (new Tabs('Client Custom Details', [
+                'Address'  => [
+                    ID::make('Id', 'id'),
+                    Text::make('Name', 'name')->hideFromDetail(),
+                ],
+                'Invoices' => [
+                    HasMany::make('Invoices'),
+                ],
+                'Actions'  => [
+                    MorphMany::make(__('Actions'), 'actions', ActionResource::class), // Acc Actions whererver you like.
+                ],
+            ]))->withToolbar(),
+
+        ];
+    }
 }
 ```
 
@@ -150,25 +184,18 @@ By default, the Tabs component moves the search input and the create button to t
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\AvailableTabFields;
 
 class User extends Resource
 {
-        
-    use AvailableTabFields;
 
     public function fields(Request $request)
     {
         return [
             
-            // ...
-            
             (new Tabs('Relations', [
                 HasMany::make('Invoices')
             ]))->defaultSearch(true),
 
-            // ...
-            
         ];
     }
 }
