@@ -497,7 +497,6 @@ module.exports = __webpack_require__(23);
 Nova.booting(function (Vue, router) {
     Vue.component('detail-tabs', __webpack_require__(5));
     Vue.component('form-tabs', __webpack_require__(12));
-    Vue.component('tabs-panel', __webpack_require__(17));
 });
 
 /***/ }),
@@ -943,285 +942,6 @@ exports.push([module.i, "\n.relationship-tabs-panel .card {\n  -webkit-box-shado
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["resource", "resourceName", "resourceId", "field"],
-  data: function data() {
-    return {
-      tabs: null,
-      activeTab: ""
-    };
-  },
-  mounted: function mounted() {
-    var tabs = {};
-    _.toArray(this.field.fields).forEach(function (field) {
-      if (!tabs.hasOwnProperty(field.tab)) {
-        tabs[field.tab] = {
-          name: field.tab,
-          listable: field.listableTab,
-          fields: []
-        };
-      }
-      tabs[field.tab].fields.push(field);
-    });
-    this.tabs = tabs;
-    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
-  },
-
-  methods: {
-    /**
-     * Handle the actionExecuted event and pass it up the chain.
-     */
-    actionExecuted: function actionExecuted() {
-      this.$emit("actionExecuted");
-    },
-    handleTabClick: function handleTabClick(tab, event) {
-      this.activeTab = tab.name;
-    }
-  }
-});
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _vm._t("default"),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "relationship-tabs-panel card overflow-hidden" },
-        [
-          _c(
-            "div",
-            { staticClass: "flex flex-row" },
-            [
-              _vm._l(_vm.tabs, function(tab, key) {
-                return _c(
-                  "button",
-                  {
-                    key: key,
-                    staticClass: "py-5 px-8 border-b-2 focus:outline-none tab",
-                    class: [
-                      _vm.activeTab == tab.name
-                        ? "text-grey-black font-bold border-primary"
-                        : "text-grey font-semibold border-40"
-                    ],
-                    on: {
-                      click: function($event) {
-                        _vm.handleTabClick(tab, $event)
-                      }
-                    }
-                  },
-                  [_vm._v(_vm._s(tab.name))]
-                )
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "flex-1 border-b-2 border-40" })
-            ],
-            2
-          ),
-          _vm._v(" "),
-          _vm._l(_vm.tabs, function(tab, index) {
-            return _c(
-              "div",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: tab.name == _vm.activeTab,
-                    expression: "tab.name == activeTab"
-                  }
-                ],
-                key: "related-tabs-fields" + index,
-                attrs: { label: tab.name }
-              },
-              [
-                _c(
-                  "div",
-                  { class: { "px-6 py-3": !tab.listable } },
-                  _vm._l(tab.fields, function(field, index) {
-                    return _c("form-" + field.component, {
-                      key: "tab-" + index,
-                      tag: "component",
-                      class: {
-                        "remove-bottom-border": index == tab.fields.length - 1
-                      },
-                      attrs: {
-                        "resource-name": _vm.resourceName,
-                        "resource-id": _vm.resourceId,
-                        resource: _vm.resource,
-                        field: field
-                      },
-                      on: { actionExecuted: _vm.actionExecuted }
-                    })
-                  }),
-                  1
-                )
-              ]
-            )
-          })
-        ],
-        2
-      )
-    ],
-    2
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-72cec6cd", module.exports)
-  }
-}
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(18)
-}
-var normalizeComponent = __webpack_require__(2)
-/* script */
-var __vue_script__ = __webpack_require__(20)
-/* template */
-var __vue_template__ = __webpack_require__(22)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/TabsPanel.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-07090c4b", Component.options)
-  } else {
-    hotAPI.reload("data-v-07090c4b", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(19);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(1)("26321df8", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-07090c4b\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TabsPanel.vue", function() {
-     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-07090c4b\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/sass-loader/lib/loader.js!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TabsPanel.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(0)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.card .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.card .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_laravel_nova__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_laravel_nova___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_laravel_nova__);
 //
@@ -1261,60 +981,162 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [__WEBPACK_IMPORTED_MODULE_0_laravel_nova__["BehavesAsPanel"]],
-
-  mounted: function mounted() {
-    this.activeTab = this.tabs[0];
-  },
+  mixins: [__WEBPACK_IMPORTED_MODULE_0_laravel_nova__["HandlesValidationErrors"], __WEBPACK_IMPORTED_MODULE_0_laravel_nova__["FormField"]],
+  props: ["resource", "resourceName", "resourceId", "field"],
   data: function data() {
     return {
-      activeTab: null
+      tabs: null,
+      activeTab: ""
     };
   },
-
-
-  computed: {
-    tabs: function tabs() {
-      return _.compact(_.uniq(this.panel.fields.map(function (o) {
-        return o["tab"];
-      })));
-    },
-    groupedFields: function groupedFields() {
-      return _.groupBy(this.panel.fields, "tab");
-    },
-    combinedTabs: function combinedTabs() {
-      return _.filter(this.panel.fields, { component: "tabs" });
-    }
+  mounted: function mounted() {
+    var tabs = {};
+    _.toArray(this.field.fields).forEach(function (field) {
+      if (!tabs.hasOwnProperty(field.tab)) {
+        tabs[field.tab] = {
+          name: field.tab,
+          listable: field.listableTab,
+          fields: []
+        };
+      }
+      tabs[field.tab].fields.push(field);
+    });
+    this.tabs = tabs;
+    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
   },
 
   methods: {
     /**
-     * Resolve the component name.
+     * Fill the given FormData object with the field's internal value.
      */
-    resolveComponentName: function resolveComponentName(field) {
-      return field.prefixComponent ? "detail-" + field.component : field.component;
+    fill: function fill(formData) {
+      _.forEach(this.tabs, function (tab) {
+        _.forEach(tab.fields, function (field) {
+          formData.append(field.attribute, field.value || "");
+        });
+      });
+      console.log("fill here", formData);
+    },
+
+    /**
+     * Handle the actionExecuted event and pass it up the chain.
+     */
+    actionExecuted: function actionExecuted() {
+      this.$emit("actionExecuted");
+    },
+    handleTabClick: function handleTabClick(tab, event) {
+      this.activeTab = tab.name;
     }
   }
 });
 
 /***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c(
+      "div",
+      { staticClass: "relationship-tabs-panel card overflow-hidden" },
+      [
+        _c(
+          "div",
+          { staticClass: "flex flex-row" },
+          [
+            _vm._l(_vm.tabs, function(tab, key) {
+              return _c(
+                "button",
+                {
+                  key: key,
+                  staticClass: "py-5 px-8 border-b-2 focus:outline-none tab",
+                  class: [
+                    _vm.activeTab == tab.name
+                      ? "text-grey-black font-bold border-primary"
+                      : "text-grey font-semibold border-40"
+                  ],
+                  on: {
+                    click: function($event) {
+                      _vm.handleTabClick(tab, $event)
+                    }
+                  }
+                },
+                [_vm._v(_vm._s(tab.name))]
+              )
+            }),
+            _vm._v(" "),
+            _c("div", { staticClass: "flex-1 border-b-2 border-40" })
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _vm._l(_vm.tabs, function(tab, index) {
+          return _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: tab.name == _vm.activeTab,
+                  expression: "tab.name == activeTab"
+                }
+              ],
+              key: "related-tabs-fields" + index,
+              attrs: { label: tab.name }
+            },
+            [
+              _c(
+                "div",
+                { class: { "px-6 py-3": !tab.listable } },
+                _vm._l(tab.fields, function(field, index) {
+                  return _c("form-" + field.component, {
+                    key: "tab-" + index,
+                    tag: "component",
+                    class: {
+                      "remove-bottom-border": index == tab.fields.length - 1
+                    },
+                    attrs: {
+                      "resource-name": _vm.resourceName,
+                      "resource-id": _vm.resourceId,
+                      resource: _vm.resource,
+                      field: field
+                    },
+                    on: { actionExecuted: _vm.actionExecuted }
+                  })
+                }),
+                1
+              )
+            ]
+          )
+        })
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-72cec6cd", module.exports)
+  }
+}
+
+/***/ }),
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11508,120 +11330,7 @@ module.exports = g;
 });
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _vm._t("default"),
-      _vm._v(" "),
-      _vm.combinedTabs.length > 0
-        ? _c(
-            "div",
-            _vm._l(_vm.combinedTabs, function(tab, index) {
-              return _c(
-                "div",
-                { key: index },
-                [
-                  _c("detail-" + tab.component, {
-                    tag: "component",
-                    attrs: {
-                      "resource-name": _vm.resourceName,
-                      "resource-id": _vm.resourceId,
-                      resource: _vm.resource,
-                      field: tab
-                    },
-                    on: { actionExecuted: _vm.actionExecuted }
-                  })
-                ],
-                1
-              )
-            }),
-            0
-          )
-        : _c(
-            "div",
-            { staticClass: "card overflow-hidden" },
-            [
-              _c(
-                "div",
-                { staticClass: "flex flex-row" },
-                [
-                  _vm._l(_vm.tabs, function(tab, key) {
-                    return _c(
-                      "button",
-                      {
-                        key: key,
-                        staticClass:
-                          "py-5 px-8 border-b-2 focus:outline-none tab",
-                        class: [
-                          _vm.activeTab == tab
-                            ? "text-grey-black font-bold border-primary"
-                            : "text-grey font-semibold border-40"
-                        ],
-                        on: {
-                          click: function($event) {
-                            _vm.activeTab = tab
-                          }
-                        }
-                      },
-                      [_vm._v(_vm._s(tab))]
-                    )
-                  }),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "flex-1 border-b-2 border-40" })
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _vm._l(_vm.groupedFields, function(fields, key) {
-                return _vm.activeTab == key
-                  ? _c(
-                      "card",
-                      { key: key, staticClass: "py-3 px-6" },
-                      _vm._l(fields, function(field, index) {
-                        return _c(_vm.resolveComponentName(field), {
-                          key: index,
-                          tag: "component",
-                          class: {
-                            "remove-bottom-border": index == fields.length - 1
-                          },
-                          attrs: {
-                            "resource-name": _vm.resourceName,
-                            "resource-id": _vm.resourceId,
-                            resource: _vm.resource,
-                            field: field
-                          },
-                          on: { actionExecuted: _vm.actionExecuted }
-                        })
-                      }),
-                      1
-                    )
-                  : _vm._e()
-              })
-            ],
-            2
-          )
-    ],
-    2
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-07090c4b", module.exports)
-  }
-}
-
-/***/ }),
+/* 22 */,
 /* 23 */
 /***/ (function(module, exports) {
 

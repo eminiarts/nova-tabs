@@ -1,8 +1,5 @@
 <template>
   <div>
-    <slot>
-      <!--<h4 class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>-->
-    </slot>
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
         <button
@@ -39,7 +36,10 @@
 </template>
 
 <script>
+import { FormField, HandlesValidationErrors } from "laravel-nova";
+
 export default {
+  mixins: [HandlesValidationErrors, FormField],
   props: ["resource", "resourceName", "resourceId", "field"],
   data() {
     return {
@@ -63,6 +63,17 @@ export default {
     this.handleTabClick(tabs[Object.keys(tabs)[0]]);
   },
   methods: {
+    /**
+     * Fill the given FormData object with the field's internal value.
+     */
+    fill(formData) {
+      _.forEach(this.tabs, function(tab) {
+        _.forEach(tab.fields, function(field) {
+          formData.append(field.attribute, field.value || "");
+        });
+      });
+      console.log("fill here", formData);
+    },
     /**
      * Handle the actionExecuted event and pass it up the chain.
      */
