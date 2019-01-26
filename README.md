@@ -183,7 +183,7 @@ class Client extends Resource
 ![image](https://user-images.githubusercontent.com/3426944/51790797-055a6080-219a-11e9-8da4-33a621093265.png)
 
 
-If you want to show Tabs on the Edit View, use the `TabsOnUpdate` Trait in your Resource.
+If you want to show Tabs on the Edit View, use the `TabsOnEdit` Trait in your Resource.
 
 ```php
 // in app/Nova/Resource.php
