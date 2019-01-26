@@ -981,12 +981,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [__WEBPACK_IMPORTED_MODULE_0_laravel_nova__["HandlesValidationErrors"], __WEBPACK_IMPORTED_MODULE_0_laravel_nova__["FormField"]],
-  props: ["resource", "resourceName", "resourceId", "field"],
+  mixins: [__WEBPACK_IMPORTED_MODULE_0_laravel_nova__["HandlesValidationErrors"], __WEBPACK_IMPORTED_MODULE_0_laravel_nova__["FormField"], __WEBPACK_IMPORTED_MODULE_0_laravel_nova__["InteractsWithResourceInformation"]],
+  props: ["resource", "resourceName", "resourceId", "field", "errors", "viaResource", "viaRelationship", "viaResourceId"],
   data: function data() {
     return {
       tabs: null,
@@ -1105,6 +1106,7 @@ var render = function() {
                       "resource-name": _vm.resourceName,
                       "resource-id": _vm.resourceId,
                       resource: _vm.resource,
+                      errors: _vm.errors,
                       field: field
                     },
                     on: { actionExecuted: _vm.actionExecuted }

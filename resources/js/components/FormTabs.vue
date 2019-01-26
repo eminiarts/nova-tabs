@@ -26,6 +26,7 @@
             :resource-name="resourceName"
             :resource-id="resourceId"
             :resource="resource"
+            :errors="errors"
             :field="field"
             @actionExecuted="actionExecuted"
           />
@@ -36,11 +37,28 @@
 </template>
 
 <script>
-import { FormField, HandlesValidationErrors } from "laravel-nova";
+import {
+  FormField,
+  HandlesValidationErrors,
+  InteractsWithResourceInformation
+} from "laravel-nova";
 
 export default {
-  mixins: [HandlesValidationErrors, FormField],
-  props: ["resource", "resourceName", "resourceId", "field"],
+  mixins: [
+    HandlesValidationErrors,
+    FormField,
+    InteractsWithResourceInformation
+  ],
+  props: [
+    "resource",
+    "resourceName",
+    "resourceId",
+    "field",
+    "errors",
+    "viaResource",
+    "viaRelationship",
+    "viaResourceId"
+  ],
   data() {
     return {
       tabs: null,
