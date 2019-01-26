@@ -48,4 +48,24 @@ trait AvailableTabFields
             return $item;
         });
     }
+
+    /**
+     * @param  NovaRequest $request
+     * @return mixed
+     */
+    public function updateFields(NovaRequest $request)
+    {
+        //dd('hier');
+        //return $this->resolveFields($request);
+
+        return $this->removeNonUpdateFields($this->resolveFields($request));
+
+        return $fields->reject(function ($field) {
+            return $field instanceof ListableField ||
+            $field instanceof ResourceToolElement ||
+            ($field instanceof ID && $field->attribute === $this->resource->getKeyName()) ||
+            $field->attribute === 'ComputedField' ||
+            !$field->showOnUpdate;
+        });
+    }
 }

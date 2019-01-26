@@ -1,105 +1,108 @@
 <?php
 namespace Eminiarts\Tabs;
 
-use Laravel\Nova\Fields\Field;
+use RuntimeException;
+use Laravel\Nova\Panel;
+use Illuminate\Http\Resources\MergeValue;
 use Laravel\Nova\Contracts\ListableField;
 
-class Tabs extends Field implements ListableField
+class Tabs extends Panel
 {
     /**
-     * @var string
+     * @var mixed
      */
-    public $activeTab = '';
+    public $defaultSearch = false;
 
     /**
-     * @var string
-     */
-    public $component = 'tabs';
-
-    /**
-     * The panel fields.
+     * Add fields to the Tab.
      *
-     * @var array
+     * @param  string              $tab
+     * @param  array               $fields
+     * @return \DKulyk\Nova\Tabs
      */
-    public $data;
-
-    /**
-     * @var array
-     */
-    public $tabs = [];
-
-    /**
-     * @param $name
-     * @param $attribute
-     * @param null          $resolveCallback
-     */
-    public function __construct($name = "Tabs", $attribute = null, $resolveCallback = null)
+    public function addFields($tab, array $fields)
     {
-        parent::__construct($name, $attribute, $resolveCallback);
-    }
-
-    /**
-     * @param  $name
-     * @return mixed
-     */
-    public function activeTab($name)
-    {
-        $this->activeTab = $name;
+        foreach ($fields as $field) {
+            if ($field instanceof ListableField || $field instanceof Panel) {
+                $this->addTab($field);
+                continue;
+            }
+            if ($field instanceof MergeValue) {
+                $this->addFields($tab, $field->data);
+                continue;
+            }
+            $field->panel = $this->name;
+            $field->withMeta([
+                'tab' => $tab,
+            ]);
+            $this->data[] = $field;
+        }
 
         return $this;
     }
 
     /**
-     * @param  $name
-     * @param  $field
-     * @param  $relationType
-     * @return mixed
+     * @param  Panel|\Laravel\Nova\Contracts\ListableField $panel
+     * @return \DKulyk\Nova\Tabs
      */
-    public function addTab($name, $fields)
+    public function addTab($panel): self
     {
-        $this->tabs[] = [
-            'name'   => $name,
-            'fields' => $fields,
-        ];
+        if ($panel instanceof ListableField) {
+            $panel->panel = $this->name;
+            $panel->withMeta([
+                'tab'         => $panel->name,
+                'listable'    => false,
+                'listableTab' => true,
+            ]);
+            $this->data[] = $panel;
+        } elseif ($panel instanceof Panel) {
+            $this->addFields($panel->name, $panel->data);
+        } else {
+            throw new RuntimeException('Only listable fields or Panel allowed.');
+        }
 
         return $this;
     }
 
     /**
-     * @return mixed
+     * @param  bool                $value
+     * @return \DKulyk\Nova\Tabs
      */
-    public function availableFields()
+    public function defaultSearch($value = true)
     {
-        return collect($this->tabs)->map(function ($item, $key) {
-            return $item['fields'];
-        })->flatten()->each(function ($item, $key) {
-            $item->showOnTabs = $item->showOnDetail;
-            $item->hideFromDetail();
-        })->all();
+        $this->defaultSearch = $value;
+
+        return $this;
     }
 
     /**
-     * @param $value
+     * Prepare the panel for JSON serialization.
+     *
+     * @return array
      */
-    public function defaultSearch()
+    public function jsonSerialize()
     {
-        return $this->withMeta(['extraAttributes' => [
-            'defaultSearch' => true],
+        return array_merge(parent::jsonSerialize(), [
+            'component'     => 'detail-tabs',
+            'defaultSearch' => $this->defaultSearch,
         ]);
     }
 
     /**
-     * Get additional meta information to merge with the field payload.
+     * Prepare the given fields.
      *
+     * @param  \Closure|array $fields
      * @return array
      */
-    public function meta()
+    protected function prepareFields($fields)
     {
-        return array_merge([
-            'activeTab' => $this->activeTab,
-            'name'      => $this->name,
-            'tabs'      => $this->tabs,
-            'listable'  => true,
-        ], $this->meta);
+        collect(is_callable($fields) ? $fields() : $fields)->each(function ($fields, $key) {
+            if (is_string($key) && is_array($fields)) {
+                $fields = new Panel($key, $fields);
+            }
+            $this->addTab($fields);
+        });
+
+        return $this->data;
     }
 }

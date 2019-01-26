@@ -88,8 +88,7 @@ class TabsPanel extends Panel implements \JsonSerializable
      */
     protected function prepareFields($tabs)
     {
-
-        $tabs = collect($tabs)->each(function ($fields, $tab) {
+        return collect($tabs)->each(function ($fields, $tab) {
             if ($fields instanceof Tabs) {
                 $fields->meta['listable'] = false;
                 $fields->panel            = $this->name;
@@ -102,7 +101,5 @@ class TabsPanel extends Panel implements \JsonSerializable
                 $field->meta['tab'] = $tab;
             })->all();
         })->flatten()->all();
-
-        return $tabs;
     }
 }
