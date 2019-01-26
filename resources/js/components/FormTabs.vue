@@ -2,13 +2,13 @@
   <div>
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
-        <button
-          class="py-5 px-8 border-b-2 focus:outline-none tab"
+        <div
+          class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
           :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
           v-for="(tab, key) in tabs"
           :key="key"
           @click="handleTabClick(tab, $event)"
-        >{{ tab.name }}</button>
+        >{{ tab.name }}</div>
         <div class="flex-1 border-b-2 border-40"></div>
       </div>
       <div
@@ -67,12 +67,9 @@ export default {
      * Fill the given FormData object with the field's internal value.
      */
     fill(formData) {
-      _.forEach(this.tabs, function(tab) {
-        _.forEach(tab.fields, function(field) {
-          formData.append(field.attribute, field.value || "");
-        });
+      _.each(this.field.fields, field => {
+        field.fill(formData);
       });
-      console.log("fill here", formData);
     },
     /**
      * Handle the actionExecuted event and pass it up the chain.

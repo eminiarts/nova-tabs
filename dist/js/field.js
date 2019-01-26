@@ -1014,12 +1014,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
      * Fill the given FormData object with the field's internal value.
      */
     fill: function fill(formData) {
-      _.forEach(this.tabs, function (tab) {
-        _.forEach(tab.fields, function (field) {
-          formData.append(field.attribute, field.value || "");
-        });
+      _.each(this.field.fields, function (field) {
+        field.fill(formData);
       });
-      console.log("fill here", formData);
     },
 
     /**
@@ -1053,10 +1050,11 @@ var render = function() {
           [
             _vm._l(_vm.tabs, function(tab, key) {
               return _c(
-                "button",
+                "div",
                 {
                   key: key,
-                  staticClass: "py-5 px-8 border-b-2 focus:outline-none tab",
+                  staticClass:
+                    "py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer",
                   class: [
                     _vm.activeTab == tab.name
                       ? "text-grey-black font-bold border-primary"

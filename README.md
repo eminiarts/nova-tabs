@@ -6,7 +6,8 @@
     2. [Tabs Panel with Toolbar](#tabs-panel-with-toolbar)
     3. [Relationship Tabs](#relationship-tabs)
     4. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
-    4. [Actions in Tabs](#actions-in-tabs)
+    5. [Actions in Tabs](#actions-in-tabs)
+    6. [Tabs on Edit View](#tabs-on-edit-view)
 3. [Customization](#customization)
 4. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
 
@@ -173,6 +174,26 @@ class Client extends Resource
 
         ];
     }
+}
+```
+
+### Tabs on Edit View
+
+![image](https://user-images.githubusercontent.com/3426944/51790797-055a6080-219a-11e9-8da4-33a621093265.png)
+
+
+If you want to show Tabs on the Edit View, use the `TabsOnUpdate` Trait in your Resource.
+
+```php
+// in app/Nova/Resource.php
+
+use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\TabsOnEdit; // Add this Trait
+
+class Client extends Resource
+{
+    use TabsOnEdit; // Use this Trait
+    //...
 }
 ```
 
