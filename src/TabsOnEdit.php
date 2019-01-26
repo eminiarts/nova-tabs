@@ -6,6 +6,39 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 trait TabsOnEdit
 {
     /**
+     * Resolve the creation fields.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
+     * @return \Illuminate\Support\Collection
+     */
+    public function creationFields(NovaRequest $request)
+    {
+        return collect(
+            [
+                'Tabs' => [
+                    'component' => 'tabs',
+                    'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Fill a new model instance using the given request.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
+     * @param  \Illuminate\Database\Eloquent\Model     $model
+     * @return array
+     */
+    public static function fill(NovaRequest $request, $model)
+    {
+        return static::fillFields(
+            $request, $model,
+            (new static($model))->parentCreationFields($request)
+        );
+    }
+
+    /**
      * @param NovaRequest $request
      * @param $model
      */
@@ -20,9 +53,30 @@ trait TabsOnEdit
     /**
      * @param NovaRequest $request
      */
+    public function parentCreationFields(NovaRequest $request)
+    {
+        return parent::creationFields($request);
+    }
+
+    /**
+     * @param NovaRequest $request
+     */
     public function parentUpdateFields(NovaRequest $request)
     {
         return parent::updateFields($request);
+    }
+
+    /**
+     * @param  NovaRequest $request
+     * @return mixed
+     */
+    public static function rulesForCreation(NovaRequest $request)
+    {
+        return static::formatRules($request, (new static(static::newModel()))
+                ->parentCreationFields($request)
+                ->mapWithKeys(function ($field) use ($request) {
+                    return $field->getCreationRules($request);
+                })->all());
     }
 
     /**
