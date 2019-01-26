@@ -1,4 +1,5 @@
 # Laravel Nova Tabs Package
+[![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
 1. [Installation](#Installation)
 2. [Usage](#Usage)
@@ -30,7 +31,7 @@ You can group Fields of a Resource into Tabs.
 ```php
 // in app/Nova/Resource.php
 
-use Eminiarts\Tabs\TabsPanel;
+use Eminiarts\Tabs\Tabs;
 
 public function fields()
 {
@@ -50,9 +51,9 @@ public function fields()
 }
 ```
 
-### Tabs Panel with Toolbar
+### Tabs with Toolbar
 
-If you are only using a TabsPanel without another default Panel, you can set the third argument `withToolbar` to `true`.
+If you are only using Tabs without another default Panel, you can set `withToolbar` to `true`.
 
 ![image](https://user-images.githubusercontent.com/3426944/50448780-608efe00-0923-11e9-9d55-3dc3d8d896e1.png)
 
@@ -60,7 +61,7 @@ If you are only using a TabsPanel without another default Panel, you can set the
 ```php
 // in app/Nova/Resource.php
 
-use Eminiarts\Tabs\TabsPanel;
+use Eminiarts\Tabs\Tabs;
 
 public function fields(Request $request)
     {
