@@ -16,9 +16,8 @@ class Tabs extends Panel
     /**
      * Add fields to the Tab.
      *
-     * @param  string              $tab
-     * @param  array               $fields
-     * @return \DKulyk\Nova\Tabs
+     * @param string $tab
+     * @param array  $fields
      */
     public function addFields($tab, array $fields)
     {
@@ -42,8 +41,7 @@ class Tabs extends Panel
     }
 
     /**
-     * @param  Panel|\Laravel\Nova\Contracts\ListableField $panel
-     * @return \DKulyk\Nova\Tabs
+     * Add a new Tab
      */
     public function addTab($panel): self
     {
@@ -65,8 +63,7 @@ class Tabs extends Panel
     }
 
     /**
-     * @param  bool                $value
-     * @return \DKulyk\Nova\Tabs
+     * Show default Search if you need more space
      */
     public function defaultSearch($value = true)
     {
