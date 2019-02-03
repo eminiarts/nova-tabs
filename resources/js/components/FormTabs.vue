@@ -1,5 +1,19 @@
 <template>
   <div>
+    <div>
+      <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
+        <component
+          :is="'form-' + field.component"
+          :errors="errors"
+          :resource-name="resourceName"
+          :field="field"
+          :via-resource="viaResource"
+          :via-resource-id="viaResourceId"
+          :via-relationship="viaRelationship"
+        />
+      </div>
+    </div>
+
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
         <div
@@ -68,9 +82,17 @@ export default {
       activeTab: ""
     };
   },
+  computed: {
+    fieldsOutsideTabs() {
+      return [];
+    }
+  },
   mounted() {
     let tabs = {};
     _.toArray(this.field.fields).forEach(field => {
+      if (!field.tab) {
+        return this.fieldsOutsideTabs.push(field);
+      }
       if (!tabs.hasOwnProperty(field.tab)) {
         tabs[field.tab] = {
           name: field.tab,
