@@ -3,7 +3,7 @@
     <slot>
       <!--<h4 class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>-->
     </slot>
-    <div class="relationship-tabs-panel card overflow-hidden overflow-x-auto">
+    <div class="relationship-tabs-panel card">
       <div
         class="tabs flex flex-row overflow-x-auto"
         :class="{'has-search-bar': activeTabHasSearch}"
@@ -20,12 +20,11 @@
       <div
         :class="[(panel && panel.defaultSearch) ? 'default-search': 'tab-content']"
         v-for="(tab, index) in tabs"
-        v-if="tab.init"
         v-show="tab.name == activeTab"
         :label="tab.name"
         :key="'related-tabs-fields' + index"
       >
-        <div :class="{'px-6 py-3':!tab.listable}">
+        <div :class="{'px-6 py-3':!tab.listable}" v-if="tab.init">
           <component
             v-for="(field, index) in tab.fields"
             :class="{'remove-bottom-border': index == tab.fields.length - 1}"
