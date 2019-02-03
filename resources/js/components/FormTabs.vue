@@ -28,6 +28,9 @@
             :resource="resource"
             :errors="errors"
             :field="field"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
             @actionExecuted="actionExecuted"
           />
         </div>
