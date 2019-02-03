@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.3 - 2019-02-03
+
+- Fixed #15 overlapping Tabs
+- ViaRelations on Fields Components, Fixed #18
+
+## 1.0.2 - 2019-02-03
+
+- Add Tabs on Create
+
+## 1.0.1 - 2019-02-03
+
+- Added HandlesValidationErrors in FormsTabs Component.
+
 ## 1.0.0 - 2019-01-26
 
 - Thanks to [dkulyk/nova-tabs](https://github.com/dkulyk/nova-tabs) the Package got a lot simpler. 
