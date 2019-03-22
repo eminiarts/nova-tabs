@@ -18,7 +18,7 @@ trait TabsOnEdit
                 'Tabs' => [
                     'component' => 'tabs',
                     'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
-                    'bottom' => @static::$tabsOnEditAtBottom ?: false,
+                    'bottom'    => isset(static::$tabsOnEditAtBottom) ? static::$tabsOnEditAtBottom : true,
                 ],
             ]
         );
@@ -108,7 +108,7 @@ trait TabsOnEdit
                 'Tabs' => [
                     'component' => 'tabs',
                     'fields'    => $this->removeNonUpdateFields($this->resolveFields($request)),
-                    'bottom' => @static::$tabsOnEditAtBottom ?: false,
+                    'bottom'    => isset(static::$tabsOnEditAtBottom) ? static::$tabsOnEditAtBottom : true,
                 ],
             ]
         );

@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div v-if="!bottom">
+    <div v-if="bottom">
       <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
         <component
             :is="'form-' + field.component"
@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-if="bottom">
+    <div v-if="!bottom">
       <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
         <component
             :is="'form-' + field.component"
