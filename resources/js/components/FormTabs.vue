@@ -1,18 +1,6 @@
 <template>
   <div>
-    <div>
-      <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
-        <component
-          :is="'form-' + field.component"
-          :errors="errors"
-          :resource-name="resourceName"
-          :field="field"
-          :via-resource="viaResource"
-          :via-resource-id="viaResourceId"
-          :via-relationship="viaRelationship"
-        />
-      </div>
-    </div>
+
 
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
@@ -48,6 +36,19 @@
             @actionExecuted="actionExecuted"
           />
         </div>
+      </div>
+    </div>
+    <div>
+      <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
+        <component
+            :is="'form-' + field.component"
+            :errors="errors"
+            :resource-name="resourceName"
+            :field="field"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+        />
       </div>
     </div>
   </div>
