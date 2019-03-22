@@ -1,7 +1,19 @@
 <template>
   <div>
 
-
+    <div v-if="!bottom">
+      <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
+        <component
+            :is="'form-' + field.component"
+            :errors="errors"
+            :resource-name="resourceName"
+            :field="field"
+            :via-resource="viaResource"
+            :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+        />
+      </div>
+    </div>
     <div class="relationship-tabs-panel card overflow-hidden">
       <div class="flex flex-row">
         <div
@@ -38,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div v-if="bottom">
       <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
         <component
             :is="'form-' + field.component"
@@ -79,6 +91,7 @@ export default {
   ],
   data() {
     return {
+      bottom: false,
       tabs: null,
       activeTab: ""
     };
@@ -104,6 +117,7 @@ export default {
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
+    this.bottom = this.field.bottom;
     this.handleTabClick(tabs[Object.keys(tabs)[0]]);
   },
   methods: {
