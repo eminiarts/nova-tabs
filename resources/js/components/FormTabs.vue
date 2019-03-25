@@ -18,7 +18,7 @@
       <div class="flex flex-row">
         <div
           class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
-          :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
+          :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40', tabHasErrors(tab) ? 'text-error' : '' ]"
           v-for="(tab, key) in tabs"
           :key="key"
           @click="handleTabClick(tab, $event)"
@@ -122,6 +122,21 @@ export default {
     },
     handleTabClick(tab, event) {
       this.activeTab = tab.name;
+    },
+
+    tabHasErrors(tab) {
+      let hasErrors = false;
+      let vm = this;
+
+      Object.keys(this.errors.errors).forEach(function(key) {
+        if (_.includes(tab.fields.map(o => o["attribute"]), key)) {
+          hasErrors = true;
+        }
+      });
+
+      tab.hasErrors = hasErrors;
+
+      return hasErrors;
     }
   }
 };
@@ -129,6 +144,12 @@ export default {
 
 <style lang="scss">
 .relationship-tabs-panel {
+  .text-error {
+    color: var(--danger);
+    &.border-primary {
+      border-color: var(--danger);
+    }
+  }
   .card {
     box-shadow: none;
   }
