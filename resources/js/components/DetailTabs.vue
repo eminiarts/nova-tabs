@@ -67,11 +67,8 @@ export default {
         }
         if (
           field.component == "has-many-field" ||
-          field.component == "has-oney-field" ||
-          field.component == "belongs-to-field" ||
           field.component == "belongs-to-many-field" ||
           field.component == "morph-many-field" ||
-          field.component == "morph-to-field" ||
           field.component == "morph-to-many-field"
         ) {
           hasTab = true;
@@ -121,7 +118,7 @@ export default {
 <style lang="scss">
 .relationship-tabs-panel {
   .has-search-bar {
-    margin-right: 45%;
+    margin-right: 500px;
   }
   .tabs::-webkit-scrollbar {
     width: 5px;
@@ -132,6 +129,17 @@ export default {
   }
   .tabs {
     white-space: nowrap;
+    // position: relative;
+
+    // &:after {
+    //   position: absolute;
+    //   content: "";
+    //   width: 100%;
+    //   height: 2px;
+    //   background: #f00;
+    //   bottom: 0%;
+    //   left: 100%;
+    // }
   }
   .card {
     box-shadow: none;
