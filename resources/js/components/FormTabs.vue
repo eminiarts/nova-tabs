@@ -87,6 +87,21 @@ export default {
       return [];
     }
   },
+  watch: {
+    errors: {
+      handler: function(errors) {
+        let vm = this;
+        let goToTab = false;
+        Object.keys(vm.tabs).forEach(function(key) {
+          if (vm.tabHasErrors(vm.tabs[key]) && !goToTab) {
+            goToTab = true;
+            return vm.handleTabClick(vm.tabs[key]);
+          }
+        });
+      },
+      deep: true
+    }
+  },
   mounted() {
     let tabs = {};
     _.toArray(this.field.fields).forEach(field => {
