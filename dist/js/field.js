@@ -561,7 +561,7 @@ var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(1)("08770da0", content, false, {});
+var update = __webpack_require__(1)("04b0cc33", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -585,7 +585,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n.relationship-tabs-panel .tabs::-webkit-scrollbar {\n  height: 8px;\n  border-radius: 4px;\n}\n.relationship-tabs-panel .tabs::-webkit-scrollbar-thumb {\n  background: #cacaca;\n}\n.relationship-tabs-panel .tabs {\n  white-space: nowrap;\n  margin-bottom: -2px;\n}\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 1.25rem;\n  padding-right: 1.25rem;\n  margin-top: 1.25rem;\n  margin-bottom: 0;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translate(-107px);\n          transform: translate(-107px);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n  z-index: 1;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
+exports.push([module.i, "\n.relationship-tabs-panel .tabs::-webkit-scrollbar {\n  height: 8px;\n  border-radius: 4px;\n}\n.relationship-tabs-panel .tabs::-webkit-scrollbar-thumb {\n  background: #cacaca;\n}\n.relationship-tabs-panel .tabs {\n  white-space: nowrap;\n  margin-bottom: -2px;\n}\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 1.25rem;\n  padding-right: 1.25rem;\n  margin-top: 1.25rem;\n  margin-bottom: 0;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translateY(-100%);\n          transform: translateY(-100%);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n  z-index: 1;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
 
 // exports
 
@@ -673,6 +673,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -680,6 +694,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   data: function data() {
     return {
       tabs: null,
+      searchBarWidth: null,
       activeTab: ""
     };
   },
@@ -689,6 +704,55 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       if (this.activeTabHasSearch) {
         var element = this.$el.querySelector("." + this.slugify(this.activeTab) + " .w-search");
       }
+    },
+    childrenResource: function childrenResource() {
+      console.log('children');
+
+      var tab = _.find(this.$children, function (o) {
+        if (!o.field) {
+          return false;
+        };
+        return o.field.component == 'has-many-field';
+      });
+
+      console.log(tab.$children);
+
+      if (tab && tab.$children) {
+        return tab.$children[0].$data.resources;
+      }
+      return null;
+    },
+    activeTabContent: function activeTabContent() {
+
+      var tab = _.find(this.tabs, { name: this.activeTab });
+      var activeComponent = false;
+
+      if (!tab || this.panel.defaultSearch) {
+        return false;
+      }
+
+      _.forEach(tab.fields, function (field) {
+        if (field.resourceName == "action-events") {
+          return;
+        }
+        if (field.component == "has-many-field" || field.component == "belongs-to-many-field" || field.component == "morph-many-field" || field.component == "morph-to-many-field") {
+          activeComponent = field;
+        }
+      });
+
+      /*  if (this.$refs[this.slugify(this.activeTab)][0].querySelector('.pl-search')) {
+       console.log(activeComponent, this.$refs[this.slugify(this.activeTab)][0].querySelector('.pl-search').parentNode.parentNode, this.$refs[this.slugify(this.activeTab)][0].querySelector('.pl-search').parentNode.parentNode.clientWidth )
+       
+       this.searchBarWidth = this.$refs[this.slugify(this.activeTab)][0].querySelector('.pl-search').parentNode.parentNode.clientWidth;
+      } else {
+       this.searchBarWidth = 0;
+      } */
+
+      /* this.$refs[this.slugify(this.activeTab)].$nextTick(() => {
+      }); */
+
+      return activeComponent;
+      return this.$refs[this.slugify(this.activeTab)].$data;
     },
     activeTabHasSearch: function activeTabHasSearch() {
       var tab = _.find(this.tabs, { name: this.activeTab });
@@ -727,6 +791,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     this.handleTabClick(tabs[Object.keys(tabs)[0]]);
   },
 
+  watch: {
+    activeTabContent: function activeTabContent(val) {}
+  },
   methods: {
     /**
      * Handle the actionExecuted event and pass it up the chain.
@@ -735,20 +802,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("actionExecuted");
     },
     handleTabClick: function handleTabClick(tab, event) {
-      var _this = this;
-
       tab.init = true;
       this.activeTab = tab.name;
 
-      setTimeout(function () {
-        var element = _this.$el.querySelector("." + _this.slugify(_this.activeTab) + " .w-search");
-
-        window.requestAnimationFrame(function () {
-          document.querySelector(".tabs").style.width = "calc(100% - " + element.parentNode.parentNode.offsetWidth + "px)";
-          //return element.parentNode.parentNode.offsetWidth;
+      this.calculateSearchBarWidth();
+    },
+    calculateSearchBarWidth: function calculateSearchBarWidth() {
+      /* setTimeout(() => {
+        let element = this.$el.querySelector(
+          "." + this.slugify(this.activeTab) + " .w-search"
+        );
+          window.requestAnimationFrame(function() {
+          document.querySelector(".tabs").style.width =
+            "calc(100% - " + element.parentNode.parentNode.offsetWidth + "px)";
         });
-        console.log("theeeeeb", element);
-      }, 200);
+      }, 500); */
     },
 
     /**
@@ -807,28 +875,95 @@ var render = function() {
           _c("div", { staticClass: "tabs-wrap border-b-2 border-40 w-full" }, [
             _c(
               "div",
-              { staticClass: "tabs flex flex-row overflow-x-auto" },
-              _vm._l(_vm.tabs, function(tab, key) {
-                return _c(
-                  "button",
+              {
+                staticClass: "tabs flex flex-row overflow-x-auto items-center"
+              },
+              [
+                _c(
+                  "svg",
                   {
-                    key: key,
-                    staticClass: "py-5 px-8 border-b-2 focus:outline-none tab",
-                    class: [
-                      _vm.activeTab == tab.name
-                        ? "text-grey-black font-bold border-primary"
-                        : "text-grey font-semibold border-40"
-                    ],
-                    on: {
-                      click: function($event) {
-                        _vm.handleTabClick(tab, $event)
-                      }
+                    staticClass:
+                      "w-3 h-3 fill-current text-grey cursor-pointer hover:text-primary",
+                    staticStyle: {
+                      "enable-background": "new 0 0 444.531 444.531"
+                    },
+                    attrs: {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      "xmlns:xlink": "http://www.w3.org/1999/xlink",
+                      version: "1.1",
+                      id: "Capa_1",
+                      x: "0px",
+                      y: "0px",
+                      viewBox: "0 0 444.531 444.531",
+                      "xml:space": "preserve"
                     }
                   },
-                  [_vm._v(_vm._s(tab.name))]
+                  [
+                    _c("g", [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M213.13,222.409L351.88,83.653c7.05-7.043,10.567-15.657,10.567-25.841c0-10.183-3.518-18.793-10.567-25.835   l-21.409-21.416C323.432,3.521,314.817,0,304.637,0s-18.791,3.521-25.841,10.561L92.649,196.425   c-7.044,7.043-10.566,15.656-10.566,25.841s3.521,18.791,10.566,25.837l186.146,185.864c7.05,7.043,15.66,10.564,25.841,10.564   s18.795-3.521,25.834-10.564l21.409-21.412c7.05-7.039,10.567-15.604,10.567-25.697c0-10.085-3.518-18.746-10.567-25.978   L213.13,222.409z"
+                        }
+                      })
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _vm._l(_vm.tabs, function(tab, key) {
+                  return _c(
+                    "button",
+                    {
+                      key: key,
+                      staticClass:
+                        "py-5 px-8 border-b-2 focus:outline-none tab",
+                      class: [
+                        _vm.activeTab == tab.name
+                          ? "text-grey-black font-bold border-primary"
+                          : "text-grey font-semibold border-40"
+                      ],
+                      on: {
+                        click: function($event) {
+                          return _vm.handleTabClick(tab, $event)
+                        }
+                      }
+                    },
+                    [_vm._v(_vm._s(tab.name))]
+                  )
+                }),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    staticClass:
+                      "w-3 h-3 fill-current text-grey cursor-pointer hover:text-primary",
+                    staticStyle: {
+                      "enable-background": "new 0 0 444.819 444.819"
+                    },
+                    attrs: {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      "xmlns:xlink": "http://www.w3.org/1999/xlink",
+                      version: "1.1",
+                      id: "Capa_1",
+                      x: "0px",
+                      y: "0px",
+                      viewBox: "0 0 444.819 444.819",
+                      "xml:space": "preserve"
+                    }
+                  },
+                  [
+                    _c("g", [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M352.025,196.712L165.884,10.848C159.029,3.615,150.469,0,140.187,0c-10.282,0-18.842,3.619-25.697,10.848L92.792,32.264   c-7.044,7.043-10.566,15.604-10.566,25.692c0,9.897,3.521,18.56,10.566,25.981l138.753,138.473L92.786,361.168   c-7.042,7.043-10.564,15.604-10.564,25.693c0,9.896,3.521,18.562,10.564,25.98l21.7,21.413   c7.043,7.043,15.612,10.564,25.697,10.564c10.089,0,18.656-3.521,25.697-10.564l186.145-185.864   c7.046-7.423,10.571-16.084,10.571-25.981C362.597,212.321,359.071,203.755,352.025,196.712z"
+                        }
+                      })
+                    ])
+                  ]
                 )
-              }),
-              0
+              ],
+              2
             )
           ]),
           _vm._v(" "),
@@ -962,7 +1097,7 @@ var content = __webpack_require__(14);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(1)("343194b4", content, false, {});
+var update = __webpack_require__(1)("22dfdc07", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -4208,7 +4343,10 @@ exports.default = {
                 }
 
                 _context.next = 3;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName, lens: lens });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 3:
                 _context.next = 7;
@@ -4216,7 +4354,9 @@ exports.default = {
 
               case 5:
                 _context.next = 7;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName
+                });
 
               case 7:
 
@@ -4244,7 +4384,7 @@ exports.default = {
     filterChanged: function filterChanged() {
       var _updateQueryString2;
 
-      this.updateQueryString((_updateQueryString2 = {}, (0, _defineProperty3.default)(_updateQueryString2, this.pageParameter, 1), (0, _defineProperty3.default)(_updateQueryString2, this.filterParameter, this.$store.getters.currentEncodedFilters), _updateQueryString2));
+      this.updateQueryString((_updateQueryString2 = {}, (0, _defineProperty3.default)(_updateQueryString2, this.pageParameter, 1), (0, _defineProperty3.default)(_updateQueryString2, this.filterParameter, this.$store.getters[this.resourceName + '/currentEncodedFilters']), _updateQueryString2));
     },
 
 
@@ -4257,13 +4397,20 @@ exports.default = {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return this.$store.dispatch('fetchFilters', { resourceName: this.resourceName, lens: lens });
+                // Clear out the filters from the store first
+                this.$store.commit(this.resourceName + '/clearFilters');
 
-              case 2:
-                this.initializeState(lens);
+                _context2.next = 3;
+                return this.$store.dispatch(this.resourceName + '/fetchFilters', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 3:
+                _context2.next = 5;
+                return this.initializeState(lens);
+
+              case 5:
               case 'end':
                 return _context2.stop();
             }
@@ -4294,7 +4441,7 @@ exports.default = {
                 }
 
                 _context3.next = 3;
-                return this.$store.dispatch('initializeCurrentFilterValuesFromQueryString', this.initialEncodedFilters);
+                return this.$store.dispatch(this.resourceName + '/initializeCurrentFilterValuesFromQueryString', this.initialEncodedFilters);
 
               case 3:
                 _context3.next = 7;
@@ -4302,7 +4449,10 @@ exports.default = {
 
               case 5:
                 _context3.next = 7;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName, lens: lens });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 7:
               case 'end':
@@ -4394,6 +4544,15 @@ exports.default = {
     handleChange: function handleChange(value) {
       this.value = value;
     }
+  },
+
+  computed: {
+    /**
+     * Determine if the field is in readonly mode
+     */
+    isReadonly: function isReadonly() {
+      return this.field.readonly || _.get(this.field, 'extraAttributes.readonly');
+    }
   }
 };
 
@@ -4451,7 +4610,7 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _regenerator = __webpack_require__(50);
@@ -4469,98 +4628,108 @@ var _cardSizes2 = _interopRequireDefault(_cardSizes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-  props: {
-    loadCards: {
-      type: Boolean,
-      default: true
-    }
-  },
+    props: {
+        loadCards: {
+            type: Boolean,
+            default: true
+        }
+    },
 
-  data: function data() {
-    return { cards: [] };
-  },
+    data: function data() {
+        return { cards: [] };
+    },
 
-  /**
-   * Fetch all of the metrics panels for this view
-   */
-  created: function created() {
-    this.fetchCards();
-  },
+    /**
+     * Fetch all of the metrics panels for this view
+     */
+    created: function created() {
+        this.fetchCards();
+    },
 
 
-  watch: {
-    cardsEndpoint: function cardsEndpoint() {
-      this.fetchCards();
-    }
-  },
+    watch: {
+        cardsEndpoint: function cardsEndpoint() {
+            this.fetchCards();
+        }
+    },
 
-  methods: {
-    fetchCards: function () {
-      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-        var _ref2, cards;
+    methods: {
+        fetchCards: function () {
+            var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+                var _ref2, cards;
 
-        return _regenerator2.default.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!this.loadCards) {
-                  _context.next = 6;
-                  break;
-                }
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                if (!this.loadCards) {
+                                    _context.next = 6;
+                                    break;
+                                }
 
-                _context.next = 3;
-                return Nova.request().get(this.cardsEndpoint);
+                                _context.next = 3;
+                                return Nova.request().get(this.cardsEndpoint, {
+                                    params: this.extraCardParams
+                                });
 
-              case 3:
-                _ref2 = _context.sent;
-                cards = _ref2.data;
+                            case 3:
+                                _ref2 = _context.sent;
+                                cards = _ref2.data;
 
-                this.cards = cards;
+                                this.cards = cards;
 
-              case 6:
-              case 'end':
-                return _context.stop();
+                            case 6:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function fetchCards() {
+                return _ref.apply(this, arguments);
             }
-          }
-        }, _callee, this);
-      }));
 
-      function fetchCards() {
-        return _ref.apply(this, arguments);
-      }
-
-      return fetchCards;
-    }()
-  },
-
-  computed: {
-    /**
-     * Determine whether we have cards to show on the Dashboard
-     */
-    shouldShowCards: function shouldShowCards() {
-      return this.cards.length > 0;
+            return fetchCards;
+        }()
     },
 
-
-    /**
-     * Return the small cards used for the Dashboard
-     */
-    smallCards: function smallCards() {
-      return _.filter(this.cards, function (c) {
-        return _cardSizes2.default.indexOf(c.width) !== -1;
-      });
-    },
+    computed: {
+        /**
+         * Determine whether we have cards to show on the Dashboard
+         */
+        shouldShowCards: function shouldShowCards() {
+            return this.cards.length > 0;
+        },
 
 
-    /**
-     * Return the full-width cards used for the Dashboard
-     */
-    largeCards: function largeCards() {
-      return _.filter(this.cards, function (c) {
-        return c.width == 'full';
-      });
+        /**
+         * Return the small cards used for the Dashboard
+         */
+        smallCards: function smallCards() {
+            return _.filter(this.cards, function (c) {
+                return _cardSizes2.default.indexOf(c.width) !== -1;
+            });
+        },
+
+
+        /**
+         * Return the full-width cards used for the Dashboard
+         */
+        largeCards: function largeCards() {
+            return _.filter(this.cards, function (c) {
+                return c.width == 'full';
+            });
+        },
+
+
+        /**
+         * Get the extra card params to pass to the endpoint.
+         */
+        extraCardParams: function extraCardParams() {
+            return null;
+        }
     }
-  }
 };
 
 /***/ }),
@@ -11396,7 +11565,7 @@ var render = function() {
                   ],
                   on: {
                     click: function($event) {
-                      _vm.handleTabClick(tab, $event)
+                      return _vm.handleTabClick(tab, $event)
                     }
                   }
                 },
