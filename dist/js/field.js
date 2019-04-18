@@ -585,7 +585,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n.relationship-tabs-panel .has-search-bar {\n  margin-right: 500px;\n}\n.relationship-tabs-panel .tabs::-webkit-scrollbar {\n  width: 5px;\n  height: 5px;\n}\n.relationship-tabs-panel .tabs::-webkit-scrollbar-thumb {\n  background: #eef1f4;\n}\n.relationship-tabs-panel .tabs {\n  white-space: nowrap;\n}\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 1.25rem;\n  padding-right: 1.25rem;\n  margin-top: 1.25rem;\n  margin-bottom: 0;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translateY(-100%);\n          transform: translateY(-100%);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
+exports.push([module.i, "\n.relationship-tabs-panel .tabs::-webkit-scrollbar {\n  height: 8px;\n  border-radius: 4px;\n}\n.relationship-tabs-panel .tabs::-webkit-scrollbar-thumb {\n  background: #cacaca;\n}\n.relationship-tabs-panel .tabs {\n  white-space: nowrap;\n  margin-bottom: -2px;\n}\n.relationship-tabs-panel .card {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.relationship-tabs-panel h1 {\n  display: none;\n}\n.relationship-tabs-panel .tab {\n  padding-top: 1.25rem;\n  padding-bottom: 1.25rem;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 1.25rem;\n  padding-right: 1.25rem;\n  margin-top: 1.25rem;\n  margin-bottom: 0;\n}\n.relationship-tabs-panel .default-search > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex {\n  -webkit-box-pack: end;\n      -ms-flex-pack: end;\n          justify-content: flex-end;\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n  position: absolute;\n  top: 0;\n  right: 0;\n  -webkit-transform: translate(-107px);\n          transform: translate(-107px);\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  height: 62px;\n  z-index: 1;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .mb-6 {\n    margin-bottom: 0;\n}\n.relationship-tabs-panel .tab-content > div > .relative > .flex > .w-full {\n    width: auto;\n    margin-left: 1.5rem;\n}\n", ""]);
 
 // exports
 
@@ -673,7 +673,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -686,9 +685,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
 
   computed: {
+    activeTabSearchWidth: function activeTabSearchWidth() {
+      if (this.activeTabHasSearch) {
+        var element = this.$el.querySelector("." + this.slugify(this.activeTab) + " .w-search");
+      }
+    },
     activeTabHasSearch: function activeTabHasSearch() {
       var tab = _.find(this.tabs, { name: this.activeTab });
-      var hasTab = false;
+      var hasSearch = false;
 
       if (!tab || this.panel.defaultSearch) {
         return false;
@@ -699,11 +703,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           return;
         }
         if (field.component == "has-many-field" || field.component == "belongs-to-many-field" || field.component == "morph-many-field" || field.component == "morph-to-many-field") {
-          hasTab = true;
+          hasSearch = true;
         }
       });
 
-      return hasTab;
+      return hasSearch;
     }
   },
   mounted: function mounted() {
@@ -731,8 +735,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("actionExecuted");
     },
     handleTabClick: function handleTabClick(tab, event) {
+      var _this = this;
+
       tab.init = true;
       this.activeTab = tab.name;
+
+      setTimeout(function () {
+        var element = _this.$el.querySelector("." + _this.slugify(_this.activeTab) + " .w-search");
+
+        window.requestAnimationFrame(function () {
+          document.querySelector(".tabs").style.width = "calc(100% - " + element.parentNode.parentNode.offsetWidth + "px)";
+          //return element.parentNode.parentNode.offsetWidth;
+        });
+        console.log("theeeeeb", element);
+      }, 200);
+    },
+
+    /**
+     * Slugify
+     * From: https://gist.github.com/mathewbyrne/1280286
+     */
+    slugify: function slugify(text) {
+      return text.toString().toLowerCase().replace(/\s+/g, "-") // Replace spaces with -
+      .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+      .replace(/\-\-+/g, "-") // Replace multiple - with single -
+      .replace(/^-+/, "") // Trim - from start of text
+      .replace(/-+$/, ""); // Trim - from end of text
     },
     componentName: function componentName(field) {
       return field.prefixComponent ? "detail-" + field.component : field.component;
@@ -776,13 +804,10 @@ var render = function() {
         "div",
         { staticClass: "relationship-tabs-panel card" },
         [
-          _c(
-            "div",
-            {
-              staticClass: "tabs flex flex-row overflow-x-auto",
-              class: { "has-search-bar": _vm.activeTabHasSearch }
-            },
-            [
+          _c("div", { staticClass: "tabs-wrap border-b-2 border-40 w-full" }, [
+            _c(
+              "div",
+              { staticClass: "tabs flex flex-row overflow-x-auto" },
               _vm._l(_vm.tabs, function(tab, key) {
                 return _c(
                   "button",
@@ -803,11 +828,9 @@ var render = function() {
                   [_vm._v(_vm._s(tab.name))]
                 )
               }),
-              _vm._v(" "),
-              _c("div", { staticClass: "flex-1 border-b-2 border-40" })
-            ],
-            2
-          ),
+              0
+            )
+          ]),
           _vm._v(" "),
           _vm._l(_vm.tabs, function(tab, index) {
             return _c(
@@ -822,10 +845,13 @@ var render = function() {
                   }
                 ],
                 key: "related-tabs-fields" + index,
+                ref: _vm.slugify(tab.name),
+                refInFor: true,
                 class: [
                   _vm.panel && _vm.panel.defaultSearch
                     ? "default-search"
-                    : "tab-content"
+                    : "tab-content",
+                  _vm.slugify(tab.name)
                 ],
                 attrs: { label: tab.name }
               },

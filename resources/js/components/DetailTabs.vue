@@ -4,21 +4,20 @@
       <!--<h4 class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>-->
     </slot>
     <div class="relationship-tabs-panel card">
-      <div
-        class="tabs flex flex-row overflow-x-auto"
-        :class="{'has-search-bar': activeTabHasSearch}"
-      >
-        <button
-          class="py-5 px-8 border-b-2 focus:outline-none tab"
-          :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
-          v-for="(tab, key) in tabs"
-          :key="key"
-          @click="handleTabClick(tab, $event)"
-        >{{ tab.name }}</button>
-        <div class="flex-1 border-b-2 border-40"></div>
+      <div class="tabs-wrap border-b-2 border-40 w-full">
+        <div class="tabs flex flex-row overflow-x-auto">
+          <button
+            class="py-5 px-8 border-b-2 focus:outline-none tab"
+            :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
+            v-for="(tab, key) in tabs"
+            :key="key"
+            @click="handleTabClick(tab, $event)"
+          >{{ tab.name }}</button>
+        </div>
       </div>
       <div
-        :class="[(panel && panel.defaultSearch) ? 'default-search': 'tab-content']"
+        :class="[(panel && panel.defaultSearch) ? 'default-search': 'tab-content', slugify(tab.name)]"
+        :ref="slugify(tab.name)"
         v-for="(tab, index) in tabs"
         v-show="tab.name == activeTab"
         :label="tab.name"
@@ -53,9 +52,16 @@ export default {
     };
   },
   computed: {
+    activeTabSearchWidth() {
+      if (this.activeTabHasSearch) {
+        let element = this.$el.querySelector(
+          "." + this.slugify(this.activeTab) + " .w-search"
+        );
+      }
+    },
     activeTabHasSearch() {
       let tab = _.find(this.tabs, { name: this.activeTab });
-      let hasTab = false;
+      let hasSearch = false;
 
       if (!tab || this.panel.defaultSearch) {
         return false;
@@ -71,11 +77,11 @@ export default {
           field.component == "morph-many-field" ||
           field.component == "morph-to-many-field"
         ) {
-          hasTab = true;
+          hasSearch = true;
         }
       });
 
-      return hasTab;
+      return hasSearch;
     }
   },
   mounted() {
@@ -104,6 +110,33 @@ export default {
     handleTabClick(tab, event) {
       tab.init = true;
       this.activeTab = tab.name;
+
+      setTimeout(() => {
+        let element = this.$el.querySelector(
+          "." + this.slugify(this.activeTab) + " .w-search"
+        );
+
+        window.requestAnimationFrame(function() {
+          document.querySelector(".tabs").style.width =
+            "calc(100% - " + element.parentNode.parentNode.offsetWidth + "px)";
+          //return element.parentNode.parentNode.offsetWidth;
+        });
+        console.log("theeeeeb", element);
+      }, 200);
+    },
+    /**
+     * Slugify
+     * From: https://gist.github.com/mathewbyrne/1280286
+     */
+    slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, "-") // Replace spaces with -
+        .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+        .replace(/\-\-+/g, "-") // Replace multiple - with single -
+        .replace(/^-+/, "") // Trim - from start of text
+        .replace(/-+$/, ""); // Trim - from end of text
     },
     componentName(field) {
       return field.prefixComponent
@@ -118,42 +151,28 @@ export default {
 <style lang="scss">
 .relationship-tabs-panel {
   .has-search-bar {
-    margin-right: 500px;
   }
   .tabs::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    height: 8px;
+    border-radius: 4px;
   }
   .tabs::-webkit-scrollbar-thumb {
-    background: #eef1f4;
+    background: #cacaca;
   }
   .tabs {
     white-space: nowrap;
-    // position: relative;
-
-    // &:after {
-    //   position: absolute;
-    //   content: "";
-    //   width: 100%;
-    //   height: 2px;
-    //   background: #f00;
-    //   bottom: 0%;
-    //   left: 100%;
-    // }
+    margin-bottom: -2px;
   }
   .card {
     box-shadow: none;
   }
-
   h1 {
     display: none;
   }
-
   .tab {
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
   }
-
   .default-search > div > .relative > .flex {
     justify-content: flex-end;
     padding-left: 1.25rem;
@@ -164,19 +183,17 @@ export default {
       margin-bottom: 0;
     }
   }
-
   .tab-content > div > .relative > .flex {
     justify-content: flex-end;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-
     position: absolute;
     top: 0;
     right: 0;
-    transform: translateY(-100%);
-
+    transform: translate(-107px);
     align-items: center;
     height: 62px;
+    z-index: 1;
 
     > .mb-6 {
       margin-bottom: 0;
