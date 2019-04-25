@@ -724,7 +724,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
-    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+    if (!_.isUndefined(this.$route.query.tab)) {
+      if (_.isUndefined(tabs[this.$route.query.tab])) {
+        this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+      } else {
+        this.activeTab = this.$route.query.tab;
+        this.handleTabClick(tabs[this.$route.query.tab]);
+      }
+    } else {
+      this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+    }
   },
 
   methods: {
@@ -735,20 +744,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("actionExecuted");
     },
     handleTabClick: function handleTabClick(tab, event) {
-      var _this = this;
-
       tab.init = true;
       this.activeTab = tab.name;
-
-      setTimeout(function () {
-        var element = _this.$el.querySelector("." + _this.slugify(_this.activeTab) + " .w-search");
-
-        window.requestAnimationFrame(function () {
-          document.querySelector(".tabs").style.width = "calc(100% - " + element.parentNode.parentNode.offsetWidth + "px)";
-          //return element.parentNode.parentNode.offsetWidth;
-        });
-        console.log("theeeeeb", element);
-      }, 200);
     },
 
     /**
@@ -821,7 +818,7 @@ var render = function() {
                     ],
                     on: {
                       click: function($event) {
-                        _vm.handleTabClick(tab, $event)
+                        return _vm.handleTabClick(tab, $event)
                       }
                     }
                   },
@@ -4208,7 +4205,10 @@ exports.default = {
                 }
 
                 _context.next = 3;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName, lens: lens });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 3:
                 _context.next = 7;
@@ -4216,7 +4216,9 @@ exports.default = {
 
               case 5:
                 _context.next = 7;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName
+                });
 
               case 7:
 
@@ -4244,7 +4246,7 @@ exports.default = {
     filterChanged: function filterChanged() {
       var _updateQueryString2;
 
-      this.updateQueryString((_updateQueryString2 = {}, (0, _defineProperty3.default)(_updateQueryString2, this.pageParameter, 1), (0, _defineProperty3.default)(_updateQueryString2, this.filterParameter, this.$store.getters.currentEncodedFilters), _updateQueryString2));
+      this.updateQueryString((_updateQueryString2 = {}, (0, _defineProperty3.default)(_updateQueryString2, this.pageParameter, 1), (0, _defineProperty3.default)(_updateQueryString2, this.filterParameter, this.$store.getters[this.resourceName + '/currentEncodedFilters']), _updateQueryString2));
     },
 
 
@@ -4257,13 +4259,20 @@ exports.default = {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return this.$store.dispatch('fetchFilters', { resourceName: this.resourceName, lens: lens });
+                // Clear out the filters from the store first
+                this.$store.commit(this.resourceName + '/clearFilters');
 
-              case 2:
-                this.initializeState(lens);
+                _context2.next = 3;
+                return this.$store.dispatch(this.resourceName + '/fetchFilters', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 3:
+                _context2.next = 5;
+                return this.initializeState(lens);
+
+              case 5:
               case 'end':
                 return _context2.stop();
             }
@@ -4294,7 +4303,7 @@ exports.default = {
                 }
 
                 _context3.next = 3;
-                return this.$store.dispatch('initializeCurrentFilterValuesFromQueryString', this.initialEncodedFilters);
+                return this.$store.dispatch(this.resourceName + '/initializeCurrentFilterValuesFromQueryString', this.initialEncodedFilters);
 
               case 3:
                 _context3.next = 7;
@@ -4302,7 +4311,10 @@ exports.default = {
 
               case 5:
                 _context3.next = 7;
-                return this.$store.dispatch('resetFilterState', { resourceName: this.resourceName, lens: lens });
+                return this.$store.dispatch(this.resourceName + '/resetFilterState', {
+                  resourceName: this.resourceName,
+                  lens: lens
+                });
 
               case 7:
               case 'end':
@@ -4394,6 +4406,15 @@ exports.default = {
     handleChange: function handleChange(value) {
       this.value = value;
     }
+  },
+
+  computed: {
+    /**
+     * Determine if the field is in readonly mode
+     */
+    isReadonly: function isReadonly() {
+      return this.field.readonly || _.get(this.field, 'extraAttributes.readonly');
+    }
   }
 };
 
@@ -4451,7 +4472,7 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _regenerator = __webpack_require__(50);
@@ -4469,98 +4490,108 @@ var _cardSizes2 = _interopRequireDefault(_cardSizes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-  props: {
-    loadCards: {
-      type: Boolean,
-      default: true
-    }
-  },
+    props: {
+        loadCards: {
+            type: Boolean,
+            default: true
+        }
+    },
 
-  data: function data() {
-    return { cards: [] };
-  },
+    data: function data() {
+        return { cards: [] };
+    },
 
-  /**
-   * Fetch all of the metrics panels for this view
-   */
-  created: function created() {
-    this.fetchCards();
-  },
+    /**
+     * Fetch all of the metrics panels for this view
+     */
+    created: function created() {
+        this.fetchCards();
+    },
 
 
-  watch: {
-    cardsEndpoint: function cardsEndpoint() {
-      this.fetchCards();
-    }
-  },
+    watch: {
+        cardsEndpoint: function cardsEndpoint() {
+            this.fetchCards();
+        }
+    },
 
-  methods: {
-    fetchCards: function () {
-      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-        var _ref2, cards;
+    methods: {
+        fetchCards: function () {
+            var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+                var _ref2, cards;
 
-        return _regenerator2.default.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!this.loadCards) {
-                  _context.next = 6;
-                  break;
-                }
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                if (!this.loadCards) {
+                                    _context.next = 6;
+                                    break;
+                                }
 
-                _context.next = 3;
-                return Nova.request().get(this.cardsEndpoint);
+                                _context.next = 3;
+                                return Nova.request().get(this.cardsEndpoint, {
+                                    params: this.extraCardParams
+                                });
 
-              case 3:
-                _ref2 = _context.sent;
-                cards = _ref2.data;
+                            case 3:
+                                _ref2 = _context.sent;
+                                cards = _ref2.data;
 
-                this.cards = cards;
+                                this.cards = cards;
 
-              case 6:
-              case 'end':
-                return _context.stop();
+                            case 6:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function fetchCards() {
+                return _ref.apply(this, arguments);
             }
-          }
-        }, _callee, this);
-      }));
 
-      function fetchCards() {
-        return _ref.apply(this, arguments);
-      }
-
-      return fetchCards;
-    }()
-  },
-
-  computed: {
-    /**
-     * Determine whether we have cards to show on the Dashboard
-     */
-    shouldShowCards: function shouldShowCards() {
-      return this.cards.length > 0;
+            return fetchCards;
+        }()
     },
 
-
-    /**
-     * Return the small cards used for the Dashboard
-     */
-    smallCards: function smallCards() {
-      return _.filter(this.cards, function (c) {
-        return _cardSizes2.default.indexOf(c.width) !== -1;
-      });
-    },
+    computed: {
+        /**
+         * Determine whether we have cards to show on the Dashboard
+         */
+        shouldShowCards: function shouldShowCards() {
+            return this.cards.length > 0;
+        },
 
 
-    /**
-     * Return the full-width cards used for the Dashboard
-     */
-    largeCards: function largeCards() {
-      return _.filter(this.cards, function (c) {
-        return c.width == 'full';
-      });
+        /**
+         * Return the small cards used for the Dashboard
+         */
+        smallCards: function smallCards() {
+            return _.filter(this.cards, function (c) {
+                return _cardSizes2.default.indexOf(c.width) !== -1;
+            });
+        },
+
+
+        /**
+         * Return the full-width cards used for the Dashboard
+         */
+        largeCards: function largeCards() {
+            return _.filter(this.cards, function (c) {
+                return c.width == 'full';
+            });
+        },
+
+
+        /**
+         * Get the extra card params to pass to the endpoint.
+         */
+        extraCardParams: function extraCardParams() {
+            return null;
+        }
     }
-  }
 };
 
 /***/ }),
@@ -11396,7 +11427,7 @@ var render = function() {
                   ],
                   on: {
                     click: function($event) {
-                      _vm.handleTabClick(tab, $event)
+                      return _vm.handleTabClick(tab, $event)
                     }
                   }
                 },
