@@ -5,6 +5,7 @@ use RuntimeException;
 use Laravel\Nova\Panel;
 use Illuminate\Http\Resources\MergeValue;
 use Laravel\Nova\Contracts\ListableField;
+use Illuminate\Http\Resources\MissingValue;
 
 class Tabs extends Panel
 {
@@ -30,10 +31,15 @@ class Tabs extends Panel
                 $this->addFields($tab, $field->data);
                 continue;
             }
+
             $field->panel = $this->name;
-            $field->withMeta([
-                'tab' => $tab,
-            ]);
+
+            if (! $field instanceof MissingValue) {
+                $field->withMeta([
+                    'tab' => $tab,
+                ]);
+            }
+
             $this->data[] = $field;
         }
 
