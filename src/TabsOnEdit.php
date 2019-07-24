@@ -1,6 +1,8 @@
 <?php
 namespace Eminiarts\Tabs;
 
+use Laravel\Nova\Panel;
+use Illuminate\Support\Collection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 trait TabsOnEdit
@@ -107,8 +109,28 @@ trait TabsOnEdit
                 'Tabs' => [
                     'component' => 'tabs',
                     'fields'    => $this->removeNonUpdateFields($this->resolveFields($request)),
+                    'panel'     => Panel::defaultNameForUpdate($request->newResource()),
                 ],
             ]
         );
+    }
+
+    /**
+     * Assign the fields with the given panels to their parent panel.
+     *
+     * @param  string                           $label
+     * @param  \Illuminate\Support\Collection   $panels
+     * @return \Illuminate\Support\Collection
+     */
+    protected function assignToPanels($label, Collection $panels)
+    {
+        return $panels->map(function ($field) use ($label) {
+            // Disable default Panel, because it's not needed for Tabs
+            // if (!$field->panel) {
+            //     $field->panel = $label;
+            // }
+
+            return $field;
+        });
     }
 }

@@ -171,9 +171,9 @@ export default {
   }
   .default-search > div > .relative > .flex {
     justify-content: flex-end;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    margin-top: 1.25rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin-top: 0.75rem;
     margin-bottom: 0;
     > .mb-6 {
       margin-bottom: 0;
@@ -186,7 +186,7 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(-107px);
+    transform: translateY(-100%);
     align-items: center;
     height: 62px;
     z-index: 1;
