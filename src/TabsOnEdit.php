@@ -126,10 +126,9 @@ trait TabsOnEdit
     protected function assignToPanels($label, Collection $panels)
     {
         return $panels->map(function ($field) use ($label) {
-            // Disable default Panel, because it's not needed for Tabs
-            // if (!$field->panel) {
-            //     $field->panel = $label;
-            // }
+            if ( !is_array($field) && !$field->panel ) {
+                 $field->panel = $label;
+            }
 
             return $field;
         });
