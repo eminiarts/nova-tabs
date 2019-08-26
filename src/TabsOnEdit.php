@@ -19,7 +19,7 @@ trait TabsOnEdit
             [
                 'Tabs' => [
                     'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
+                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
                     'panel'     => Panel::defaultNameForCreate($request->newResource()),
                 ],
             ]
@@ -109,7 +109,7 @@ trait TabsOnEdit
             [
                 'Tabs' => [
                     'component' => 'tabs',
-                    'fields'    => $this->removeNonUpdateFields($this->resolveFields($request)),
+                    'fields'    => $this->removeNonUpdateFields($request, $this->resolveFields($request)),
                     'panel'     => Panel::defaultNameForUpdate($request->newResource()),
                 ],
             ]
