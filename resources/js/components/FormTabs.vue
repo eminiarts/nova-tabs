@@ -18,7 +18,7 @@
       <div class="flex flex-row">
         <div
           class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
-          :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40', tabHasErrors(tab) ? 'text-error' : '' ]"
+          :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40', errorTabs.indexOf(tab.name) >= 0 ? 'text-error' : '' ]"
           v-for="(tab, key) in tabs"
           :key="key"
           @click="handleTabClick(tab, $event)"
@@ -79,7 +79,8 @@ export default {
   data() {
     return {
       tabs: null,
-      activeTab: ""
+      activeTab: "",
+      errorTabs: [],
     };
   },
   computed: {
@@ -89,15 +90,40 @@ export default {
   },
   watch: {
     errors: {
-      handler: function(errors) {
-        let vm = this;
+      handler(errors) {
+        const errorFields = Object.keys(errors.errors);
+        const errorTabs = [];
         let goToTab = false;
-        Object.keys(vm.tabs).forEach(function(key) {
-          if (vm.tabHasErrors(vm.tabs[key]) && !goToTab) {
-            goToTab = true;
-            return vm.handleTabClick(vm.tabs[key]);
+        // If there were validation errors
+        if(errorFields.length > 0) {
+          // check which tabs have an error
+          _.forEach(this.field.fields, field => {
+            if (typeof field.tab === 'undefined') return;
+
+            if (errorFields.indexOf(field.attribute) >= 0 && errorTabs.indexOf(field.tab) === -1) {
+              errorTabs.push(field.tab);
+            }
+          });
+        }
+
+        // If there were tabs with errors
+        if(errorTabs.length > 0) {
+          // Go to the first tab that errors
+          Object.keys(this.tabs).forEach(tab => {
+            if(goToTab !== false) return;
+            if(errorTabs.indexOf(tab) >= 0) {
+              goToTab = tab;
+            }
+          });
+
+          // Go to the first errored tab, if any
+          if(goToTab !== false) {
+              this.handleTabClick(this.tabs[goToTab]);
           }
-        });
+        }
+
+        // Store the error tabs
+        this.errorTabs = errorTabs;
       },
       deep: true
     }
@@ -137,21 +163,6 @@ export default {
     },
     handleTabClick(tab, event) {
       this.activeTab = tab.name;
-    },
-
-    tabHasErrors(tab) {
-      let hasErrors = false;
-      let vm = this;
-
-      Object.keys(this.errors.errors).forEach(function(key) {
-        if (_.includes(tab.fields.map(o => o["attribute"]), key)) {
-          hasErrors = true;
-        }
-      });
-
-      tab.hasErrors = hasErrors;
-
-      return hasErrors;
     }
   }
 };
