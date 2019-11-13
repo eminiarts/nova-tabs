@@ -120,12 +120,12 @@ trait TabsOnEdit
      * Assign the fields with the given panels to their parent panel.
      *
      * @param  string                           $label
-     * @param  \Illuminate\Support\Collection   $panels
+     * @param  \Illuminate\Support\Collection   $fields
      * @return \Illuminate\Support\Collection
      */
-    protected function assignToPanels($label, Collection $panels)
+    protected function assignToPanels($label, Laravel\Nova\Fields\FieldCollection $fields)
     {
-        return $panels->map(function ($field) use ($label) {
+        return $fields->map(function ($field) use ($label) {
             if ( !is_array($field) && !$field->panel ) {
                  $field->panel = $label;
             }
