@@ -2,7 +2,7 @@
 namespace Eminiarts\Tabs;
 
 use Laravel\Nova\Panel;
-use Illuminate\Support\Collection;
+use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 trait TabsOnEdit
@@ -15,7 +15,7 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return collect(
+        return new FieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
@@ -105,7 +105,7 @@ trait TabsOnEdit
      */
     public function updateFields(NovaRequest $request)
     {
-        return collect(
+        return new FieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
@@ -119,11 +119,11 @@ trait TabsOnEdit
     /**
      * Assign the fields with the given panels to their parent panel.
      *
-     * @param  string                           $label
-     * @param  \Illuminate\Support\Collection   $panels
-     * @return \Illuminate\Support\Collection
+     * @param string                               $label
+     * @param \Laravel\Nova\Fields\FieldCollection $panels
+     * @return \Laravel\Nova\Fields\FieldCollection
      */
-    protected function assignToPanels($label, Collection $panels)
+    protected function assignToPanels($label, FieldCollection $panels)
     {
         return $panels->map(function ($field) use ($label) {
             if ( !is_array($field) && !$field->panel ) {
