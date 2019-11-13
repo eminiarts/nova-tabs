@@ -11,11 +11,11 @@ trait TabsOnEdit
      * Resolve the creation fields.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return \Illuminate\Support\Collection
+     * @return \Eminiarts\Tabs\FieldCollection
      */
     public function creationFields(NovaRequest $request)
     {
-        return collect(
+        return new FieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
