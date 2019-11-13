@@ -1,6 +1,7 @@
 <?php
 namespace Eminiarts\Tabs;
 
+use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -120,16 +121,15 @@ trait TabsOnEdit
      * Assign the fields with the given panels to their parent panel.
      *
      * @param  string                           $label
-     * @param  \Illuminate\Support\Collection   $fields
+     * @param  \Illuminate\Support\Collection   $panels
      * @return \Illuminate\Support\Collection
      */
-    protected function assignToPanels($label, Laravel\Nova\Fields\FieldCollection $fields)
+    protected function assignToPanels($label, FieldCollection $fields)
     {
         return $fields->map(function ($field) use ($label) {
             if ( !is_array($field) && !$field->panel ) {
-                 $field->panel = $label;
+                $field->panel = $label;
             }
-
             return $field;
         });
     }
