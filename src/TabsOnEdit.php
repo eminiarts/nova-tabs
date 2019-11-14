@@ -4,7 +4,6 @@ namespace Eminiarts\Tabs;
 use Laravel\Nova\Fields\FieldCollection as NovaFieldCollection;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Panel;
 
 trait TabsOnEdit
 {
