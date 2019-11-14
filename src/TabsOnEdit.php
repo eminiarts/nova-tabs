@@ -125,7 +125,7 @@ trait TabsOnEdit
      * @param \Laravel\Nova\Fields\FieldCollection $panels
      * @return \Laravel\Nova\Fields\FieldCollection
      */
-    protected function assignToPanels($label, FieldCollection $panels)
+    protected function assignToPanels($label, NovaFieldCollection $panels)
     {
         return $panels->map(function ($field) use ($label) {
             if (!is_array($field) && !$field->panel) {
