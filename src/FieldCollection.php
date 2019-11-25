@@ -19,4 +19,20 @@ class FieldCollection extends NovaFieldCollection
             return collect(Arr::get($tab, 'fields'))->whereInstanceOf($type);
         });
     }
+
+    public function findFieldByAttribute($attribute, $default = null)
+    {
+        foreach ($this->items as $field) {
+            if (isset($field->attribute) && $field->attribute === $attribute) {
+                return $field;
+            }
+
+            // Search the fields inside tabs.
+            if (is_array($field) && isset($field['component']) && $field['component'] === 'tabs') {
+                return static::make($field['fields'])->findFieldByAttribute($attribute, $default);
+            }
+        }
+
+        return null;
+    }
 }
