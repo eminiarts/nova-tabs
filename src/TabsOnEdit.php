@@ -1,8 +1,9 @@
 <?php
 namespace Eminiarts\Tabs;
 
-use Laravel\Nova\Panel;
 use Laravel\Nova\Fields\FieldCollection;
+use Laravel\Nova\Panel;
+use Illuminate\Support\Collection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 trait TabsOnEdit
@@ -15,11 +16,11 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return new FieldCollection(
+        return collect(
             [
                 'Tabs' => [
                     'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
+                    'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
                     'panel'     => Panel::defaultNameForCreate($request->newResource()),
                 ],
             ]
@@ -88,7 +89,7 @@ trait TabsOnEdit
      * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
      * @return array
      */
-    public static function rulesForUpdate(NovaRequest $request)
+    public static function rulesForUpdate(NovaRequest $request, $resource = null)
     {
         return static::formatRules($request, (new static(static::newModel()))
                 ->parentUpdateFields($request)
@@ -119,15 +120,15 @@ trait TabsOnEdit
     /**
      * Assign the fields with the given panels to their parent panel.
      *
-     * @param string                               $label
-     * @param \Laravel\Nova\Fields\FieldCollection $panels
+     * @param  string  $label
+     * @param  \Laravel\Nova\Fields\FieldCollection  $fields
      * @return \Laravel\Nova\Fields\FieldCollection
      */
-    protected function assignToPanels($label, FieldCollection $panels)
+    protected function assignToPanels($label, FieldCollection $fields)
     {
-        return $panels->map(function ($field) use ($label) {
+        return $fields->map(function ($field) use ($label) {
             if ( !is_array($field) && !$field->panel ) {
-                 $field->panel = $label;
+                $field->panel = $label;
             }
 
             return $field;
