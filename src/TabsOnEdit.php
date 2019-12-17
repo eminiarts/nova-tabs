@@ -17,7 +17,7 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return collect(
+        return new FieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
