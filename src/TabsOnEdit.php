@@ -21,7 +21,7 @@ trait TabsOnEdit
             [
                 'Tabs' => [
                     'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
+                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
                     'panel'     => Panel::defaultNameForCreate($request->newResource()),
                 ],
             ]
