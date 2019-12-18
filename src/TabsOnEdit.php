@@ -3,7 +3,6 @@ namespace Eminiarts\Tabs;
 
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
-use Illuminate\Support\Collection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 trait TabsOnEdit
@@ -12,15 +11,15 @@ trait TabsOnEdit
      * Resolve the creation fields.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return \Illuminate\Support\Collection
+     * @return \Laravel\Nova\Fields\FieldCollection
      */
     public function creationFields(NovaRequest $request)
     {
-        return collect(
+        return new FieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($this->resolveFields($request)),
+                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
                     'panel'     => Panel::defaultNameForCreate($request->newResource()),
                 ],
             ]
@@ -102,7 +101,7 @@ trait TabsOnEdit
      * Resolve the update fields.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return \Illuminate\Support\Collection
+     * @return \Laravel\Nova\Fields\FieldCollection
      */
     public function updateFields(NovaRequest $request)
     {
