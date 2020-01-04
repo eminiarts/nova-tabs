@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="relationship-tabs-panel card overflow-hidden">
+    <div class="relationship-tabs-panel card w-full overflow-hidden">
       <div class="flex flex-row">
         <div
           class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
