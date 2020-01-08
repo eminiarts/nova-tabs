@@ -91,8 +91,6 @@ public function fields(Request $request)
 
 ![image](https://user-images.githubusercontent.com/3426944/50060715-a3b8d680-0197-11e9-8f98-1cac8cf3fd83.png)
 
-You can also group Relations into Tabs. Make sure to use the `AvailableTabFields` Trait in your Nova Resource.
-
 ```php
 // in app/Nova/Resource.php
 
