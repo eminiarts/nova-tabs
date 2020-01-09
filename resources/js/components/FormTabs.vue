@@ -118,7 +118,7 @@ export default {
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
-    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+    this.activeTab = this.$route.query.tab || tabs[Object.keys(tabs)[0]];
   },
   methods: {
     /**
@@ -137,6 +137,7 @@ export default {
     },
     handleTabClick(tab, event) {
       this.activeTab = tab.name;
+      this.$router.push({ query: { tab: tab.name }});
     },
 
     tabHasErrors(tab) {

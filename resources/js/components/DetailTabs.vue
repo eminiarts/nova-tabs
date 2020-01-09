@@ -119,6 +119,7 @@ export default {
     handleTabClick(tab, event) {
       tab.init = true;
       this.activeTab = tab.name;
+      this.$router.push({ query: { tab: tab.name }});
     },
     /**
      * Slugify
