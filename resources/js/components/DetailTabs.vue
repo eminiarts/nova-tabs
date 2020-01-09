@@ -98,13 +98,8 @@ export default {
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
-    if(!_.isUndefined(this.$route.query.tab)) {
-        if(_.isUndefined(tabs[this.$route.query.tab])) {
-            this.handleTabClick(tabs[Object.keys(tabs)[0]]);
-        } else {
-            this.activeTab = this.$route.query.tab;
-            this.handleTabClick(tabs[this.$route.query.tab]);
-        }
+    if(!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
+        this.handleTabClick(tabs[this.$route.query.tab]);
     } else {
         this.handleTabClick(tabs[Object.keys(tabs)[0]]);
     }
