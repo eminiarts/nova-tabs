@@ -138,8 +138,6 @@ export default {
       this.$emit("actionExecuted");
     },
     handleTabClick(tab, event) {
-        console.log(tab)
-        console.log(event)
       this.activeTab = tab.name;
       this.$router.push({ query: { tab: tab.name }});
     },
