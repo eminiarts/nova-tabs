@@ -29,6 +29,9 @@
             ]
         }
     },
+    "suggest": {
+        "demency/nova-gridder": "Allows use Nova Tailwind Grid System"
+    },
     "config": {
         "sort-packages": true
     },
