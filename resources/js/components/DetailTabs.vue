@@ -23,10 +23,13 @@
         :label="tab.name"
         :key="'related-tabs-fields' + index"
       >
-        <div :class="{'px-6 py-3':!tab.listable}" v-if="tab.init">
+        <div :class="{
+            'px-6 py-3':!tab.listable,
+            'flex flex-wrap' : tab.fields.some((field) => field.gridder),
+        }" v-if="tab.init">
           <component
             v-for="(field, index) in tab.fields"
-            :class="{'remove-bottom-border': index == tab.fields.length - 1}"
+            :class="componentClass(tab, field, index)"
             :key="'tab-' + index"
             :is="componentName(field)"
             :resource-name="resourceName"
@@ -52,6 +55,10 @@ export default {
     };
   },
   computed: {
+    fieldClass(tab, field, index) {
+      return {
+      }
+    },
     activeTabSearchWidth() {
       if (this.activeTabHasSearch) {
         let element = this.$el.querySelector(
@@ -110,6 +117,14 @@ export default {
     }
   },
   methods: {
+    /**
+     * Get component class
+     */
+    componentClass(tab, field, index) {
+        let gridderClass = field.gridder ? field.gridder.panelSize : 'w-full';
+        let borderBottom = index == tab.fields.length - 1 ? ' remove-bottom-border' : ' ';
+        return gridderClass + borderBottom
+    },
     /**
      * Handle the actionExecuted event and pass it up the chain.
      */
