@@ -55,10 +55,6 @@ export default {
     };
   },
   computed: {
-    fieldClass(tab, field, index) {
-      return {
-      }
-    },
     activeTabSearchWidth() {
       if (this.activeTabHasSearch) {
         let element = this.$el.querySelector(
