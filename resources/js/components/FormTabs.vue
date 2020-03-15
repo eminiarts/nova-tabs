@@ -138,8 +138,11 @@ export default {
       this.$emit("actionExecuted");
     },
     handleTabClick(tab, event) {
+      let cur = this.$router.currentRoute.query;
       this.activeTab = tab.name;
-      this.$router.push({ query: { tab: tab.name }});
+      if(!cur || cur.tab != tab.name) {
+        this.$router.replace({query: { tab: tab.name }});
+      }
     },
 
     tabHasErrors(tab) {
