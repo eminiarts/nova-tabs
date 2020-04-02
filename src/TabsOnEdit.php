@@ -37,7 +37,7 @@ trait TabsOnEdit
     {
         return static::fillFields(
             $request, $model,
-            (new static($model))->parentCreationFields($request)
+            (new static($model))->creationFieldsWithoutReadonly($request)
         );
     }
 
@@ -49,8 +49,36 @@ trait TabsOnEdit
     {
         return static::fillFields(
             $request, $model,
-            (new static($model))->parentUpdateFields($request)
+            (new static($model))->updateFieldsWithoutReadonly($request)
         );
+    }
+
+    /**
+     * Return the creation fields excluding any readonly ones.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
+    public function creationFieldsWithoutReadonly(NovaRequest $request)
+    {
+        return $this->parentCreationFields($request)
+                    ->reject(function ($field) use ($request) {
+                        return $field->isReadonly($request);
+                    });
+    }
+
+    /**
+     * Return the update fields excluding any readonly ones.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
+    public function updateFieldsWithoutReadonly(NovaRequest $request)
+    {
+        return $this->parentUpdateFields($request)
+                    ->reject(function ($field) use ($request) {
+                        return $field->isReadonly($request);
+                    });
     }
 
     /**
