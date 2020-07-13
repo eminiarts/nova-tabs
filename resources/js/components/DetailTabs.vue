@@ -23,7 +23,7 @@
         :label="tab.name"
         :key="'related-tabs-fields' + index"
       >
-        <div :class="{'px-6 py-3':!tab.listable}" v-if="tab.init">
+        <div :class="{'px-6 py-3':!tab.listable}" class="flex-wrap" v-if="tab.init">
           <component
             v-for="(field, index) in tab.fields"
             :class="{'remove-bottom-border': index == tab.fields.length - 1}"
