@@ -46,6 +46,7 @@
             :via-resource-id="viaResourceId"
             :via-relationship="viaRelationship"
             @actionExecuted="actionExecuted"
+            :show-help-text="field.helpText != null"
           />
         </div>
       </div>
