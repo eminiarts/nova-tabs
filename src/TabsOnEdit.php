@@ -4,6 +4,7 @@ namespace Eminiarts\Tabs;
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Resource;
 
 trait TabsOnEdit
 {
@@ -138,7 +139,7 @@ trait TabsOnEdit
                 'Tabs' => [
                     'component' => 'tabs',
                     'fields'    => $this->removeNonUpdateFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForUpdate($request->newResource()),
+                    'panel'     => Panel::defaultNameForUpdate($this->resolveResource($request)),
                 ],
             ]
         );
@@ -160,5 +161,18 @@ trait TabsOnEdit
 
             return $field;
         });
+    }
+
+    /**
+     * @param NovaRequest $request
+     * @return Resource
+     */
+    private function resolveResource(NovaRequest $request)
+    {
+        if ($this instanceof Resource) {
+            return $this;
+        }
+
+        return $request->newResource();
     }
 }
