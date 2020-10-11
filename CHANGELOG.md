@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.3 - (TBD)
+## 1.2.3 - (2020-10-11)
 
 - Fixed help text not showing up on fields (#108)
 - Fixed readonly fields being ignored during a fill (#91)
