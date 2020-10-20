@@ -10,7 +10,9 @@
     5. [Actions in Tabs](#actions-in-tabs)
     6. [Tabs on Edit View](#tabs-on-edit-view)
 3. [Customization](#customization)
-4. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
+    1. [Default search](#default-search)
+    2. [Display more than 5 items](#display-more-than-5-items)
+5. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
 
 ## Installation
 
@@ -198,6 +200,8 @@ class Client extends Resource
 
 ## Customization
 
+### Default search
+
 By default, the Tabs component moves the search input and the create button to the tabs. If you have a lot of tabs, you can move them back down to its own line:
 
 ```php
@@ -225,8 +229,10 @@ Set `->defaultSearch(true)` to revert it to its default.
 
 ![image](https://user-images.githubusercontent.com/3426944/50060732-dbc01980-0197-11e9-8f0c-6014132539a2.png)
 
+### Display more than 5 items
 
-
+By default, any `HasMany`, `BelongsToMany` and `MorphMany` fields show 5 items in their index. You can use Nova's built-in static property `$perPageViaRelationship` on the respective resource to show more (or less).
+ 
 ## Upgrade to 1.0.0
 Thanks to [dkulyk/nova-tabs](https://github.com/dkulyk/nova-tabs) the Package got a lot simpler. 
 
