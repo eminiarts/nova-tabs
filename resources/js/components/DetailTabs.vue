@@ -191,13 +191,13 @@ export default {
     height: 62px;
     z-index: 1;
 
-    > .mb-6 {
-      margin-bottom: 0;
-    }
-
     > .w-full {
       width: auto;
       margin-left: 1.5rem;
+
+      > .mb-6 {
+        margin-bottom: 0;
+      }
     }
   }
 }
