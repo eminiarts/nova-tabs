@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0 - (TBD)
+
+- Added Nova Gridder support (#87, to be merged)
+- Active tabs are now remembered (#86, to be merged)
+- Fixed an overflow issue when using `TabsOnEdit` (#114)
+- Fixed bottom margin on create and attach buttons not being applied (#55)
+
+## 1.2.3 - (2020-10-11)
+
+- Fixed help text not showing up on fields (#108)
+- Fixed readonly fields being ignored during a fill (#91)
+- Fixed `TabsOnEdit` not showing anything in Nova 3.12.x (#111)
+
 ## 1.0.3 - 2019-02-03
 
 - Fixed #15 overlapping Tabs

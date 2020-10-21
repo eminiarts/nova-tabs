@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="relationship-tabs-panel card w-full overflow-hidden">
+    <div class="relationship-tabs-panel card w-full">
       <div class="flex flex-row">
         <div
           class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
@@ -46,6 +46,7 @@
             :via-resource-id="viaResourceId"
             :via-relationship="viaRelationship"
             @actionExecuted="actionExecuted"
+            :show-help-text="field.helpText != null"
           />
         </div>
       </div>

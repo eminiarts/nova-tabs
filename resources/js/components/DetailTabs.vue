@@ -112,9 +112,12 @@ export default {
       this.$emit("actionExecuted");
     },
     handleTabClick(tab, event) {
+      let cur = this.$router.currentRoute.query;
       tab.init = true;
       this.activeTab = tab.name;
-      this.$router.push({ query: { tab: tab.name }});
+      if(!cur || cur.tab != tab.name) {
+        this.$router.replace({query: { tab: tab.name }});
+      }
     },
     /**
      * Slugify
@@ -187,13 +190,13 @@ export default {
     height: 62px;
     z-index: 1;
 
-    > .mb-6 {
-      margin-bottom: 0;
-    }
-
     > .w-full {
       width: auto;
       margin-left: 1.5rem;
+
+      > .mb-6 {
+        margin-bottom: 0;
+      }
     }
   }
 }
