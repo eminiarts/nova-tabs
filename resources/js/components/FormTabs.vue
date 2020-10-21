@@ -33,6 +33,7 @@
       >
         <div :class="{'px-6 py-3':!tab.listable}">
           <component
+            ref="fields"
             v-for="(field, index) in tab.fields"
             :class="{'remove-bottom-border': index == tab.fields.length - 1}"
             :key="'tab-' + index"
@@ -138,6 +139,10 @@ export default {
     },
     handleTabClick(tab, event) {
       this.activeTab = tab.name;
+
+      // When code fields are not visible initially they are not loaded
+      // See https://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
+      setTimeout(this.refreshCodeFields, 1);
     },
 
     tabHasErrors(tab) {
@@ -153,7 +158,16 @@ export default {
       tab.hasErrors = hasErrors;
 
       return hasErrors;
-    }
+    },
+
+    refreshCodeFields() {
+      const codeFields = this.$refs.fields.filter(field => 'codemirror' in field);
+
+      // TODO: Cache initialization so it doesn't refresh when it's not needed
+      codeFields.forEach(field => {
+        field.codemirror.refresh();
+      });
+    },
   }
 };
 </script>
