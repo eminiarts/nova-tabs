@@ -119,7 +119,9 @@ export default {
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
-    this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+    this.handleTabClick({
+        name: this.$route.query.tab || tabs[Object.keys(tabs)[0]].name
+    });
   },
   methods: {
     /**
@@ -137,7 +139,11 @@ export default {
       this.$emit("actionExecuted");
     },
     handleTabClick(tab, event) {
+      let cur = this.$router.currentRoute.query;
       this.activeTab = tab.name;
+      if(!cur || cur.tab != tab.name) {
+        this.$router.replace({query: { tab: tab.name }});
+      }
     },
 
     tabHasErrors(tab) {
