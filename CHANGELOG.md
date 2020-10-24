@@ -2,9 +2,9 @@
 
 ## 1.3.0 - (TBD)
 
-- Active tabs are now remembered (#86)
-- Fixed an overflow issue when using `TabsOnEdit` (#114)
-- Fixed bottom margin on create and attach buttons not being applied (#55)
+- Active tabs are now remembered ([#86](https://github.com/eminiarts/nova-tabs/pull/86))
+- Fixed an overflow issue when using `TabsOnEdit` ([#114](https://github.com/eminiarts/nova-tabs/pull/114))
+- Fixed bottom margin on create and attach buttons not being applied ([#55](https://github.com/eminiarts/nova-tabs/pull/55))
 
 ## 1.2.3 - (2020-10-11)
 
