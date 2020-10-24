@@ -2,8 +2,7 @@
 
 ## 1.3.0 - (TBD)
 
-- Added Nova Gridder support (#87, to be merged)
-- Active tabs are now remembered (#86, to be merged)
+- Active tabs are now remembered (#86)
 - Fixed an overflow issue when using `TabsOnEdit` (#114)
 - Fixed bottom margin on create and attach buttons not being applied (#55)
 
