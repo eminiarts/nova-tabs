@@ -4,16 +4,19 @@
             <!--<h4 class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>-->
         </slot>
         <div class="relationship-tabs-panel card">
-            <div class="tabs-wrap border-b-2 border-40 w-full">
-                <div class="tabs flex flex-row overflow-x-auto">
-                    <button
-                        class="py-5 px-8 border-b-2 focus:outline-none tab"
-                        :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
-                        v-for="(tab, key) in tabs"
-                        :key="key"
-                        @click="handleTabClick(tab, $event)"
-                    >{{ tab.name }}</button>
-                </div>
+            <div class="tabs-wrap border-b-2 border-40 w-full" :style="{ maxWidth: maxTabsDisplayWidth }">
+                <perfect-scrollbar ref="scroll" :options="scrollOptions">
+                    <div class="tabs flex flex-row">
+                        <button
+                            :ref="`tab-${slugify(tab.name)}`"
+                            class="py-5 px-8 border-b-2 focus:outline-none tab"
+                            :class="[activeTab === tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
+                            v-for="(tab, key) in tabs"
+                            :key="key"
+                            @click="handleTabClick(tab, $event)"
+                        >{{ tab.name }}</button>
+                    </div>
+                </perfect-scrollbar>
             </div>
             <div
                 :class="[(panel && panel.defaultSearch) ? 'default-search': 'tab-content', slugify(tab.name)]"
@@ -43,45 +46,50 @@
 
 <script>
 import BehavesAsPanel from 'laravel-nova/src/mixins/BehavesAsPanel';
+
+
 export default {
     mixins: [BehavesAsPanel],
     data() {
         return {
             tabs: null,
             activeTab: '',
+            activeTabSearchWidth: 0,
+            initialized: false,
         };
     },
     computed: {
-        activeTabSearchWidth() { // eslint-disable-line
-            if (this.activeTabHasSearch) {
-                this.$el.querySelector(
-                    '.' + this.slugify(this.activeTab) + ' .w-search',
-                );
-            }
-        },
         activeTabHasSearch() {
-            let tab = _.find(this.tabs, { name: this.activeTab });
-            let hasSearch = false;
+            const tab = _.find(this.tabs, { name: this.activeTab });
 
             if (!tab || this.panel.defaultSearch) {
                 return false;
             }
 
-            _.forEach(tab.fields, function(field) {
-                if (field.resourceName == 'action-events') {
-                    return;
+            return tab.fields.some(field => {
+                if (field.resourceName === 'action-events') {
+                    return false;
                 }
-                if (
-                    field.component == 'has-many-field' ||
-          field.component == 'belongs-to-many-field' ||
-          field.component == 'morph-many-field' ||
-          field.component == 'morph-to-many-field'
-                ) {
-                    hasSearch = true;
-                }
-            });
 
-            return hasSearch;
+                return [
+                    'has-many-field',
+                    'belongs-to-many-field',
+                    'morph-many-field',
+                    'morph-to-many-field',
+                ].includes(field.component);
+            });
+        },
+        maxTabsDisplayWidth() {
+            if (!this.initialized) {
+                return '100%';
+            }
+
+            return `${this.$el.clientWidth - this.activeTabSearchWidth}px`;
+        },
+        scrollOptions() {
+            return {
+                suppressScrollY: true,
+            };
         },
     },
     mounted() {
@@ -99,23 +107,40 @@ export default {
         });
         this.tabs = tabs;
         if(!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
+            this.$nextTick(() => {
+                const selectedTabRef = this.$refs[`tab-${this.slugify(this.$route.query.tab)}`];
+
+                if (selectedTabRef && selectedTabRef.length > 0) {
+                    this.$refs.scroll.$el.scrollLeft = selectedTabRef[0].offsetLeft;
+                }
+            });
+
             this.handleTabClick(tabs[this.$route.query.tab]);
         } else {
             this.handleTabClick(tabs[Object.keys(tabs)[0]]);
         }
+
+        this.initialized = true;
+
+        this.setActiveTabSearchWidth();
+    },
+    watch: {
+        activeTabHasSearch: 'setActiveTabSearchWidth',
     },
     methods: {
-    /**
-     * Handle the actionExecuted event and pass it up the chain.
-     */
+        /**
+         * Handle the actionExecuted event and pass it up the chain.
+         */
         actionExecuted() {
             this.$emit('actionExecuted');
         },
         handleTabClick(tab) {
-            let cur = this.$router.currentRoute.query;
+            const cur = this.$router.currentRoute.query;
+
             tab.init = true;
             this.activeTab = tab.name;
-            if(!cur || cur.tab != tab.name) {
+
+            if (!cur || cur.tab !== tab.name) {
                 this.$router.replace({query: { tab: tab.name }});
             }
         },
@@ -137,6 +162,48 @@ export default {
             return field.prefixComponent
                 ? 'detail-' + field.component
                 : field.component;
+        },
+        async setActiveTabSearchWidth() {
+            if (this.activeTabHasSearch) {
+                const element = await this.getSearchBar();
+
+                if (!element) {
+                    this.activeTabSearchWidth = 0;
+                    return;
+                }
+
+                this.activeTabSearchWidth = element.clientWidth;
+                return;
+            }
+
+            this.activeTabSearchWidth = 0;
+        },
+        async getSearchBar() {
+            let attempts = 0;
+            const searchBarSizes = [];
+            const selector = `[label="${this.activeTab}"] .relative .flex`;
+            const wait = () => new Promise(resolve => setTimeout(resolve, 50));
+            const isSettled = () => searchBarSizes.length >= 3 && searchBarSizes.slice(-3).reduce((sizes, size) => {
+                if (!sizes.includes(size)) {
+                    sizes.push(size);
+                }
+
+                return sizes;
+            }, []).length === 1;
+
+            while (attempts++ < 100) {
+                const element = this.$el.querySelector(selector);
+
+                if (element) {
+                    searchBarSizes.push(element.clientWidth);
+
+                    if (isSettled()) {
+                        return element;
+                    }
+                }
+
+                await wait();
+            }
         },
     },
 };
@@ -189,6 +256,10 @@ export default {
         align-items: center;
         height: 62px;
         z-index: 1;
+
+        > .mb-6 {
+            margin-bottom: 0;
+        }
 
         > .w-full {
             width: auto;
