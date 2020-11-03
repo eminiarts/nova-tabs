@@ -11,7 +11,7 @@
             :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
             v-for="(tab, key) in tabs"
             :key="key"
-            @click="handleTabClick(tab, $event)"
+            @click="handleTabClick(tab)"
           >{{ tab.name }}</button>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default {
       });
 
       return hasSearch;
-    }
+    },
   },
   mounted() {
     let tabs = {};
@@ -101,7 +101,7 @@ export default {
     if(!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
         this.handleTabClick(tabs[this.$route.query.tab]);
     } else {
-        this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+        this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
     }
   },
   methods: {
@@ -111,11 +111,11 @@ export default {
     actionExecuted() {
       this.$emit("actionExecuted");
     },
-    handleTabClick(tab, event) {
+    handleTabClick(tab, updateUri = true) {
       let cur = this.$router.currentRoute.query;
       tab.init = true;
       this.activeTab = tab.name;
-      if(!cur || cur.tab != tab.name) {
+      if(updateUri && (!cur || cur.tab != tab.name)) {
         this.$router.replace({query: { tab: tab.name }});
       }
     },
