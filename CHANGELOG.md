@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0 - 2020-11-05
+
+- Active tabs are now remembered ([#86](https://github.com/eminiarts/nova-tabs/pull/86) and [#119](https://github.com/eminiarts/nova-tabs/pull/119))
+- Titles of tabs can now be shown by chaining `->showTitle()` on the `Tabs` instance. Off by default. ([#118](https://github.com/eminiarts/nova-tabs/issue/118))
+- Fixed an overflow issue when using `TabsOnEdit` ([#114](https://github.com/eminiarts/nova-tabs/pull/114))
+- Fixed bottom margin on create and attach buttons not being applied ([#55](https://github.com/eminiarts/nova-tabs/pull/55))
+- Fixed issue with code fields not appearing on load ([#23](https://github.com/eminiarts/nova-tabs/issue/23))
+
+## 1.2.3 - 2020-10-11
+
+- Fixed help text not showing up on fields (#108)
+- Fixed readonly fields being ignored during a fill (#91)
+- Fixed `TabsOnEdit` not showing anything in Nova 3.12.x (#111)
+
 ## 1.0.3 - 2019-02-03
 
 - Fixed #15 overlapping Tabs

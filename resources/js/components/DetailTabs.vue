@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot>
-      <!--<h4 class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>-->
+      <h4 v-if="panel.showTitle" class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>
     </slot>
     <div class="relationship-tabs-panel card">
       <div class="tabs-wrap border-b-2 border-40 w-full">
@@ -11,7 +11,7 @@
             :class="[activeTab == tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
             v-for="(tab, key) in tabs"
             :key="key"
-            @click="handleTabClick(tab, $event)"
+            @click="handleTabClick(tab)"
           >{{ tab.name }}</button>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default {
       });
 
       return hasSearch;
-    }
+    },
   },
   mounted() {
     let tabs = {};
@@ -98,15 +98,10 @@ export default {
       tabs[field.tab].fields.push(field);
     });
     this.tabs = tabs;
-    if(!_.isUndefined(this.$route.query.tab)) {
-        if(_.isUndefined(tabs[this.$route.query.tab])) {
-            this.handleTabClick(tabs[Object.keys(tabs)[0]]);
-        } else {
-            this.activeTab = this.$route.query.tab;
-            this.handleTabClick(tabs[this.$route.query.tab]);
-        }
+    if(!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
+        this.handleTabClick(tabs[this.$route.query.tab]);
     } else {
-        this.handleTabClick(tabs[Object.keys(tabs)[0]]);
+        this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
     }
   },
   methods: {
@@ -116,9 +111,13 @@ export default {
     actionExecuted() {
       this.$emit("actionExecuted");
     },
-    handleTabClick(tab, event) {
+    handleTabClick(tab, updateUri = true) {
+      let cur = this.$router.currentRoute.query;
       tab.init = true;
       this.activeTab = tab.name;
+      if(updateUri && (!cur || cur.tab != tab.name)) {
+        this.$router.replace({query: { tab: tab.name }});
+      }
     },
     /**
      * Slugify
@@ -191,13 +190,13 @@ export default {
     height: 62px;
     z-index: 1;
 
-    > .mb-6 {
-      margin-bottom: 0;
-    }
-
     > .w-full {
       width: auto;
       margin-left: 1.5rem;
+
+      > .mb-6 {
+        margin-bottom: 0;
+      }
     }
   }
 }

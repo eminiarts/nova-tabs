@@ -5,6 +5,7 @@ namespace Eminiarts\Tabs;
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Resource;
 
 trait TabsOnEdit
 {
@@ -37,9 +38,8 @@ trait TabsOnEdit
     public static function fill(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request,
-            $model,
-            (new static($model))->parentCreationFields($request)
+            $request, $model,
+            (new static($model))->creationFieldsWithoutReadonly($request)
         );
     }
 
@@ -50,10 +50,37 @@ trait TabsOnEdit
     public static function fillForUpdate(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request,
-            $model,
-            (new static($model))->parentUpdateFields($request)
+            $request, $model,
+            (new static($model))->updateFieldsWithoutReadonly($request)
         );
+    }
+
+    /**
+     * Return the creation fields excluding any readonly ones.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
+    public function creationFieldsWithoutReadonly(NovaRequest $request)
+    {
+        return $this->parentCreationFields($request)
+                    ->reject(function ($field) use ($request) {
+                        return $field->isReadonly($request);
+                    });
+    }
+
+    /**
+     * Return the update fields excluding any readonly ones.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
+    public function updateFieldsWithoutReadonly(NovaRequest $request)
+    {
+        return $this->parentUpdateFields($request)
+                    ->reject(function ($field) use ($request) {
+                        return $field->isReadonly($request);
+                    });
     }
 
     /**
@@ -113,7 +140,7 @@ trait TabsOnEdit
                 'Tabs' => [
                     'component' => 'tabs',
                     'fields'    => $this->removeNonUpdateFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForUpdate($request->newResource()),
+                    'panel'     => Panel::defaultNameForUpdate($this->resolveResource($request)),
                 ],
             ]
         );
@@ -135,5 +162,18 @@ trait TabsOnEdit
 
             return $field;
         });
+    }
+
+    /**
+     * @param NovaRequest $request
+     * @return Resource
+     */
+    private function resolveResource(NovaRequest $request)
+    {
+        if ($this instanceof Resource) {
+            return $this;
+        }
+
+        return $request->newResource();
     }
 }

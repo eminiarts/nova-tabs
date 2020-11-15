@@ -14,6 +14,11 @@ class Tabs extends Panel
     public $defaultSearch = false;
 
     /**
+     * @var bool
+     */
+    public $showTitle = false;
+
+    /**
      * Add fields to the Tab.
      *
      * @param string $tab
@@ -73,6 +78,17 @@ class Tabs extends Panel
     }
 
     /**
+     * @param bool $show
+     * @return $this
+     */
+    public function showTitle($show = true)
+    {
+        $this->showTitle = $show;
+
+        return $this;
+    }
+
+    /**
      * Prepare the panel for JSON serialization.
      *
      * @return array
@@ -82,6 +98,7 @@ class Tabs extends Panel
         return array_merge(parent::jsonSerialize(), [
             'component'     => 'detail-tabs',
             'defaultSearch' => $this->defaultSearch,
+            'showTitle' => $this->showTitle,
         ]);
     }
 
