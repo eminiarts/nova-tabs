@@ -2,6 +2,7 @@
 
 namespace Eminiarts\Tabs;
 
+use Eminiarts\Tabs\FieldCollection as TabsFieldCollection;
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -17,7 +18,7 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return new FieldCollection(
+        return new TabsFieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',
@@ -135,7 +136,7 @@ trait TabsOnEdit
      */
     public function updateFields(NovaRequest $request)
     {
-        return new FieldCollection(
+        return new TabsFieldCollection(
             [
                 'Tabs' => [
                     'component' => 'tabs',

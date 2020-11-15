@@ -6,6 +6,7 @@
           :is="'form-' + field.component"
           :errors="errors"
           :resource-name="resourceName"
+          :resource-id="resourceId"
           :field="field"
           :via-resource="viaResource"
           :via-resource-id="viaResourceId"
