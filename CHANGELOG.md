@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 - TBD
+
+- Fixed issue with files not being deletable when using `TabsOnEdit` ([#28](https://github.com/eminiarts/nova-tabs/issues/28) and [#59](https://github.com/eminiarts/nova-tabs/pulls/59))
+
 ## 1.3.0 - 2020-11-05
 
 - Active tabs are now remembered ([#86](https://github.com/eminiarts/nova-tabs/pull/86) and [#119](https://github.com/eminiarts/nova-tabs/pull/119))
