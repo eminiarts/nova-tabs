@@ -1,6 +1,6 @@
 <?php
-namespace Eminiarts\Tabs;
 
+namespace Eminiarts\Tabs;
 
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Panel;
