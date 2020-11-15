@@ -1,4 +1,5 @@
 <?php
+
 namespace Eminiarts\Tabs;
 
 use Laravel\Nova\Fields\FieldCollection;
