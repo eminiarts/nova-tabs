@@ -195,10 +195,10 @@ export default {
     > .w-full {
       width: auto;
       margin-left: 1.5rem;
+    }
 
-      > .mb-6 {
-        margin-bottom: 0;
-      }
+    .mb-6 {
+      margin-bottom: 0;
     }
   }
 }
