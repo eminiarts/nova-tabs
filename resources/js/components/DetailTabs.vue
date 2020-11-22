@@ -43,6 +43,8 @@
 
 <script>
 import BehavesAsPanel from "laravel-nova/src/mixins/BehavesAsPanel";
+import {changeActiveTab} from '../util/tab-updater';
+
 export default {
   mixins: [BehavesAsPanel],
   data() {
@@ -116,7 +118,7 @@ export default {
       tab.init = true;
       this.activeTab = tab.name;
       if(updateUri && (!cur || cur.tab != tab.name)) {
-        this.$router.replace({query: { tab: tab.name }});
+        changeActiveTab(this.$router, tab.name);
       }
     },
     /**

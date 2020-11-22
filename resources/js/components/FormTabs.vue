@@ -63,6 +63,8 @@ import {
   InteractsWithResourceInformation
 } from "laravel-nova";
 
+import {changeActiveTab} from '../util/tab-updater'
+
 export default {
   mixins: [
     HandlesValidationErrors,
@@ -145,7 +147,7 @@ export default {
       this.activeTab = tab.name;
 
       if(!cur || cur.tab != tab.name) {
-        this.$router.replace({query: { tab: tab.name }});
+        changeActiveTab(this.$router, tab.name);
       }
 
       // When code fields are not visible initially they are not loaded
