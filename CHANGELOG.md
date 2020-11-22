@@ -3,6 +3,8 @@
 ## 1.3.1 - TBD
 
 - Fixed issue with files not being deletable when using `TabsOnEdit` ([#28](https://github.com/eminiarts/nova-tabs/issues/28) and [#59](https://github.com/eminiarts/nova-tabs/pulls/59))
+- Fixed issue with switching tabs causing the query string to be overwritten completely ([#124](https://github.com/eminiarts/nova-tabs/issues/124))
+- Fixed a styling issue causing the search bar to not be in line with the create/attach button ([#121](https://github.com/eminiarts/nova-tabs/issues/121))
 
 ## 1.3.0 - 2020-11-05
 
