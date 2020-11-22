@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.1 - TBD
+## 1.3.1 - 2020-11-22
 
 - Fixed issue with files not being deletable when using `TabsOnEdit` ([#28](https://github.com/eminiarts/nova-tabs/issues/28) and [#59](https://github.com/eminiarts/nova-tabs/pulls/59))
 - Fixed issue with switching tabs causing the query string to be overwritten completely ([#124](https://github.com/eminiarts/nova-tabs/issues/124))
