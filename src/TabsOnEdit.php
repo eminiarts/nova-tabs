@@ -121,8 +121,9 @@ trait TabsOnEdit
      */
     public static function rulesForUpdate(NovaRequest $request, $resource = null)
     {
-        return static::formatRules($request, (new static(static::newModel()))
-                ->parentUpdateFields($request)
+        $resource = $resource ?? self::newResource();
+
+        return static::formatRules($request, $resource->parentUpdateFields($request)
                 ->mapWithKeys(function ($field) use ($request) {
                     return $field->getUpdateRules($request);
                 })->all());
