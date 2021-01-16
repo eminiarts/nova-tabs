@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Eminiarts\Tabs;
 
 use RuntimeException;
@@ -23,8 +26,9 @@ class Tabs extends Panel
      *
      * @param string $tab
      * @param array  $fields
+     * @return $this
      */
-    public function addFields($tab, array $fields)
+    public function addFields($tab, array $fields): self
     {
         foreach ($fields as $field) {
             if ($field instanceof ListableField || $field instanceof Panel) {
@@ -47,6 +51,8 @@ class Tabs extends Panel
 
     /**
      * Add a new Tab
+     *
+     * @return $this
      */
     public function addTab($panel): self
     {
@@ -69,8 +75,12 @@ class Tabs extends Panel
 
     /**
      * Show default Search if you need more space
+     *
+     * @param bool $value
+     *
+     * @return $this
      */
-    public function defaultSearch($value = true)
+    public function defaultSearch(bool $value = true): self
     {
         $this->defaultSearch = $value;
 
@@ -78,10 +88,12 @@ class Tabs extends Panel
     }
 
     /**
+     * Whether the show the title
+     *
      * @param bool $show
      * @return $this
      */
-    public function showTitle($show = true)
+    public function showTitle($show = true): self
     {
         $this->showTitle = $show;
 
@@ -110,8 +122,8 @@ class Tabs extends Panel
      */
     protected function prepareFields($fields)
     {
-        collect(is_callable($fields) ? $fields() : $fields)->each(function ($fields, $key) {
-            if (is_string($key) && is_array($fields)) {
+        collect(\is_callable($fields) ? $fields() : $fields)->each(function ($fields, $key): void {
+            if (\is_string($key) && \is_array($fields)) {
                 $fields = new Panel($key, $fields);
             }
             $this->addTab($fields);

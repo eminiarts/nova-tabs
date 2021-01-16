@@ -14,12 +14,17 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.1.3",
         "laravel/nova": ">=2.9.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.17",
+        "orchestra/testbench": "^6.7"
     },
     "autoload": {
         "psr-4": {
-            "Eminiarts\\Tabs\\": "src/"
+            "Eminiarts\\Tabs\\": "src/",
+            "Eminiarts\\Tabs\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -39,5 +44,13 @@
             "type": "composer",
             "url": "https://nova.laravel.com"
         }
-    ]
+    ],
+    "scripts": {
+        "php-cs-fixer": "vendor/bin/php-cs-fixer fix",
+        "phpunit": "vendor/bin/phpunit",
+        "test": [
+            "composer php-cs-fixer",
+            "composer phpunit"
+        ]
+    }
 }

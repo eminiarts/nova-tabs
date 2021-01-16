@@ -9,3 +9,4 @@ phpunit.xml
 .DS_Store
 Thumbs.db
 yarn.lock
+.php_cs.cache

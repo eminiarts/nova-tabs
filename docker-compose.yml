@@ -9,4 +9,6 @@ services:
     volumes:
       - .:/home/app/nova-tabs
       - ~/.composer:/home/app/.composer
+    environment:
+      - PHP_CS_FIXER_IGNORE_ENV=1
     tty: true
