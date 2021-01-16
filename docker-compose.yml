@@ -1,0 +1,12 @@
+version: '3'
+services:
+  workspace:
+    build:
+      context: resources/docker/workspace
+      args:
+        GID: "${GID:-1000}"
+        UID: "${UID:-1000}"
+    volumes:
+      - .:/home/app/nova-tabs
+      - ~/.composer:/home/app/.composer
+    tty: true
