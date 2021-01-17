@@ -121,9 +121,10 @@ class Tab implements TabContract, \JsonSerializable
         $title = $this->resolve($this->title);
 
         return [
-            'title' => $this->resolve($title),
+            'title' => $title,
             'fields' => $this->fields,
-            'name' => $this->name ?? Str::slug($title),
+            'name' => $this->name ?? $title,
+            'slug' => Str::slug($this->name ?? $title),
             'showIf' => $this->resolve($this->showIf),
             'showUnless' => $this->resolve($this->showUnless),
             'titleAsHtml' => $this->titleAsHtml,
