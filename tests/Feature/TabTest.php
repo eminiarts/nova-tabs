@@ -55,4 +55,74 @@ class TabTest extends TestCase
         self::assertTrue($tabBoolean->toArray()['shouldShow']);
         self::assertTrue($tabClosure->toArray()['shouldShow']);
     }
+
+    public function testTabClass(): void
+    {
+        $tab = Tab::make('Tab class', []);
+
+        self::assertEquals([], $tab->toArray()['tabClass']);
+
+        $tab->tabClass('bg-blue-400');
+
+        self::assertEquals([ 'bg-blue-400' ], $tab->toArray()['tabClass']);
+
+        $tab->tabClass([
+            'bg-red-600',
+            'my-tab',
+        ]);
+
+        self::assertEquals([
+            'bg-red-600',
+            'my-tab',
+        ], $tab->toArray()['tabClass']);
+
+        $tab->addTabClass('another-class');
+
+        self::assertEquals([
+            'bg-red-600',
+            'my-tab',
+            'another-class',
+        ], $tab->toArray()['tabClass']);
+
+        $tab->tabClass('some-class');
+
+        self::assertEquals([
+            'some-class',
+        ], $tab->toArray()['tabClass']);
+    }
+
+    public function testBodyClass(): void
+    {
+        $tab = Tab::make('Body class', []);
+
+        self::assertEquals([], $tab->toArray()['bodyClass']);
+
+        $tab->bodyClass('bg-blue-400');
+
+        self::assertEquals([ 'bg-blue-400' ], $tab->toArray()['bodyClass']);
+
+        $tab->bodyClass([
+            'bg-red-600',
+            'my-tab',
+        ]);
+
+        self::assertEquals([
+            'bg-red-600',
+            'my-tab',
+        ], $tab->toArray()['bodyClass']);
+
+        $tab->addBodyClass('another-class');
+
+        self::assertEquals([
+            'bg-red-600',
+            'my-tab',
+            'another-class',
+        ], $tab->toArray()['bodyClass']);
+
+        $tab->bodyClass('some-class');
+
+        self::assertEquals([
+            'some-class',
+        ], $tab->toArray()['bodyClass']);
+    }
 }

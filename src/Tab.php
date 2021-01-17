@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Eminiarts\Tabs;
 
 use Eminiarts\Tabs\Contracts\TabContract;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
@@ -16,7 +17,7 @@ use Laravel\Nova\Makeable;
  *
  * @method static Tab make($title, array $fields)
  */
-class Tab implements TabContract, \JsonSerializable
+class Tab implements TabContract, \JsonSerializable, Arrayable
 {
     use Makeable;
 
@@ -113,9 +114,23 @@ class Tab implements TabContract, \JsonSerializable
         return $this;
     }
 
+    public function addTabClass($classes): self
+    {
+        $this->tabClass = array_merge($this->tabClass, Arr::wrap($classes));
+
+        return $this;
+    }
+
     public function bodyClass($classes): self
     {
         $this->bodyClass = Arr::wrap($classes);
+
+        return $this;
+    }
+
+    public function addBodyClass($classes): self
+    {
+        $this->bodyClass = array_merge($this->bodyClass, Arr::wrap($classes));
 
         return $this;
     }
