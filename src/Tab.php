@@ -65,20 +65,24 @@ class Tab implements TabContract, \JsonSerializable
 
     public function showIf($condition): self
     {
-        $this->showIf = $condition;
+        if (\is_bool($condition) || \is_callable($condition)) {
+            $this->showIf = $condition;
 
-        return $this;
+            return $this;
+        }
+
+        throw new \InvalidArgumentException('The $condition parameter must be a boolean or a closure returning one');
     }
 
     public function showUnless($condition): self
     {
-        if (!\is_bool($condition) || !\is_callable($condition)) {
-            throw new \InvalidArgumentException('The $condition parameter must be a boolean of a closure returning one');
+        if (\is_bool($condition) || \is_callable($condition)) {
+            $this->showUnless = $condition;
+
+            return $this;
         }
 
-        $this->showUnless = $condition;
-
-        return $this;
+        throw new \InvalidArgumentException('The $condition parameter must be a boolean or a closure returning one');
     }
 
     public function titleAsHtml(bool $titleAsHtml): self
@@ -125,8 +129,7 @@ class Tab implements TabContract, \JsonSerializable
             'fields' => $this->fields,
             'name' => $this->name ?? $title,
             'slug' => Str::slug($this->name ?? $title),
-            'showIf' => $this->resolve($this->showIf),
-            'showUnless' => $this->resolve($this->showUnless),
+            'shouldShow' => $this->shouldShow(),
             'titleAsHtml' => $this->titleAsHtml,
             'beforeIcon' => $this->beforeIcon,
             'afterIcon' => $this->afterIcon,
@@ -147,5 +150,18 @@ class Tab implements TabContract, \JsonSerializable
         }
 
         return $value;
+    }
+
+    private function shouldShow(): bool
+    {
+        if ($this->showIf !== null) {
+            return $this->resolve($this->showIf);
+        }
+
+        if ($this->showUnless !== null) {
+            return !$this->resolve($this->showUnless);
+        }
+
+        return true;
     }
 }

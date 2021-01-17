@@ -33,4 +33,26 @@ class TabTest extends TestCase
         self::assertSame('Tab name', $tabWithName->toArray()['name']);
         self::assertSame('tab-name', $tabWithName->toArray()['slug']);
     }
+
+    public function testShowIf(): void
+    {
+        $tabBoolean = Tab::make('Show if', [])->showIf(true);
+        $tabClosure = Tab::make('Show if', [])->showIf(function () {
+            return true;
+        });
+
+        self::assertTrue($tabBoolean->toArray()['shouldShow']);
+        self::assertTrue($tabClosure->toArray()['shouldShow']);
+    }
+
+    public function testShowUnless(): void
+    {
+        $tabBoolean = Tab::make('Show unless', [])->showUnless(false);
+        $tabClosure = Tab::make('Show unless', [])->showUnless(function () {
+            return false;
+        });
+
+        self::assertTrue($tabBoolean->toArray()['shouldShow']);
+        self::assertTrue($tabClosure->toArray()['shouldShow']);
+    }
 }
