@@ -22,10 +22,10 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
     use Makeable;
 
     /** @var string|\Closure */
-    private $title;
+    protected $title;
 
     /** @var Field[] */
-    private $fields;
+    protected $fields;
 
     /** @var string|null */
     protected $name;
@@ -57,11 +57,37 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         $this->fields = $fields;
     }
 
+    /**
+     * @return \Closure|string
+     */
+    public function getTitle(): string
+    {
+        return (string) $this->resolve($this->title);
+    }
+
+    /**
+     * @return Field[]
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
     public function name(string $name): self
     {
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name ?? $this->getTitle();
+    }
+
+    public function getSlug(): string
+    {
+        return Str::slug($this->getName());
     }
 
     public function showIf($condition): self
@@ -86,11 +112,29 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         throw new \InvalidArgumentException('The $condition parameter must be a boolean or a closure returning one');
     }
 
+    public function shouldShow(): bool
+    {
+        if ($this->showIf !== null) {
+            return $this->resolve($this->showIf);
+        }
+
+        if ($this->showUnless !== null) {
+            return !$this->resolve($this->showUnless);
+        }
+
+        return true;
+    }
+
     public function titleAsHtml(bool $titleAsHtml): self
     {
         $this->titleAsHtml = $titleAsHtml;
 
         return $this;
+    }
+
+    public function isTitleAsHtml(): bool
+    {
+        return $this->titleAsHtml;
     }
 
     public function beforeIcon(string $iconAsHtml): self
@@ -100,6 +144,11 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         return $this;
     }
 
+    public function getBeforeIcon(): ?string
+    {
+        return $this->beforeIcon;
+    }
+
     public function afterIcon(string $iconAsHtml): self
     {
         $this->afterIcon = $iconAsHtml;
@@ -107,11 +156,24 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         return $this;
     }
 
+    public function getAfterIcon(): ?string
+    {
+        return $this->afterIcon;
+    }
+
     public function tabClass($classes): self
     {
         $this->tabClass = Arr::wrap($classes);
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTabClass(): array
+    {
+        return $this->tabClass;
     }
 
     public function addTabClass($classes): self
@@ -128,6 +190,14 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getBodyClass(): array
+    {
+        return $this->bodyClass;
+    }
+
     public function addBodyClass($classes): self
     {
         $this->bodyClass = array_merge($this->bodyClass, Arr::wrap($classes));
@@ -137,19 +207,17 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
 
     public function toArray(): array
     {
-        $title = $this->resolve($this->title);
-
         return [
-            'title' => $title,
-            'fields' => $this->fields,
-            'name' => $this->name ?? $title,
-            'slug' => Str::slug($this->name ?? $title),
+            'title' => $this->getTitle(),
+            'fields' => $this->getFields(),
+            'name' => $this->getName(),
+            'slug' => $this->getSlug(),
             'shouldShow' => $this->shouldShow(),
-            'titleAsHtml' => $this->titleAsHtml,
-            'beforeIcon' => $this->beforeIcon,
-            'afterIcon' => $this->afterIcon,
-            'tabClass' => $this->tabClass,
-            'bodyClass' => $this->bodyClass,
+            'titleAsHtml' => $this->isTitleAsHtml(),
+            'beforeIcon' => $this->getBeforeIcon(),
+            'afterIcon' => $this->getAfterIcon(),
+            'tabClass' => $this->getTabClass(),
+            'bodyClass' => $this->getBodyClass(),
         ];
     }
 
@@ -165,18 +233,5 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         }
 
         return $value;
-    }
-
-    private function shouldShow(): bool
-    {
-        if ($this->showIf !== null) {
-            return $this->resolve($this->showIf);
-        }
-
-        if ($this->showUnless !== null) {
-            return !$this->resolve($this->showUnless);
-        }
-
-        return true;
     }
 }
