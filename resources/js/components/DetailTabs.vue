@@ -8,7 +8,7 @@
                 <div class="tabs flex flex-row overflow-x-auto">
                     <button
                         class="py-5 px-8 border-b-2 focus:outline-none tab"
-                        :class="[activeTab === tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40']"
+                        :class="getTabClass(tab)"
                         v-for="(tab, key) in tabs"
                         :key="key"
                         @click="handleTabClick(tab)"
@@ -122,6 +122,17 @@ export default {
             return field.prefixComponent
                 ? 'detail-' + field.component
                 : field.component;
+        },
+        getTabClass(tab) {
+            const baseClasses = [
+                this.activeTab === tab.name ? 'text-grey-black font-bold border-primary' : 'text-grey font-semibold border-40',
+            ];
+
+            if (tab.tabInfo.tabClass) {
+                return baseClasses.concat(tab.tabInfo.tabClass);
+            }
+
+            return baseClasses;
         },
     },
 };
