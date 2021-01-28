@@ -89,4 +89,11 @@ interface TabContract
      * @return $this
      */
     public function bodyClass($classes);
+
+    /**
+     * Array representation of the tab
+     *
+     * @return array
+     */
+    public function toArray(): array;
 }

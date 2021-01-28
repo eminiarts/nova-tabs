@@ -16,8 +16,11 @@
                 </div>
             </div>
             <div
-                :class="[(panel && panel.defaultSearch) ? 'default-search': 'tab-content', slugify(tab.name)]"
-                :ref="slugify(tab.name)"
+                :class="[
+                    (panel && panel.defaultSearch) ? 'default-search' : 'tab-content',
+                    tab.name,
+                ]"
+                :ref="tab.name"
                 v-for="(tab, index) in tabs"
                 v-show="tab.name === activeTab"
                 :label="tab.name"
@@ -88,6 +91,7 @@ export default {
                     init: false,
                     listable: field.listableTab,
                     fields: [],
+                    tabInfo: this.panel.tabInfo[field.tabSlug],
                 };
             }
             tabs[field.tab].fields.push(field);
@@ -113,20 +117,6 @@ export default {
             if (updateUri && (!cur || cur.tab !== tab.name)) {
                 changeActiveTab(this.$router, tab.name);
             }
-        },
-        /**
-     * Slugify
-     * From: https://gist.github.com/mathewbyrne/1280286
-     */
-        slugify(text) {
-            return text
-                .toString()
-                .toLowerCase()
-                .replace(/\s+/g, '-') // Replace spaces with -
-                .replace(/[^\w-]+/g, '') // Remove all non-word chars
-                .replace(/--+/g, '-') // Replace multiple - with single -
-                .replace(/^-+/, '') // Trim - from start of text
-                .replace(/-+$/, ''); // Trim - from end of text
         },
         componentName(field) {
             return field.prefixComponent

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Eminiarts\Tabs;
 
+use Eminiarts\Tabs\Contracts\TabContract;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Panel;
 use Illuminate\Http\Resources\MergeValue;
@@ -22,13 +24,20 @@ class Tabs extends Panel
     public $showTitle = false;
 
     /**
+     * @var TabContract[]
+     */
+    private $tabs = [];
+
+    /**
      * Add fields to the Tab.
      *
-     * @param Tab $tab
+     * @param TabContract $tab
      * @return $this
      */
-    public function addFields(Tab $tab): self
+    public function addFields(TabContract $tab): self
     {
+        $this->tabs[] = $tab;
+
         foreach ($tab->getFields() as $field) {
             if ($field instanceof Panel) {
                 $this->addFields(
@@ -48,13 +57,7 @@ class Tabs extends Panel
 
             $meta = [
                 'tab' => $tab->getName(),
-                'slug' => $tab->getSlug(),
-                'title_as_html' => $tab->isTitleAsHtml(),
-                'before_icon' => $tab->getBeforeIcon(),
-                'after_icon' => $tab->getAfterIcon(),
-                'tab_class' => $tab->getTabClass(),
-                'body_class' => $tab->getBodyClass(),
-
+                'tabSlug' => $tab->getSlug(),
             ];
 
             if ($field instanceof ListableField) {
@@ -110,6 +113,11 @@ class Tabs extends Panel
             'component'     => 'detail-tabs',
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
+            'tabInfo' => collect($this->tabs)->mapWithKeys(static function (TabContract $tab): array {
+                return [
+                    $tab->getSlug() => Arr::except($tab->toArray(), [ 'fields' ]),
+                ];
+            })->toArray(),
         ]);
     }
 
@@ -129,12 +137,13 @@ class Tabs extends Panel
                 $this->addFields($tab);
             });
 
+
         return $this->data ?? [];
     }
 
     /**
      * @param $fields
-     * @return Collection<Tab>
+     * @return Collection<TabContract>
      */
     private function convertFieldsToTabs($fields): Collection
     {
@@ -152,9 +161,9 @@ class Tabs extends Panel
      * @param string|int $key
      * @return Tab
      */
-    private function convertToTab($fields, $key): Tab
+    private function convertToTab($fields, $key): TabContract
     {
-        if ($fields instanceof Tab) {
+        if ($fields instanceof TabContract) {
             return $fields;
         }
 
