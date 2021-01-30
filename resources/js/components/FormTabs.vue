@@ -93,24 +93,18 @@ export default {
         return {
             tabs: null,
             activeTab: '',
+            fieldsOutsideTabs: [],
         };
-    },
-    computed: {
-        fieldsOutsideTabs() {
-            return [];
-        },
     },
     watch: {
         errors: {
             handler: function() {
-                const vm = this;
-                let goToTab = false;
-                Object.keys(vm.tabs).forEach(function(key) {
-                    if (vm.tabHasErrors(vm.tabs[key]) && !goToTab) {
-                        goToTab = true;
-                        return vm.handleTabClick(vm.tabs[key]);
+                for (const key of Object.keys(this.tabs)) {
+                    if (this.tabHasErrors(this.tabs[key])) {
+                        this.handleTabClick(this.tabs[key]);
+                        break;
                     }
-                });
+                }
             },
             deep: true,
         },
@@ -141,17 +135,17 @@ export default {
         });
     },
     methods: {
-    /**
-     * Fill the given FormData object with the field's internal value.
-     */
+        /**
+         * Fill the given FormData object with the field's internal value.
+         */
         fill(formData) {
             _.each(this.field.fields, field => {
                 field.fill(formData);
             });
         },
         /**
-     * Handle the actionExecuted event and pass it up the chain.
-     */
+         * Handle the actionExecuted event and pass it up the chain.
+         */
         actionExecuted() {
             this.$emit('actionExecuted');
         },
@@ -167,14 +161,9 @@ export default {
             // See https://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
             setTimeout(this.refreshCodeFields, 1);
         },
-
         tabHasErrors(tab) {
-            let hasErrors = false;
-
-            Object.keys(this.errors.errors).forEach(function(key) {
-                if (_.includes(tab.fields.map(o => o['attribute']), key)) {
-                    hasErrors = true;
-                }
+            const hasErrors = Object.keys(this.errors.errors).some(key => {
+                return _.includes(tab.fields.map(o => o.attribute), key);
             });
 
             tab.hasErrors = hasErrors;
