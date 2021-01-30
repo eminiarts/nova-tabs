@@ -12,7 +12,9 @@
                         v-for="(tab, key) in tabs"
                         :key="key"
                         @click="handleTabClick(tab)"
-                    >{{ tab.name }}</button>
+                    >
+                        <tab-title :tab="tab" />
+                    </button>
                 </div>
             </div>
             <div
@@ -49,9 +51,11 @@
 
 <script>
 import BehavesAsPanel from 'laravel-nova/src/mixins/BehavesAsPanel';
-import {changeActiveTab} from '../util/tab-updater';
+import TabTitle from './TabTitle';
+import { changeActiveTab } from '../util/tab-updater';
 
 export default {
+    components: {TabTitle},
     mixins: [BehavesAsPanel],
     data() {
         return {

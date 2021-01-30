@@ -125,7 +125,7 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
         return true;
     }
 
-    public function titleAsHtml(bool $titleAsHtml): self
+    public function titleAsHtml(bool $titleAsHtml = true): self
     {
         $this->titleAsHtml = $titleAsHtml;
 
