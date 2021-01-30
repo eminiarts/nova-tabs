@@ -1,7 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Eminiarts\Tabs;
 
-use RuntimeException;
+use Eminiarts\Tabs\Contracts\TabContract;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Laravel\Nova\Panel;
 use Illuminate\Http\Resources\MergeValue;
 use Laravel\Nova\Contracts\ListableField;
@@ -19,26 +24,52 @@ class Tabs extends Panel
     public $showTitle = false;
 
     /**
+     * @var TabContract[]
+     */
+    private $tabs = [];
+
+    /**
      * Add fields to the Tab.
      *
-     * @param string $tab
-     * @param array  $fields
+     * @param TabContract $tab
+     * @return $this
      */
-    public function addFields($tab, array $fields)
+    public function addFields(TabContract $tab): self
     {
-        foreach ($fields as $field) {
-            if ($field instanceof ListableField || $field instanceof Panel) {
-                $this->addTab($field);
+        $this->tabs[] = $tab;
+
+        foreach ($tab->getFields() as $field) {
+            if ($field instanceof Panel) {
+                $this->addFields(
+                    new Tab($field->name, $field->data)
+                );
                 continue;
             }
+
             if ($field instanceof MergeValue) {
-                $this->addFields($tab, $field->data);
+                $this->addFields(
+                    new Tab($tab->getTitle(), $field->data)
+                );
                 continue;
             }
+
             $field->panel = $this->name;
-            $field->withMeta([
-                'tab' => $tab,
-            ]);
+
+            $meta = [
+                'tab' => $tab->getName(),
+                'tabSlug' => $tab->getSlug(),
+                'tabInfo' => Arr::except($tab->toArray(), [ 'fields', 'slug' ])
+            ];
+
+            if ($field instanceof ListableField) {
+                $meta += [
+                    'listable'    => false,
+                    'listableTab' => true,
+                ];
+            }
+
+            $field->withMeta($meta);
+
             $this->data[] = $field;
         }
 
@@ -46,31 +77,13 @@ class Tabs extends Panel
     }
 
     /**
-     * Add a new Tab
-     */
-    public function addTab($panel): self
-    {
-        if ($panel instanceof ListableField) {
-            $panel->panel = $this->name;
-            $panel->withMeta([
-                'tab'         => $panel->name,
-                'listable'    => false,
-                'listableTab' => true,
-            ]);
-            $this->data[] = $panel;
-        } elseif ($panel instanceof Panel) {
-            $this->addFields($panel->name, $panel->data);
-        } else {
-            throw new RuntimeException('Only listable fields or Panel allowed.');
-        }
-
-        return $this;
-    }
-
-    /**
      * Show default Search if you need more space
+     *
+     * @param bool $value
+     *
+     * @return $this
      */
-    public function defaultSearch($value = true)
+    public function defaultSearch(bool $value = true): self
     {
         $this->defaultSearch = $value;
 
@@ -78,10 +91,12 @@ class Tabs extends Panel
     }
 
     /**
+     * Whether the show the title
+     *
      * @param bool $show
      * @return $this
      */
-    public function showTitle($show = true)
+    public function showTitle($show = true): self
     {
         $this->showTitle = $show;
 
@@ -110,13 +125,48 @@ class Tabs extends Panel
      */
     protected function prepareFields($fields)
     {
-        collect(is_callable($fields) ? $fields() : $fields)->each(function ($fields, $key) {
-            if (is_string($key) && is_array($fields)) {
-                $fields = new Panel($key, $fields);
-            }
-            $this->addTab($fields);
-        });
+        $this->convertFieldsToTabs($fields)
+            ->filter(static function (Tab $tab): bool {
+                return $tab->shouldShow();
+            })
+            ->each(function (Tab $tab): void {
+                $this->addFields($tab);
+            });
 
-        return $this->data;
+
+        return $this->data ?? [];
+    }
+
+    /**
+     * @param $fields
+     * @return Collection<TabContract>
+     */
+    private function convertFieldsToTabs($fields): Collection
+    {
+        $fieldsCollection = collect(
+            \is_callable($fields) ? $fields() : $fields
+        );
+
+        return $fieldsCollection->map(function ($fields, $key) {
+            return $this->convertToTab($fields, $key);
+        })->values();
+    }
+
+    /**
+     * @param mixed $fields
+     * @param string|int $key
+     * @return Tab
+     */
+    private function convertToTab($fields, $key): TabContract
+    {
+        if ($fields instanceof TabContract) {
+            return $fields;
+        }
+
+        if ($fields instanceof Panel) {
+            return new Tab($fields->name, $fields->data);
+        }
+
+        return new Tab($key, $fields);
     }
 }

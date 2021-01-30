@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Eminiarts\Tabs;
 
 use Eminiarts\Tabs\FieldCollection as TabsFieldCollection;
@@ -39,7 +41,8 @@ trait TabsOnEdit
     public static function fill(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request, $model,
+            $request,
+            $model,
             (new static($model))->creationFieldsWithoutReadonly($request)
         );
     }
@@ -51,7 +54,8 @@ trait TabsOnEdit
     public static function fillForUpdate(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request, $model,
+            $request,
+            $model,
             (new static($model))->updateFieldsWithoutReadonly($request)
         );
     }
@@ -157,7 +161,7 @@ trait TabsOnEdit
     protected function assignToPanels($label, FieldCollection $fields)
     {
         return $fields->map(function ($field) use ($label) {
-            if ( !is_array($field) && !$field->panel ) {
+            if (!\is_array($field) && !$field->panel) {
                 $field->panel = $label;
             }
 

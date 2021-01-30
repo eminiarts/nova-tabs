@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Eminiarts\Tabs;
 
 use Illuminate\Support\Arr;
@@ -28,7 +30,7 @@ class FieldCollection extends NovaFieldCollection
             }
 
             // Search the fields inside tabs.
-            if (is_array($field) && isset($field['component']) && $field['component'] === 'tabs') {
+            if (\is_array($field) && isset($field['component']) && $field['component'] === 'tabs') {
                 return static::make($field['fields'])->findFieldByAttribute($attribute, $default);
             }
         }
