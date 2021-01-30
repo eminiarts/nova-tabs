@@ -16,7 +16,7 @@
         </div>
 
         <div class="relationship-tabs-panel card w-full">
-            <div class="flex flex-row">
+            <div class="flex flex-row overflow-x-auto">
                 <div
                     v-for="(tab, key) in tabs"
                     class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
