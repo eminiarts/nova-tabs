@@ -18,15 +18,18 @@
             <div
                 :class="[
                     (panel && panel.defaultSearch) ? 'default-search' : 'tab-content',
-                    tab.name,
+                    tab.tabInfo.slug,
                 ]"
-                :ref="tab.name"
+                :ref="getTabRefName(tab)"
                 v-for="(tab, index) in tabs"
-                v-show="tab.name === activeTab"
+                v-show="tab.tabInfo.slug === activeTab"
                 :label="tab.name"
                 :key="'related-tabs-fields' + index"
             >
-                <div :class="{'px-6 py-3':!tab.listable}" v-if="tab.init">
+                <div
+                    v-if="tab.init"
+                    :class="getBodyClass(tab)"
+                >
                     <component
                         v-for="(field, index) in tab.fields"
                         :class="{'remove-bottom-border': index === tab.fields.length - 1}"
@@ -83,10 +86,9 @@ export default {
         },
     },
     mounted() {
-        const tabs = {};
-        this.panel.fields.forEach(field => {
-            if (!Object.hasOwnProperty.call(tabs, field.tab)) {
-                tabs[field.tab] = {
+        const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
+            if (!(field.tabSlug in tabs)) {
+                tabs[field.tabSlug] = {
                     name: field.tab,
                     init: false,
                     listable: field.listableTab,
@@ -94,9 +96,12 @@ export default {
                     tabInfo: this.panel.tabInfo[field.tabSlug],
                 };
             }
-            tabs[field.tab].fields.push(field);
-        });
-        this.tabs = tabs;
+
+            tabs[field.tabSlug].fields.push(field);
+
+            return tabs;
+        }, {});
+
         if (!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
             this.handleTabClick(tabs[this.$route.query.tab]);
         } else {
@@ -104,18 +109,18 @@ export default {
         }
     },
     methods: {
-    /**
-     * Handle the actionExecuted event and pass it up the chain.
-     */
+        /**
+         * Handle the actionExecuted event and pass it up the chain.
+         */
         actionExecuted() {
             this.$emit('actionExecuted');
         },
         handleTabClick(tab, updateUri = true) {
-            const cur = this.$router.currentRoute.query;
+            const query = this.$router.currentRoute.query;
             tab.init = true;
-            this.activeTab = tab.name;
-            if (updateUri && (!cur || cur.tab !== tab.name)) {
-                changeActiveTab(this.$router, tab.name);
+            this.activeTab = tab.tabInfo.slug;
+            if (updateUri && (!query || query.tab !== tab.tabInfo.slug)) {
+                changeActiveTab(this.$router, tab.tabInfo.slug);
             }
         },
         componentName(field) {
@@ -125,14 +130,20 @@ export default {
         },
         getTabClass(tab) {
             const baseClasses = [
-                this.activeTab === tab.name ? 'text-grey-black font-bold border-primary' : 'text-grey font-semibold border-40',
+                this.activeTab === tab.tabInfo.slug ? 'text-grey-black font-bold border-primary' : 'text-grey font-semibold border-40',
             ];
 
-            if (tab.tabInfo.tabClass) {
-                return baseClasses.concat(tab.tabInfo.tabClass);
-            }
+            return baseClasses.concat(tab.tabInfo.tabClass);
+        },
+        getBodyClass(tab) {
+            const baseClasses = [
+                !tab.listable ? 'px-6 py-3' : '',
+            ];
 
-            return baseClasses;
+            return baseClasses.concat(tab.tabInfo.bodyClass);
+        },
+        getTabRefName(tab) {
+            return `tab-${tab.tabInfo.slug}`;
         },
     },
 };
