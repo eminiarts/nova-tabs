@@ -20,11 +20,11 @@
             <div
                 :class="[
                     (panel && panel.defaultSearch) ? 'default-search' : 'tab-content',
-                    tab.tabInfo.slug,
+                    tab.slug,
                 ]"
                 :ref="getTabRefName(tab)"
                 v-for="(tab, index) in tabs"
-                v-show="tab.tabInfo.slug === activeTab"
+                v-show="tab.slug === activeTab"
                 :label="tab.name"
                 :key="'related-tabs-fields' + index"
             >
@@ -63,41 +63,16 @@ export default {
             activeTab: '',
         };
     },
-    computed: {
-        activeTabHasSearch() {
-            const tab = _.find(this.tabs, { name: this.activeTab });
-            let hasSearch = false;
-
-            if (!tab || this.panel.defaultSearch) {
-                return false;
-            }
-
-            _.forEach(tab.fields, function(field) {
-                if (field.resourceName === 'action-events') {
-                    return;
-                }
-                if (
-                    field.component === 'has-many-field' ||
-          field.component === 'belongs-to-many-field' ||
-          field.component === 'morph-many-field' ||
-          field.component === 'morph-to-many-field'
-                ) {
-                    hasSearch = true;
-                }
-            });
-
-            return hasSearch;
-        },
-    },
     mounted() {
         const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
             if (!(field.tabSlug in tabs)) {
                 tabs[field.tabSlug] = {
                     name: field.tab,
+                    slug: field.tabSlug,
                     init: false,
                     listable: field.listableTab,
                     fields: [],
-                    tabInfo: this.panel.tabInfo[field.tabSlug],
+                    properties: field.tabInfo,
                 };
             }
 
@@ -122,9 +97,9 @@ export default {
         handleTabClick(tab, updateUri = true) {
             const query = this.$router.currentRoute.query;
             tab.init = true;
-            this.activeTab = tab.tabInfo.slug;
-            if (updateUri && (!query || query.tab !== tab.tabInfo.slug)) {
-                changeActiveTab(this.$router, tab.tabInfo.slug);
+            this.activeTab = tab.slug;
+            if (updateUri && (!query || query.tab !== tab.slug)) {
+                changeActiveTab(this.$router, tab.slug);
             }
         },
         componentName(field) {
@@ -133,21 +108,27 @@ export default {
                 : field.component;
         },
         getTabClass(tab) {
-            const baseClasses = [
-                this.activeTab === tab.tabInfo.slug ? 'text-grey-black font-bold border-primary' : 'text-grey font-semibold border-40',
-            ];
+            const classes = [];
 
-            return baseClasses.concat(tab.tabInfo.tabClass);
+            if (this.activeTab === tab.slug) {
+                classes.push('text-grey-black font-bold border-primary');
+            } else {
+                classes.push('text-grey font-semibold border-40');
+            }
+
+            return classes.concat(tab.properties.tabClass);
         },
         getBodyClass(tab) {
-            const baseClasses = [
-                !tab.listable ? 'px-6 py-3' : '',
-            ];
+            const classes = [];
 
-            return baseClasses.concat(tab.tabInfo.bodyClass);
+            if (!tab.listable) {
+                classes.push('px-6 py-3');
+            }
+
+            return classes.concat(tab.properties.bodyClass);
         },
         getTabRefName(tab) {
-            return `tab-${tab.tabInfo.slug}`;
+            return `tab-${tab.slug}`;
         },
     },
 };

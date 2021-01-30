@@ -58,6 +58,7 @@ class Tabs extends Panel
             $meta = [
                 'tab' => $tab->getName(),
                 'tabSlug' => $tab->getSlug(),
+                'tabInfo' => Arr::except($tab->toArray(), [ 'fields', 'slug' ])
             ];
 
             if ($field instanceof ListableField) {
@@ -113,11 +114,6 @@ class Tabs extends Panel
             'component'     => 'detail-tabs',
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
-            'tabInfo' => collect($this->tabs)->mapWithKeys(static function (TabContract $tab): array {
-                return [
-                    $tab->getSlug() => Arr::except($tab->toArray(), [ 'fields' ]),
-                ];
-            })->toArray(),
         ]);
     }
 

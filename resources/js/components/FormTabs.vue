@@ -18,21 +18,25 @@
         <div class="relationship-tabs-panel card w-full">
             <div class="flex flex-row">
                 <div
-                    class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer"
-                    :class="[activeTab === tab.name ? 'text-grey-black font-bold border-primary': 'text-grey font-semibold border-40', tabHasErrors(tab) ? 'text-error' : '' ]"
                     v-for="(tab, key) in tabs"
+                    class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
+                    :class="getTabClass(tab)"
                     :key="key"
                     @click="handleTabClick(tab, $event)"
-                >{{ tab.name }}</div>
+                >
+                    <tab-title :tab="tab" />
+                </div>
                 <div class="flex-1 border-b-2 border-40"></div>
             </div>
             <div
                 v-for="(tab, index) in tabs"
-                v-show="tab.name === activeTab"
-                :label="tab.name"
+                v-show="tab.slug === activeTab"
                 :key="'related-tabs-fields' + index"
+                :label="tab.name"
             >
-                <div :class="{'px-6 py-3':!tab.listable}">
+                <div
+                    :class="getBodyClass(tab)"
+                >
                     <component
                         ref="fields"
                         v-for="(field, index) in tab.fields"
@@ -64,8 +68,12 @@ import {
 } from 'laravel-nova';
 
 import {changeActiveTab} from '../util/tab-updater';
+import TabTitle from './TabTitle';
 
 export default {
+    components: {
+        TabTitle,
+    },
     mixins: [
         HandlesValidationErrors,
         FormField,
@@ -108,24 +116,28 @@ export default {
         },
     },
     mounted() {
-        const tabs = {};
-        _.toArray(this.field.fields).forEach(field => {
+        const tabs = this.tabs = _.toArray(this.field.fields).reduce((tabs, field) => {
             if (!field.tab) {
-                return this.fieldsOutsideTabs.push(field);
+                this.fieldsOutsideTabs.push(field);
+                return tabs;
             }
 
             if (!Object.hasOwnProperty.call(tabs, field.tab)) {
                 tabs[field.tab] = {
                     name: field.tab,
+                    slug: field.tabSlug,
                     listable: field.listableTab,
                     fields: [],
+                    properties: field.tabInfo,
                 };
             }
             tabs[field.tab].fields.push(field);
-        });
-        this.tabs = tabs;
+
+            return tabs;
+        }, {});
+
         this.handleTabClick({
-            name: this.$route.query.tab || tabs[Object.keys(tabs)[0]].name,
+            slug: this.$route.query.tab || tabs[Object.keys(tabs)[0]].slug,
         });
     },
     methods: {
@@ -145,10 +157,10 @@ export default {
         },
         handleTabClick(tab) {
             const cur = this.$router.currentRoute.query;
-            this.activeTab = tab.name;
+            this.activeTab = tab.slug;
 
-            if (!cur || cur.tab !== tab.name) {
-                changeActiveTab(this.$router, tab.name);
+            if (!cur || cur.tab !== tab.slug) {
+                changeActiveTab(this.$router, tab.slug);
             }
 
             // When code fields are not visible initially they are not loaded
@@ -169,7 +181,30 @@ export default {
 
             return hasErrors;
         },
+        getTabClass(tab) {
+            const classes = [];
 
+            if (this.activeTab === tab.slug) {
+                classes.push('text-grey-black font-bold border-primary');
+            } else {
+                classes.push('text-grey font-semibold border-40');
+            }
+
+            if (this.tabHasErrors(tab)) {
+                classes.push('text-error');
+            }
+
+            return classes.concat(tab.properties.tabClass);
+        },
+        getBodyClass(tab) {
+            const classes = [];
+
+            if (!tab.listable) {
+                classes.push('px-6 py-3');
+            }
+
+            return classes.concat(tab.properties.bodyClass);
+        },
         refreshCodeFields() {
             this.$refs.fields
                 .filter(field => 'codemirror' in field)
