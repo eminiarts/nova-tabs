@@ -18,15 +18,7 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return new TabsFieldCollection(
-            [
-                'Tabs' => [
-                    'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForCreate($request->newResource()),
-                ],
-            ]
-        );
+        return $this->assignTabPanels($this->removeNonCreationFields($request, $this->resolveFields($request)));
     }
 
     /**
@@ -136,15 +128,7 @@ trait TabsOnEdit
      */
     public function updateFields(NovaRequest $request)
     {
-        return new TabsFieldCollection(
-            [
-                'Tabs' => [
-                    'component' => 'tabs',
-                    'fields'    => $this->removeNonUpdateFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForUpdate($this->resolveResource($request)),
-                ],
-            ]
-        );
+        return $this->assignTabPanels($this->removeNonUpdateFields($request, $this->resolveFields($request)));
     }
 
     /**
@@ -176,5 +160,32 @@ trait TabsOnEdit
         }
 
         return $request->newResource();
+    }
+
+    private function assignTabPanels(FieldCollection $fields) 
+    {
+        $non_tab_fields = $tab_panels = [];
+
+        $fields->each(function($field, $key) use (&$non_tab_fields, &$tab_panels) {
+            if ( isset($field->meta['tab']) ) {
+                if ( isset($tab_panels[$field->panel]) ) {
+                    $tab_panels[$field->panel]['fields'][] = $field;
+                } else {
+                    $new_panel = [
+                        'component' => 'tabs',
+                        'panel' => $field->panel,
+                        'fields' => [$field]
+                    ];
+                    $tab_panels[$field->panel] = $new_panel;
+                }
+            } else {
+                $non_tab_fields[] = $field;
+            }
+        });
+
+        return new TabsFieldCollection([
+            ...$non_tab_fields,
+            ...array_values($tab_panels)
+        ]);
     }
 }
