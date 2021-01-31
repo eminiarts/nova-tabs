@@ -172,11 +172,15 @@ export default {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
         margin-top: 0.75rem;
-        margin-bottom: 0;
+        margin-bottom: 0.75rem;
 
         > .mb-6 {
             margin-bottom: 0;
         }
+    }
+  
+    .default-search > div > .relative > .card > .flex {
+        padding-top: 0;
     }
 
     .tab-content > div > .relative > .flex {
