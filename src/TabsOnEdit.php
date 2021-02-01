@@ -164,6 +164,11 @@ trait TabsOnEdit
         return $request->newResource();
     }
 
+    /**
+     * Assigns fields to proper tab components
+     * @param  \Laravel\Nova\Fields\FieldCollection $Fields
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
     private function assignTabPanels(FieldCollection $fields)
     {
         $tabPanels = [];
