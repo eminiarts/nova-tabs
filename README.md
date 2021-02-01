@@ -1,4 +1,5 @@
-# Laravel Nova Tabs Package
+![Nova Tabs, awesome resource tabs for Nova](banner.png)
+
 [![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
 1. [Installation](#Installation)
