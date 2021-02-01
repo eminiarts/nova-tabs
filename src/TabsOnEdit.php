@@ -31,7 +31,8 @@ trait TabsOnEdit
     public static function fill(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request, $model,
+            $request,
+            $model,
             (new static($model))->creationFieldsWithoutReadonly($request)
         );
     }
@@ -43,7 +44,8 @@ trait TabsOnEdit
     public static function fillForUpdate(NovaRequest $request, $model)
     {
         return static::fillFields(
-            $request, $model,
+            $request,
+            $model,
             (new static($model))->updateFieldsWithoutReadonly($request)
         );
     }
@@ -141,7 +143,7 @@ trait TabsOnEdit
     protected function assignToPanels($label, FieldCollection $fields)
     {
         return $fields->map(function ($field) use ($label) {
-            if ( !is_array($field) && !$field->panel ) {
+            if (!is_array($field) && !$field->panel) {
                 $field->panel = $label;
             }
 
@@ -162,26 +164,26 @@ trait TabsOnEdit
         return $request->newResource();
     }
 
-    private function assignTabPanels(FieldCollection $fields) 
+    private function assignTabPanels(FieldCollection $fields)
     {
-        $tab_panels = [];
+        $tabPanels = [];
 
-        $non_tab_fields = $fields->filter(function($field, $key) use (&$tab_panels) {
-            $is_tab_field = isset($field->meta['tab']);
-            if ( $is_tab_field ) {
-                if (! isset($tab_panels[$field->panel]) ) {
-                    $new_panel = [
+        $nonTabFields = $fields->filter(function ($field, $key) use (&$tabPanels) {
+            $isTabField = isset($field->meta['tab']);
+            if ($isTabField) {
+                if (! isset($tabPanels[$field->panel])) {
+                    $newPanel = [
                         'component' => 'tabs',
                         'panel' => $field->panel,
                         'fields' => []
                     ];
-                    $tab_panels[$field->panel] = $new_panel;
+                    $tabPanels[$field->panel] = $newPanel;
                 }
-                $tab_panels[$field->panel]['fields'][] = $field;
+                $tabPanels[$field->panel]['fields'][] = $field;
             }
-            return !$is_tab_field;
+            return !$isTabField;
         });
 
-        return $non_tab_fields->concat($tab_panels);
+        return $nonTabFields->concat($tabPanels);
     }
 }
