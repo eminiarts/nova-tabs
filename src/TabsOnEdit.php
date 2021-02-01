@@ -164,28 +164,24 @@ trait TabsOnEdit
 
     private function assignTabPanels(FieldCollection $fields) 
     {
-        $non_tab_fields = $tab_panels = [];
+        $tab_panels = [];
 
-        $fields->each(function($field, $key) use (&$non_tab_fields, &$tab_panels) {
-            if ( isset($field->meta['tab']) ) {
-                if ( isset($tab_panels[$field->panel]) ) {
-                    $tab_panels[$field->panel]['fields'][] = $field;
-                } else {
+        $non_tab_fields = $fields->filter(function($field, $key) use (&$tab_panels) {
+            $is_tab_field = isset($field->meta['tab']);
+            if ( $is_tab_field ) {
+                if (! isset($tab_panels[$field->panel]) ) {
                     $new_panel = [
                         'component' => 'tabs',
                         'panel' => $field->panel,
-                        'fields' => [$field]
+                        'fields' => []
                     ];
                     $tab_panels[$field->panel] = $new_panel;
                 }
-            } else {
-                $non_tab_fields[] = $field;
+                $tab_panels[$field->panel]['fields'][] = $field;
             }
+            return !$is_tab_field;
         });
 
-        return new TabsFieldCollection([
-            ...$non_tab_fields,
-            ...array_values($tab_panels)
-        ]);
+        return $non_tab_fields->concat($tab_panels);
     }
 }
