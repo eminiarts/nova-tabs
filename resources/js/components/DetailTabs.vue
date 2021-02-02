@@ -178,7 +178,7 @@ export default {
             margin-bottom: 0;
         }
     }
-  
+
     .default-search > div > .relative > .card > .flex {
         padding-top: 0;
     }

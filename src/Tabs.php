@@ -47,6 +47,10 @@ class Tabs extends Panel
             }
 
             if ($field instanceof MergeValue) {
+                if (null === $field->panel) {
+                    $field->panel = $this->name;
+                }
+
                 $this->addFields(
                     new Tab($tab->getTitle(), $field->data)
                 );
@@ -54,6 +58,8 @@ class Tabs extends Panel
             }
 
             $field->panel = $this->name;
+
+//            dd($field);
 
             $meta = [
                 'tab' => $tab->getName(),

@@ -1,60 +1,43 @@
 <template>
-    <div>
-        <div>
-            <div v-for="(field, index) in fieldsOutsideTabs" :key="index">
+    <div class="relationship-tabs-panel card w-full">
+        <div class="flex flex-row overflow-x-auto">
+            <div
+                v-for="(tab, key) in tabs"
+                class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
+                :class="getTabClass(tab)"
+                :key="key"
+                @click="handleTabClick(tab, $event)"
+            >
+                <tab-title :tab="tab" />
+            </div>
+            <div class="flex-1 border-b-2 border-40"></div>
+        </div>
+        <div
+            v-for="(tab, index) in tabs"
+            v-show="tab.slug === activeTab"
+            :key="'related-tabs-fields' + index"
+            :label="tab.name"
+        >
+            <div
+                :class="getBodyClass(tab)"
+            >
                 <component
+                    ref="fields"
+                    v-for="(field, index) in tab.fields"
+                    :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                    :key="'tab-' + index"
                     :is="'form-' + field.component"
-                    :errors="errors"
                     :resource-name="resourceName"
                     :resource-id="resourceId"
+                    :resource="resource"
+                    :errors="errors"
                     :field="field"
                     :via-resource="viaResource"
                     :via-resource-id="viaResourceId"
                     :via-relationship="viaRelationship"
+                    @actionExecuted="actionExecuted"
+                    :show-help-text="field.helpText !== null"
                 />
-            </div>
-        </div>
-
-        <div class="relationship-tabs-panel card w-full">
-            <div class="flex flex-row overflow-x-auto">
-                <div
-                    v-for="(tab, key) in tabs"
-                    class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
-                    :class="getTabClass(tab)"
-                    :key="key"
-                    @click="handleTabClick(tab, $event)"
-                >
-                    <tab-title :tab="tab" />
-                </div>
-                <div class="flex-1 border-b-2 border-40"></div>
-            </div>
-            <div
-                v-for="(tab, index) in tabs"
-                v-show="tab.slug === activeTab"
-                :key="'related-tabs-fields' + index"
-                :label="tab.name"
-            >
-                <div
-                    :class="getBodyClass(tab)"
-                >
-                    <component
-                        ref="fields"
-                        v-for="(field, index) in tab.fields"
-                        :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-                        :key="'tab-' + index"
-                        :is="'form-' + field.component"
-                        :resource-name="resourceName"
-                        :resource-id="resourceId"
-                        :resource="resource"
-                        :errors="errors"
-                        :field="field"
-                        :via-resource="viaResource"
-                        :via-resource-id="viaResourceId"
-                        :via-relationship="viaRelationship"
-                        @actionExecuted="actionExecuted"
-                        :show-help-text="field.helpText !== null"
-                    />
-                </div>
             </div>
         </div>
     </div>
@@ -93,7 +76,6 @@ export default {
         return {
             tabs: null,
             activeTab: '',
-            fieldsOutsideTabs: [],
         };
     },
     watch: {
@@ -111,13 +93,8 @@ export default {
     },
     mounted() {
         const tabs = this.tabs = _.toArray(this.field.fields).reduce((tabs, field) => {
-            if (!field.tab) {
-                this.fieldsOutsideTabs.push(field);
-                return tabs;
-            }
-
-            if (!Object.hasOwnProperty.call(tabs, field.tab)) {
-                tabs[field.tab] = {
+            if (!Object.hasOwnProperty.call(tabs, field.tabSlug)) {
+                tabs[field.tabSlug] = {
                     name: field.tab,
                     slug: field.tabSlug,
                     listable: field.listableTab,
@@ -125,7 +102,8 @@ export default {
                     properties: field.tabInfo,
                 };
             }
-            tabs[field.tab].fields.push(field);
+
+            tabs[field.tabSlug].fields.push(field);
 
             return tabs;
         }, {});

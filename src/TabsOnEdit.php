@@ -176,19 +176,21 @@ trait TabsOnEdit
     {
         $tabPanels = [];
 
-        $nonTabFields = $fields->filter(function ($field, $key) use (&$tabPanels) {
+        $nonTabFields = $fields->filter(function ($field) use (&$tabPanels) {
             $isTabField = isset($field->meta['tab']);
+
             if ($isTabField) {
-                if (! isset($tabPanels[$field->panel])) {
-                    $newPanel = [
+                if (!isset($tabPanels[$field->panel])) {
+                    $tabPanels[$field->panel] = [
                         'component' => 'tabs',
                         'panel' => $field->panel,
                         'fields' => []
                     ];
-                    $tabPanels[$field->panel] = $newPanel;
                 }
+
                 $tabPanels[$field->panel]['fields'][] = $field;
             }
+
             return !$isTabField;
         });
 
