@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Eminiarts\Tabs;
 
 use Eminiarts\Tabs\FieldCollection as TabsFieldCollection;
@@ -144,6 +146,7 @@ trait TabsOnEdit
     {
         return $fields->map(function ($field) use ($label) {
             if (!is_array($field) && !$field->panel) {
+
                 $field->panel = $label;
             }
 

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  workspace:
+    build:
+      context: resources/docker/workspace
+      args:
+        GID: "${GID:-1000}"
+        UID: "${UID:-1000}"
+    volumes:
+      - .:/home/app/nova-tabs
+      - ~/.composer:/home/app/.composer
+    environment:
+      - PHP_CS_FIXER_IGNORE_ENV=1
+    tty: true

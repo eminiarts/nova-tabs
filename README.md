@@ -1,4 +1,5 @@
-# Laravel Nova Tabs Package
+![Nova Tabs, awesome resource tabs for Nova](banner.png)
+
 [![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
 1. [Installation](#Installation)
@@ -9,9 +10,11 @@
     4. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
     5. [Actions in Tabs](#actions-in-tabs)
     6. [Tabs on Edit View](#tabs-on-edit-view)
-3. [Customization](#customization)
-    1. [Default search](#default-search)
-    2. [Display more than 5 items](#display-more-than-5-items)
+3. [Tab object](#tab-object)
+4. [Customization](#customization)
+    1. [Tab](#tab)
+    2. [Default search](#default-search)
+    3. [Display more than 5 items](#display-more-than-5-items)
 5. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
 
 ## Installation
@@ -28,7 +31,7 @@ composer require eminiarts/nova-tabs
 
 ![image](https://user-images.githubusercontent.com/3426944/50060698-7835ec00-0197-11e9-8b9c-c7f1e67400db.png)
 
-You can group Fields of a Resource into Tabs.
+You can group fields of a resource into tabs, you can use an array or a Tab object (as of 1.4.0)::
 
 ```php
 // in app/Nova/Resource.php
@@ -53,6 +56,31 @@ public function fields()
 }
 ```
 
+or
+
+```php
+// in app/Nova/Resource.php
+
+use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\Tab;
+
+public function fields()
+{
+    return [
+        Tabs::make('Tabs', [
+            Tab::make('Balance', [
+                Number::make('Balance', 'balance'),
+                Number::make('Total', 'total'),
+            ]),
+            Tab::make('Other Info', [
+                Number::make('Paid To Date', 'paid_to_date')
+            ]),
+        ]),
+
+    ];
+}
+```
+
 ### Tabs with Toolbar
 
 If you are only using Tabs without another default Panel, you can set `withToolbar` to `true`.
@@ -64,29 +92,27 @@ If you are only using Tabs without another default Panel, you can set `withToolb
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\Tab;
 
 public function fields(Request $request)
-    {
-        return [
-
-            (new Tabs('Contact Details', [
-                'Address' => [
-                    ID::make('Id', 'id')->rules('required'),
-                    Text::make('Email', 'email')->sortable(),
-                    Text::make('Phone', 'phone')->sortable(),
-                ],
-
-                'Relations' => [
-                    BelongsTo::make('User'),
-                    MorphTo::make('Contactable')->types([
-                        Client::class,
-                        Invoice::class,
-                    ]),
-                ]
-            ]))->withToolbar(),
-
-        ];
-    }
+{
+    return [
+        Tabs::make('Contact Details', [
+            Tab::make('Address', [
+                ID::make('Id', 'id')->rules('required'),
+                Text::make('Email', 'email')->sortable(),
+                Text::make('Phone', 'phone')->sortable(),
+            ]),
+            Tab::make('Relations', [
+                BelongsTo::make('User'),
+                MorphTo::make('Contactable')->types([
+                    Client::class,
+                    Invoice::class,
+                ]),
+            ]),
+        ])->withToolbar(),
+    ];
+}
 ```
 
 ### Relationship Tabs
@@ -103,8 +129,7 @@ class User extends Resource
     public function fields(Request $request)
     {
         return [
-            
-           new Tabs('Relations', [
+           Tabs::make('Relations', [
                 HasMany::make('Invoices'),
                 HasMany::make('Notes'),
                 HasMany::make('Contacts')
@@ -112,7 +137,6 @@ class User extends Resource
 
         ];
     }
-
 }
 ```
 
@@ -128,15 +152,13 @@ use Eminiarts\Tabs\Tabs;
 public function fields(Request $request)
 {
     return [
-
-        (new Tabs(__('Client Custom Details'), [
+        Tabs::make(__('Client Custom Details'), [
             new Panel(__('Details'), [
                     ID::make('Id', 'id')->rules('required')->hideFromIndex(),
                     Text::make('Name', 'name'),
             ]),
             HasMany::make('Invoices')
-        ])
-
+        ]),
     ];
 }
 ```
@@ -149,6 +171,7 @@ If your Model uses the `Laravel\Nova\Actions\Actionable` Trait you can put the A
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
+use Eminiarts\Tabs\Tab;
 use Eminiarts\Tabs\ActionsInTabs; // Add this Trait
 use Laravel\Nova\Actions\ActionResource; // Import the Resource
 
@@ -159,20 +182,18 @@ class Client extends Resource
     public function fields(Request $request)
     {
         return [
-            
-            (new Tabs('Client Custom Details', [
-                'Address'  => [
+            Tabs::make('Client Custom Details', [
+                Tab::make('Address', [
                     ID::make('Id', 'id'),
                     Text::make('Name', 'name')->hideFromDetail(),
-                ],
-                'Invoices' => [
+                ]),
+                Tab::make('Invoices', [
                     HasMany::make('Invoices'),
-                ],
-                'Actions'  => [
-                    MorphMany::make(__('Actions'), 'actions', ActionResource::class), // Acc Actions whererver you like.
-                ],
-            ]))->withToolbar(),
-
+                ]),
+                Tab::make('Actions', [
+                    $this->actionfield(), // Add Actions whererver you like.
+                ]),
+            ])->withToolbar(),
         ];
     }
 }
@@ -198,6 +219,21 @@ class Client extends Resource
 }
 ```
 
+## Tab object
+
+As of v1.4.0 it's possible to use a `Tab` class instead of an array to represent your tabs.
+
+| Property    | Type                | Default     | Description                                                                                                                                                            |
+|-------------|---------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name        | `string`            | `null`      | The name of the tab, used for the slug.  Defaults to the title if not set                                                                                              |
+| showIf      | `bool` or `Closure` | `null`      | If the result is truthy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                   |
+| showUnless  | `bool` or `Closure` | `null`      | If the result is falsy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                    |
+| titleAsHtml | `bool`              | `false`     | Whether the given title should be rendered as HTML.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.**                         |
+| beforeIcon  | `string`            | `null`      | An icon (or anything else really) you want to render in front of the title.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.** |
+| afterIcon   | `string`            | `null`      | An icon (or anything else really) you want to render behind the title.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.**      |
+| tabClass    | `string` or `array` | Empty array | A string or string array of classes to add to the tab.  This sets the `tabClass` property, if you want to append you can use `addTabClass` instead.                    |
+| bodyClass   | `string` or `array` | Empty array | A string or string array of classes to add to the tab's body.  This sets the `bodyClass` property, if you want to append you can use `addBodyClass` instead.           |
+
 ## Customization
 
 ### Default search
@@ -215,11 +251,9 @@ class User extends Resource
     public function fields(Request $request)
     {
         return [
-            
-            (new Tabs('Relations', [
+            Tabs::make('Relations', [
                 HasMany::make('Invoices')
-            ]))->defaultSearch(true),
-
+            ])->defaultSearch(true),
         ];
     }
 }
