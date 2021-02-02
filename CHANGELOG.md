@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0 - (TBD, aiming week of Feb 1st)
+
+- Added `Tab` class. ([#129](https://github.com/eminiarts/nova-tabs/issues/129), [#130](https://github.com/eminiarts/nova-tabs/issues/130), [#138](https://github.com/eminiarts/nova-tabs/pull/138))
+  - This class can be used as an alternative to using arrays and offers way more features. Check the README for info and documentation.
+- Fixed margin on the search bar when defaultSearch is enabled. ([#134](https://github.com/eminiarts/nova-tabs/pull/134))
+- `ActionsInTabs` now allows use of the `Laravel\Nova\ResolvesFields::actionField` method. ([#135](https://github.com/eminiarts/nova-tabs/pull/135))
+- Added a pretty banner, courtesy of https://banners.beyondco.de/
+- Fix panel order on edit page. ([#85](https://github.com/eminiarts/nova-tabs/issues/85), [#139](https://github.com/eminiarts/nova-tabs/pull/139))
+- Fixed an issue causing field that did not have a panel set to not slow correctly or at all. ([#112](https://github.com/eminiarts/nova-tabs/issues/112))
+
 ## 1.3.1 - 2020-11-22
 
 - Fixed issue with files not being deletable when using `TabsOnEdit` ([#28](https://github.com/eminiarts/nova-tabs/issues/28) and [#59](https://github.com/eminiarts/nova-tabs/pulls/59))

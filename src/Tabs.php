@@ -59,8 +59,6 @@ class Tabs extends Panel
 
             $field->panel = $this->name;
 
-//            dd($field);
-
             $meta = [
                 'tab' => $tab->getName(),
                 'tabSlug' => $tab->getSlug(),
