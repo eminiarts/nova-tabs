@@ -1,5 +1,7 @@
 ![Nova Tabs, awesome resource tabs for Nova](banner.png)
 
+---
+
 [![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
 1. [Installation](#Installation)
@@ -272,3 +274,7 @@ Thanks to [dkulyk/nova-tabs](https://github.com/dkulyk/nova-tabs) the Package go
 
 - No need to use a Trait anymore. Remove all `AvailableTabFields` Traits in your Resources.
 - Everything is in `Tabs` now. There is no `TabsPanel` anymore. Remove all `TabsPanels` and adjust your Fields according to this Readme.
+
+## Credits
+
+Banner was created with https://banners.beyondco.de/
