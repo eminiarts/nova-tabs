@@ -20,15 +20,7 @@ trait TabsOnEdit
      */
     public function creationFields(NovaRequest $request)
     {
-        return new TabsFieldCollection(
-            [
-                'Tabs' => [
-                    'component' => 'tabs',
-                    'fields'    => $this->removeNonCreationFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForCreate($request->newResource()),
-                ],
-            ]
-        );
+        return $this->assignTabPanels($this->removeNonCreationFields($request, $this->resolveFields($request)));
     }
 
     /**
@@ -140,15 +132,7 @@ trait TabsOnEdit
      */
     public function updateFields(NovaRequest $request)
     {
-        return new TabsFieldCollection(
-            [
-                'Tabs' => [
-                    'component' => 'tabs',
-                    'fields'    => $this->removeNonUpdateFields($request, $this->resolveFields($request)),
-                    'panel'     => Panel::defaultNameForUpdate($this->resolveResource($request)),
-                ],
-            ]
-        );
+        return $this->assignTabPanels($this->removeNonUpdateFields($request, $this->resolveFields($request)));
     }
 
     /**
@@ -161,7 +145,8 @@ trait TabsOnEdit
     protected function assignToPanels($label, FieldCollection $fields)
     {
         return $fields->map(function ($field) use ($label) {
-            if (!\is_array($field) && !$field->panel) {
+            if (!is_array($field) && !$field->panel) {
+
                 $field->panel = $label;
             }
 
@@ -180,5 +165,33 @@ trait TabsOnEdit
         }
 
         return $request->newResource();
+    }
+
+    /**
+     * Assigns fields to proper tab components
+     * @param  \Laravel\Nova\Fields\FieldCollection $Fields
+     * @return \Laravel\Nova\Fields\FieldCollection
+     */
+    private function assignTabPanels(FieldCollection $fields)
+    {
+        $tabPanels = [];
+
+        $nonTabFields = $fields->filter(function ($field, $key) use (&$tabPanels) {
+            $isTabField = isset($field->meta['tab']);
+            if ($isTabField) {
+                if (! isset($tabPanels[$field->panel])) {
+                    $newPanel = [
+                        'component' => 'tabs',
+                        'panel' => $field->panel,
+                        'fields' => []
+                    ];
+                    $tabPanels[$field->panel] = $newPanel;
+                }
+                $tabPanels[$field->panel]['fields'][] = $field;
+            }
+            return !$isTabField;
+        });
+
+        return $nonTabFields->concat($tabPanels);
     }
 }
