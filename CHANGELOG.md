@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.0 - (TBD, aiming week of Feb 1st)
+## 1.4.0 - 2021-02-03
 
 - Added `Tab` class. ([#129](https://github.com/eminiarts/nova-tabs/issues/129), [#130](https://github.com/eminiarts/nova-tabs/issues/130), [#138](https://github.com/eminiarts/nova-tabs/pull/138))
   - This class can be used as an alternative to using arrays and offers way more features. Check the README for info and documentation.
