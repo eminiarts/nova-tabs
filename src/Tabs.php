@@ -47,7 +47,7 @@ class Tabs extends Panel
             }
 
             if ($field instanceof MergeValue) {
-                if (null === $field->panel) {
+                if (!isset($field->panel)) {
                     $field->panel = $this->name;
                 }
 
