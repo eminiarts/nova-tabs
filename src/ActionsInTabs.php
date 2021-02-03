@@ -24,7 +24,7 @@ trait ActionsInTabs
 //            })
             ->filterForDetail($request, $this->resource)
             ->authorized($request)
-            ->each(function ($field) use ($request) {
+            ->each(function ($field) use ($request): void {
                 if ($field instanceof ListableField || ! $field instanceof Resolvable) {
                     return;
                 }

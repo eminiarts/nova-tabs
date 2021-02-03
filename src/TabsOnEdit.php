@@ -145,8 +145,7 @@ trait TabsOnEdit
     protected function assignToPanels($label, FieldCollection $fields)
     {
         return $fields->map(function ($field) use ($label) {
-            if (!is_array($field) && !$field->panel) {
-
+            if (!\is_array($field) && !$field->panel) {
                 $field->panel = $label;
             }
 

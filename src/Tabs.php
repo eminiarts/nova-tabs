@@ -177,7 +177,7 @@ class Tabs extends Panel
          *
          * @link https://github.com/eminiarts/nova-tabs/issues/141
          */
-        if (!is_array($fields)) {
+        if (!\is_array($fields)) {
             return new Tab($fields->name, [ $fields ]);
         }
 
