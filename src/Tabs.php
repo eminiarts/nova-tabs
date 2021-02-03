@@ -171,6 +171,16 @@ class Tabs extends Panel
             return new Tab($fields->name, $fields->data);
         }
 
+        /**
+         * If a field is not nested into an array or a Tab object
+         * it acts as a tab in itself
+         *
+         * @link https://github.com/eminiarts/nova-tabs/issues/141
+         */
+        if (!is_array($fields)) {
+            return new Tab($fields->name, [ $fields ]);
+        }
+
         return new Tab($key, $fields);
     }
 }
