@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 - 2021-02-03
+
+- Fixed crash caused by fields extending `MergeValue` not having a `$panel` property. ([#140](https://github.com/eminiarts/nova-tabs/issues/140))
+- Fixed crash by fields not being nested into an array or a `Tab` object. ([#141](https://github.com/eminiarts/nova-tabs/issues/141))
+
 ## 1.4.0 - 2021-02-03
 
 - Added `Tab` class. ([#129](https://github.com/eminiarts/nova-tabs/issues/129), [#130](https://github.com/eminiarts/nova-tabs/issues/130), [#138](https://github.com/eminiarts/nova-tabs/pull/138))
