@@ -81,7 +81,7 @@ export default {
             return tabs;
         }, {});
 
-        if (!_.isUndefined(this.$route.query.tab) && !_.isUndefined(tabs[this.$route.query.tab])) {
+        if (this.$route.query.tab !== undefined && tabs[this.$route.query.tab] !== undefined) {
             this.handleTabClick(tabs[this.$route.query.tab]);
         } else {
             this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
@@ -95,10 +95,12 @@ export default {
             this.$emit('actionExecuted');
         },
         handleTabClick(tab, updateUri = true) {
-            const query = this.$router.currentRoute.query;
+            const currentTab = this.$router.currentRoute.query;
+
             tab.init = true;
             this.activeTab = tab.slug;
-            if (updateUri && (!query || query.tab !== tab.slug)) {
+
+            if (updateUri && (!currentTab || currentTab.tab !== tab.slug)) {
                 changeActiveTab(this.$router, tab.slug);
             }
         },

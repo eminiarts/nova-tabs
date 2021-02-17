@@ -108,9 +108,13 @@ export default {
             return tabs;
         }, {});
 
-        this.handleTabClick({
-            slug: this.$route.query.tab || tabs[Object.keys(tabs)[0]].slug,
-        });
+        if (this.$route.query.tab !== undefined && tabs[this.$route.query.tab] !== undefined) {
+            this.handleTabClick({
+                slug: this.$route.query.tab,
+            });
+        } else {
+            this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
+        }
     },
     methods: {
         /**
@@ -127,11 +131,13 @@ export default {
         actionExecuted() {
             this.$emit('actionExecuted');
         },
-        handleTabClick(tab) {
-            const cur = this.$router.currentRoute.query;
+        handleTabClick(tab, updateUri = true) {
+            const currentTab = this.$router.currentRoute.query;
+
+            tab.init = true;
             this.activeTab = tab.slug;
 
-            if (!cur || cur.tab !== tab.slug) {
+            if (updateUri && (!currentTab || currentTab.tab !== tab.slug)) {
                 changeActiveTab(this.$router, tab.slug);
             }
 
