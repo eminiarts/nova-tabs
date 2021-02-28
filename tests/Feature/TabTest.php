@@ -125,4 +125,29 @@ class TabTest extends TestCase
             'some-class',
         ], $tab->toArray()['bodyClass']);
     }
+
+    /**
+     * @link https://github.com/eminiarts/nova-tabs/issues/145
+     *
+     * @dataProvider multibyteTitleProvider
+     */
+    public function testDoesNotCrashWithMultibyteCharactersAsTitle(string $title): void
+    {
+        $tab = Tab::make($title, []);
+
+        self::assertEmpty($tab->getSlug());
+    }
+
+    /**
+     * All these strings are translated from English "This is a test"
+     *
+     * @return iterable<string>
+     */
+    public function multibyteTitleProvider(): iterable
+    {
+        yield 'Traditional Chinese' => [ '這是一個測試' ];
+        yield 'Simplified Chinese' => [ '这是一个测试' ];
+        yield 'Korean' => [ '이것은 테스트입니다' ];
+        yield 'Japanese' => [ 'これはテストです' ];
+    }
 }
