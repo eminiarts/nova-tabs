@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2 - 2021-02-28
+
+- Fixed issue with 2nd tabs not slowing if a tab has been selected.
+
 ## 1.4.1 - 2021-02-03
 
 - Fixed crash caused by fields extending `MergeValue` not having a `$panel` property. ([#140](https://github.com/eminiarts/nova-tabs/issues/140))
