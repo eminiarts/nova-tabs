@@ -9,18 +9,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
-use Laravel\Nova\Makeable;
 
-/**
- * Class Tab
- * @package Eminiarts\Tabs
- *
- * @method static Tab make($title, array $fields)
- */
 class Tab implements TabContract, \JsonSerializable, Arrayable
 {
-    use Makeable;
-
     /** @var string|\Closure */
     protected $title;
 
@@ -55,6 +46,11 @@ class Tab implements TabContract, \JsonSerializable, Arrayable
     {
         $this->title = $title;
         $this->fields = $fields;
+    }
+
+    public static function make($title, array $fields): self
+    {
+        return new static($title, $fields);
     }
 
     /**
