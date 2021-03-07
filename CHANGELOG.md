@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3 - 2021-03-07
+
+- Fixed issue with `Laravel\Nova\Makeable` not existing. ([#144](https://github.com/eminiarts/nova-tabs/issues/144))
+
 ## 1.4.2 - 2021-02-28
 
 - Fixed issue with 2nd tabs not slowing if a tab has been selected.
