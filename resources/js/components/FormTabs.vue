@@ -6,6 +6,7 @@
                 class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
                 :class="getTabClass(tab)"
                 :key="key"
+                :dusk="tab.slug + '-tab'"
                 @click="handleTabClick(tab, $event)"
             >
                 <tab-title :tab="tab" />
