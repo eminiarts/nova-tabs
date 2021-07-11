@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.5 - 2021-07-11
+
+- Fixed the inability to use Laravel Dusk to run tests. ([#155](https://github.com/eminiarts/nova-tabs/pull/155))
+
 ## 1.4.4 - 2021-07-10
 
 - Fixed an issue using `TabsOnEdit` causing rules relying on the current resources to not work properly. ([#154](https://github.com/eminiarts/nova-tabs/pull/154))
