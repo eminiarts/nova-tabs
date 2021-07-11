@@ -11,6 +11,7 @@
                         :class="getTabClass(tab)"
                         v-for="(tab, key) in tabs"
                         :key="key"
+                        :dusk="tab.slug + '-tab'"
                         @click="handleTabClick(tab)"
                     >
                         <tab-title :tab="tab" />
