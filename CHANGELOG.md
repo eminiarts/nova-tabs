@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.6 - 2021-07-12
+
+- Revert production build files that broke the package on detail views. ([#156](https://github.com/eminiarts/nova-tabs/issues/156))
+
 ## 1.4.5 - 2021-07-11
 
 - Fixed the inability to use Laravel Dusk to run tests. ([#155](https://github.com/eminiarts/nova-tabs/pull/155))
