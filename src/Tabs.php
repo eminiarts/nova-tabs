@@ -52,7 +52,11 @@ class Tabs extends Panel
                 }
 
                 $this->addFields(
-                    new Tab($tab->getTitle(), $field->data)
+                    tap(new Tab($tab->getTitle(), $field->data), function(TabContract $newTab) use ($tab){
+                        if ($tab->getName() !== $tab->getTitle()) {
+                            $newTab->name($tab->getName());
+                        }
+                    })
                 );
                 continue;
             }
