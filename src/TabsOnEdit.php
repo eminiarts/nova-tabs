@@ -134,7 +134,14 @@ trait TabsOnEdit
      */
     public function updateFields(NovaRequest $request)
     {
-        return $this->assignTabPanels($this->removeNonUpdateFields($request, $this->resolveFields($request)));
+        return new TabsFieldCollection(
+            $this->assignTabPanels(
+                $this->removeNonUpdateFields(
+                    $request,
+                    $this->resolveFields($request)
+                )
+            )
+        );
     }
 
     /**
