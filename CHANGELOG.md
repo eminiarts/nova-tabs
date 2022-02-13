@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 - 2022-02-13
+
+- Added `selectFirstTab(false)` and `dontSelectFirstTab()` ([#165](https://github.com/eminiarts/nova-tabs/pull/165))
+  - This method can be used to opt out from the default selected tab. This can be useful when your relations are particularly heavy
+- Fixed issue with third-party fields implementing `MergeValue` causing the tab to lose its slug value ([#162](https://github.com/eminiarts/nova-tabs/pull/162))
+- Fixed issue with files not being able to be deleted within tabs ([#169](https://github.com/eminiarts/nova-tabs/pull/169))
+- Fixed h1 selector in `DetailTabs` breaking certain packages like Quill and Editor.js ([#171](https://github.com/eminiarts/nova-tabs/pull/171))
+
 ## 1.4.6 - 2021-07-12
 
 - Revert production build files that broke the package on detail views. ([#156](https://github.com/eminiarts/nova-tabs/issues/156))

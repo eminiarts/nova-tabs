@@ -83,6 +83,26 @@ public function fields()
 }
 ```
 
+The first tab in every `Tabs` instance will be auto-selected. You can opt out from this by calling `selectFirstTab(false)` or `dontSelectFirstTab()` on it.
+
+```php
+public function fields()
+{
+    return [
+        Tabs::make('Tabs', [
+            Tab::make('Balance', [
+                Number::make('Balance', 'balance'),
+                Number::make('Total', 'total'),
+            ]),
+            Tab::make('Other Info', [
+                Number::make('Paid To Date', 'paid_to_date')
+            ]),
+        ])
+            ->selectFirstTab(false) // or ->dontSelectFirstTab(),
+    ];
+}
+```
+
 ### Tabs with Toolbar
 
 If you are only using Tabs without another default Panel, you can set `withToolbar` to `true`.
