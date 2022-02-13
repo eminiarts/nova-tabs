@@ -129,6 +129,11 @@ class Tabs extends Panel
         return $this;
     }
 
+    public function dontSelectFirstTab(): self
+    {
+        return $this->selectFirstTab(false);
+    }
+
     /**
      * Prepare the panel for JSON serialization.
      *
