@@ -24,6 +24,11 @@ class Tabs extends Panel
     public $showTitle = false;
 
     /**
+     * @var bool
+     */
+    public $selectFirstTab = true;
+
+    /**
      * @var TabContract[]
      */
     private $tabs = [];
@@ -112,6 +117,19 @@ class Tabs extends Panel
     }
 
     /**
+     * Select first tab on init
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function selectFirstTab(bool $value = true): self
+    {
+        $this->selectFirstTab = $value;
+
+        return $this;
+    }
+
+    /**
      * Prepare the panel for JSON serialization.
      *
      * @return array
@@ -122,6 +140,7 @@ class Tabs extends Panel
             'component'     => 'detail-tabs',
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
+            'selectFirstTab' => $this->selectFirstTab,
         ]);
     }
 

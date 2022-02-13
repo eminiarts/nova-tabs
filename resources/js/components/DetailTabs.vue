@@ -84,7 +84,7 @@ export default {
 
         if (this.$route.query.tab !== undefined && tabs[this.$route.query.tab] !== undefined) {
             this.handleTabClick(tabs[this.$route.query.tab]);
-        } else {
+        } else if (this.panel.selectFirstTab) {
             this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
         }
     },
