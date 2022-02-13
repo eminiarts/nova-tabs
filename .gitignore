@@ -12,3 +12,4 @@ yarn.lock
 .php_cs.cache
 .npm
 .config
+.node-gyp
