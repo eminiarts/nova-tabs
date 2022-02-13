@@ -161,6 +161,10 @@ export default {
         box-shadow: none;
     }
 
+    .tab-content > div > div[dusk$="-index-component"] > h1 {
+        display: none;
+    }
+
     .tab {
         padding-top: 1.25rem;
         padding-bottom: 1.25rem;
