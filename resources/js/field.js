@@ -1,4 +1,7 @@
+import DetailTabs from '@/components/DetailTabs.vue';
+import FormTabs from '@/components/FormTabs.vue';
+
 Nova.booting(Vue => {
-    Vue.component('detail-tabs', require('./components/DetailTabs'));
-    Vue.component('form-tabs', require('./components/FormTabs'));
+    Vue.component('detail-tabs', DetailTabs);
+    Vue.component('form-tabs', FormTabs);
 });

@@ -53,7 +53,7 @@
 <script>
 import BehavesAsPanel from 'laravel-nova/src/mixins/BehavesAsPanel';
 import TabTitle from './TabTitle';
-import { changeActiveTab } from '../util/tab-updater';
+import { changeActiveTab } from '@/util/tab-updater';
 
 export default {
     components: {TabTitle},
