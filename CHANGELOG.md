@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1 - 2022-02-24
+
+- Fixed issue with tabs not showing up. ([#172](https://github.com/eminiarts/nova-tabs/issues/172))
+
 ## 1.5.0 - 2022-02-13
 
 - Added `selectFirstTab(false)` and `dontSelectFirstTab()` ([#165](https://github.com/eminiarts/nova-tabs/pull/165))
