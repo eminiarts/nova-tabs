@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0 - 2022-04-21
+- Nova 4 compatible
+
+- Breaking changes
+  - Removed selectFirstTab, first tab is always displayed first.
+  - Even if you have other panels, tabs will always show up first and has the toolbar.
+  - TabsOnEdit is gone and non relational tabs will simply always display on edit.
+  - I don't use dusk, so didn't check the tests for it either, they might be broken.
+  - To make HasMany, BelongsToMany, HasManyThrough, HasOneThrough and MorphToMany work, you'd need to use their respective fields within this package to remove nova 4's AsPanel method from the fields.
+  - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4's panelsWithDefaultLabel method in Laravel\Nova\ResolveFields to enable tabs on edit pages.
+  - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs 
+
 ## 1.5.1 - 2022-02-24
 
 - Fixed issue with tabs not showing up. ([#172](https://github.com/eminiarts/nova-tabs/issues/172))

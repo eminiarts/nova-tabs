@@ -13,3 +13,4 @@ yarn.lock
 .npm
 .config
 .node-gyp
+auth.json

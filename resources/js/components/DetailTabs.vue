@@ -1,211 +1,226 @@
 <template>
-    <div>
-        <slot>
-            <h4 v-if="panel.showTitle" class="text-90 font-normal text-2xl mb-3">{{ panel.name }}</h4>
-        </slot>
-        <div class="relationship-tabs-panel card">
-            <div class="tabs-wrap border-b-2 border-40 w-full">
-                <div class="tabs flex flex-row overflow-x-auto">
-                    <button
-                        class="py-5 px-8 border-b-2 focus:outline-none tab"
-                        :class="getTabClass(tab)"
-                        v-for="(tab, key) in tabs"
-                        :key="key"
-                        :dusk="tab.slug + '-tab'"
-                        @click="handleTabClick(tab)"
-                    >
-                        <tab-title :tab="tab" />
-                    </button>
-                </div>
-            </div>
-            <div
-                :class="[
-                    (panel && panel.defaultSearch) ? 'default-search' : 'tab-content',
+  <div>
+    <slot>
+      <Heading :level="1" v-text="panel.name" />
+
+      <p
+          v-if="panel.helpText"
+          :class="panel.helpText ? 'mt-2' : 'mt-3'"
+          class="text-gray-500 text-sm font-semibold italic"
+          v-html="panel.helpText"
+      ></p>
+    </slot>
+
+    <div id="tabs">
+      <div class="sm:hidden">
+        <label class="sr-only" for="tabs">Select a tab</label>
+
+        <select
+            id="tab"
+            v-model="selectedTab"
+            class="form-select block px-3 w-full focus:ring-sky-200 focus:border-sky-200 border-gray-300 rounded-md capitalize"
+            @change="handleTabClick(selectedTab)"
+        >
+          <option
+              v-for="(tab, key) in tabs"
+              :key="key"
+              :selected="getIsTabCurrent(tab)"
+              :value="tab"
+              class="p-2"
+          >
+            {{ tab.name }}
+          </option>
+        </select>
+      </div>
+      <div class="hidden sm:block">
+        <nav
+            aria-label="Tabs"
+            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-lg shadow mx-auto"
+        >
+          <a
+              v-for="(tab, key) in tabs"
+              :key="key"
+              :dusk="tab.slug + '-tab'"
+              :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
+              class="first:rounded-l-lg max-w-[350px] last:rounded-r-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
+              @click="handleTabClick(tab)"
+          >
+            <span class="capitalize">{{ tab.properties.title }}</span>
+            <span
+                v-if="getIsTabCurrent(tab)"
+                aria-hidden="true"
+                class="bg-primary-500 absolute inset-x-0 bottom-0 h-0.5"
+            ></span>
+            <span
+                v-else
+                aria-hidden="true"
+                class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"
+            ></span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <Card
+        v-for="(tab, index) in tabs"
+        v-show="getIsTabCurrent(tab)"
+        :key="'related-tabs-fields' + index"
+        :ref="getTabRefName(tab)"
+        :class="[
                     tab.slug,
                 ]"
-                :ref="getTabRefName(tab)"
-                v-for="(tab, index) in tabs"
-                v-show="tab.slug === activeTab"
-                :label="tab.name"
-                :key="'related-tabs-fields' + index"
-            >
-                <div
-                    v-if="tab.init"
-                    :class="getBodyClass(tab)"
-                >
-                    <component
-                        v-for="(field, index) in tab.fields"
-                        :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-                        :key="'tab-' + index"
-                        :is="componentName(field)"
-                        :resource-name="resourceName"
-                        :resource-id="resourceId"
-                        :resource="resource"
-                        :field="field"
-                        @actionExecuted="actionExecuted"
-                    />
-                </div>
-            </div>
-        </div>
-    </div>
+        :label="tab.name"
+        class="mt-8 py-2 px-6"
+    >
+      <div v-if="getIsTabCurrent(tab)" :class="getBodyClass(tab)">
+        <component
+            :is="getComponentName(field)"
+            v-for="(field, index) in tab.fields"
+            :key="index"
+            :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+            :field="field"
+            :index="index"
+            :resource="resource"
+            :resource-id="resourceId"
+            :resource-name="resourceName"
+            @actionExecuted="actionExecuted"
+        />
+      </div>
+    </Card>
+  </div>
 </template>
 
 <script>
-import BehavesAsPanel from 'laravel-nova/src/mixins/BehavesAsPanel';
-import TabTitle from './TabTitle';
-import { changeActiveTab } from '@/util/tab-updater';
+import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
+import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
+import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
 
 export default {
-    components: {TabTitle},
-    mixins: [BehavesAsPanel],
-    data() {
-        return {
-            tabs: null,
-            activeTab: '',
+  mixins: [BehavesAsPanel],
+
+  components: {Card, Heading},
+
+  props: {
+    panel: {
+      type: Object,
+      required: true,
+    },
+
+    name: {
+      default: 'Panel',
+    },
+
+    mode: {
+      type: String,
+      default: 'detail',
+    },
+
+    fields: {
+      type: Array,
+      default: [],
+    },
+
+    resourceName: {
+      type: String,
+      required: true,
+    },
+
+    resourceId: {
+      type: [Number, String],
+    },
+
+    relatedResourceName: {
+      type: String,
+    },
+
+    relatedResourceId: {
+      type: [Number, String],
+    },
+
+    viaResource: {
+      type: String,
+    },
+
+    viaResourceId: {
+      type: [Number, String],
+    },
+
+    viaRelationship: {
+      type: String,
+    },
+  },
+
+  data() {
+    return {
+      tabs: null,
+      selectedTab: {}
+    };
+  },
+
+  /**
+   * Get the tabs and their respective fields when mounted
+   * and show the first tab by default.
+   */
+  mounted() {
+    const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
+      if (!(field.tabSlug in tabs)) {
+        tabs[field.tabSlug] = {
+          name: field.tab,
+          slug: field.tabSlug,
+          init: false,
+          listable: field.listableTab,
+          fields: [],
+          properties: field.tabInfo,
         };
+      }
+
+      tabs[field.tabSlug].fields.push(field);
+
+      return tabs;
+    }, {});
+
+    this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
+  },
+
+  methods: {
+
+    /**
+     * Handle tabs being clicked
+     */
+    handleTabClick(tab, updateUri = true) {
+      this.selectedTab = tab;
     },
-    mounted() {
-        const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
-            if (!(field.tabSlug in tabs)) {
-                tabs[field.tabSlug] = {
-                    name: field.tab,
-                    slug: field.tabSlug,
-                    init: false,
-                    listable: field.listableTab,
-                    fields: [],
-                    properties: field.tabInfo,
-                };
-            }
 
-            tabs[field.tabSlug].fields.push(field);
-
-            return tabs;
-        }, {});
-
-        if (this.$route.query.tab !== undefined && tabs[this.$route.query.tab] !== undefined) {
-            this.handleTabClick(tabs[this.$route.query.tab]);
-        } else if (this.panel.selectFirstTab) {
-            this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
-        }
+    /**
+     * Get the component name.
+     */
+    getComponentName(field) {
+      return field.prefixComponent
+          ? 'detail-' + field.component
+          : field.component
     },
-    methods: {
-        /**
-         * Handle the actionExecuted event and pass it up the chain.
-         */
-        actionExecuted() {
-            this.$emit('actionExecuted');
-        },
-        handleTabClick(tab, updateUri = true) {
-            const currentTab = this.$router.currentRoute.query;
 
-            tab.init = true;
-            this.activeTab = tab.slug;
-
-            if (updateUri && (!currentTab || currentTab.tab !== tab.slug)) {
-                changeActiveTab(this.$router, tab.slug);
-            }
-        },
-        componentName(field) {
-            return field.prefixComponent
-                ? 'detail-' + field.component
-                : field.component;
-        },
-        getTabClass(tab) {
-            const classes = [];
-
-            if (this.activeTab === tab.slug) {
-                classes.push('text-grey-black font-bold border-primary');
-            } else {
-                classes.push('text-grey font-semibold border-40');
-            }
-
-            return classes.concat(tab.properties.tabClass);
-        },
-        getBodyClass(tab) {
-            const classes = [];
-
-            if (!tab.listable) {
-                classes.push('px-6 py-3');
-            }
-
-            return classes.concat(tab.properties.bodyClass);
-        },
-        getTabRefName(tab) {
-            return `tab-${tab.slug}`;
-        },
+    /**
+     * Get body class for tabbed field panel
+     */
+    getBodyClass(tab) {
+      return tab.properties.bodyClass;
     },
+
+    /**
+     * Get reference name for tab
+     */
+    getTabRefName(tab) {
+      return `tab-${tab.slug}`;
+    },
+
+    /**
+     * Check if the specified tab is the current opened one
+     */
+    getIsTabCurrent(tab) {
+      return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+    }
+
+  },
 };
 </script>
-
-
-<style lang="scss">
-.relationship-tabs-panel {
-    .has-search-bar {
-    }
-
-    .tabs::-webkit-scrollbar {
-        height: 8px;
-        border-radius: 4px;
-    }
-
-    .tabs::-webkit-scrollbar-thumb {
-        background: #cacaca;
-    }
-
-    .tabs {
-        white-space: nowrap;
-        margin-bottom: -2px;
-    }
-
-    .card {
-        box-shadow: none;
-    }
-
-    .tab-content > div > div[dusk$="-index-component"] > h1 {
-        display: none;
-    }
-
-    .tab {
-        padding-top: 1.25rem;
-        padding-bottom: 1.25rem;
-    }
-
-    .default-search > div > .relative > .flex {
-        justify-content: flex-end;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        margin-top: 0.75rem;
-        margin-bottom: 0.75rem;
-
-        > .mb-6 {
-            margin-bottom: 0;
-        }
-    }
-
-    .default-search > div > .relative > .card > .flex {
-        padding-top: 0;
-    }
-
-    .tab-content > div > .relative > .flex {
-        justify-content: flex-end;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translateY(-100%);
-        align-items: center;
-        height: 62px;
-        z-index: 1;
-
-        > .w-full {
-            width: auto;
-            margin-left: 1.5rem;
-        }
-
-        .mb-6 {
-            margin-bottom: 0;
-        }
-    }
-}
-</style>

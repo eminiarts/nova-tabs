@@ -2,30 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs;
+namespace Eminiarts\Tabs\Traits;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Contracts\Resolvable;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-trait ActionsInTabs
+trait HasActionsInTabs
 {
     /**
-     * @param  NovaRequest $request
+     * @param  NovaRequest  $request
      * @return mixed
      */
     public function detailFields(NovaRequest $request)
     {
         return $this->availableFields($request)
             ->when($request->viaRelationship(), $this->fieldResolverCallback($request))
-//            ->when($this->shouldAddActionsField($request), function ($fields) {
-//                return $fields->push($this->actionfield());
-//            })
             ->filterForDetail($request, $this->resource)
             ->authorized($request)
             ->each(function ($field) use ($request): void {
-                if ($field instanceof ListableField || ! $field instanceof Resolvable) {
+                if ($field instanceof ListableField || !$field instanceof Resolvable) {
                     return;
                 }
 
