@@ -1,71 +1,73 @@
 <template>
-  <div class="tab-group">
-    <slot>
-      <Heading :level="1" v-text="panel.name" v-if="showTitle"/>
+  <div :class="darkModeClass">
+    <div class="tab-group">
+      <slot>
+        <Heading :level="1" v-text="panel.name" v-if="showTitle"/>
 
-      <p
-          v-if="panel.helpText"
-          :class="panel.helpText ? 'mt-2' : 'mt-3'"
-          class="text-gray-500 text-sm font-semibold italic"
-          v-html="panel.helpText"
-      ></p>
-    </slot>
+        <p
+            v-if="panel.helpText"
+            :class="panel.helpText ? 'mt-2' : 'mt-3'"
+            class="nt-text-gray-500 nt-text-sm nt-font-semibold nt-italic"
+            v-html="panel.helpText"
+        ></p>
+      </slot>
 
-    <div id="tabs">
-      <div class="block">
-        <nav
-            aria-label="Tabs"
-            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-t-lg border-gray-200 border-b mx-auto overflow-x-auto"
-        >
-          <a
-              v-for="(tab, key) in tabs"
-              :key="key"
-              :dusk="tab.slug + '-tab'"
-              :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
-              class="first:rounded-tl-lg last:rounded-tr-lg group relative min-w-min flex-shrink-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
-              @click="handleTabClick(tab)"
+      <div id="tabs">
+        <div class="block">
+          <nav
+              aria-label="Tabs"
+              class="tab-menu"
           >
-            <span class="capitalize">{{ tab.properties.title }}</span>
-            <span
-                v-if="getIsTabCurrent(tab)"
-                aria-hidden="true"
-                class="bg-primary-500 absolute inset-x-0 bottom-0 h-0.5"
-            ></span>
-            <span
-                v-else
-                aria-hidden="true"
-                class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"
-            ></span>
-          </a>
-        </nav>
+            <a
+                v-for="(tab, key) in tabs"
+                :key="key"
+                :dusk="tab.slug + '-tab'"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'nt-text-gray-800 dark:nt-text-gray-50'"
+                class="tab-item"
+                @click="handleTabClick(tab)"
+            >
+              <span class="capitalize">{{ tab.properties.title }}</span>
+              <span
+                  v-if="getIsTabCurrent(tab)"
+                  aria-hidden="true"
+                  class="bg-primary-500 nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+              ></span>
+              <span
+                  v-else
+                  aria-hidden="true"
+                  class="nt-bg-transparent nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+              ></span>
+            </a>
+          </nav>
+        </div>
       </div>
-    </div>
 
-    <div
-        v-for="(tab, index) in tabs"
-        v-show="getIsTabCurrent(tab)"
-        :key="'related-tabs-fields' + index"
-        :ref="getTabRefName(tab)"
-        :class="[
-                    'tab',
-                    tab.slug,
-                    tab.classes
-                ]"
-        :label="tab.name"
-    >
-      <div v-if="getIsTabCurrent(tab)" :class="getBodyClass(tab)">
-        <component
-            :is="getComponentName(field)"
-            v-for="(field, index) in tab.fields"
-            :key="index"
-            :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-            :field="field"
-            :index="index"
-            :resource="resource"
-            :resource-id="resourceId"
-            :resource-name="resourceName"
-            @actionExecuted="actionExecuted"
-        />
+      <div
+          v-for="(tab, index) in tabs"
+          v-show="getIsTabCurrent(tab)"
+          :key="'related-tabs-fields' + index"
+          :ref="getTabRefName(tab)"
+          :class="[
+                      'tab',
+                      tab.slug,
+                      tab.classes
+                  ]"
+          :label="tab.name"
+      >
+        <div v-if="getIsTabCurrent(tab)" :class="getBodyClass(tab)">
+          <component
+              :is="getComponentName(field)"
+              v-for="(field, index) in tab.fields"
+              :key="index"
+              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+              :field="field"
+              :index="index"
+              :resource="resource"
+              :resource-id="resourceId"
+              :resource-name="resourceName"
+              @actionExecuted="actionExecuted"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -138,7 +140,8 @@ export default {
   data() {
     return {
       tabs: null,
-      selectedTab: {}
+      selectedTab: {},
+      darkModeClass: ''
     };
   },
 
@@ -147,6 +150,23 @@ export default {
    * and show the first tab by default.
    */
   mounted() {
+    this.observer = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        const newValue = m.target.getAttribute(m.attributeName);
+        this.$nextTick(() => {
+          this.darkModeClass = newValue.includes('dark') ? 'nt-dark' : ''
+        });
+      }
+    });
+
+    this.observer.observe(document.documentElement, {
+      attributes: true,
+      attributeOldValue : true,
+      attributeFilter: ['class'],
+    });
+
+    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'nt-dark' : '';
+
     const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
       if (!(field.tabSlug in tabs)) {
         tabs[field.tabSlug] = {
@@ -208,8 +228,11 @@ export default {
      */
     getIsTabCurrent(tab) {
       return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
-    }
+    },
 
+  },
+  beforeDestroy() {
+    this.observer.disconnect();
   },
 };
 </script>

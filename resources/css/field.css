@@ -1,26 +1,32 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .relationship-tabs-panel.card .flex-no-shrink.ml-auto.mb-6 {
     margin-bottom: 0;
 }
+.tab-group .tab-menu {
+    @apply nt-relative nt-z-0 nt-divide-x nt-divide-gray-200 nt-border-gray-200 dark:nt-border-gray-700 dark:nt-divide-gray-700 nt-bg-white dark:nt-bg-gray-800 nt-rounded-t-lg nt-border-b nt-mx-auto nt-overflow-x-auto;
+    display: flex; /* Set flex display manually to circumvent tailwind circular dependency */
+}
+.tab-group .tab-item {
+    @apply nt-relative nt-min-w-min nt-flex-shrink-0 nt-flex-1 nt-overflow-hidden nt-bg-white dark:nt-bg-gray-800 nt-py-4 nt-px-4 nt-font-semibold nt-text-center nt-cursor-pointer hover:nt-bg-gray-50 hover:dark:nt-bg-gray-700 focus:nt-z-10 first:nt-rounded-tl-lg last:nt-rounded-tr-lg;
+}
 .tab-group .tab.fields-tab {
-    @apply bg-white dark:bg-gray-800 rounded-b-lg shadow py-2 px-6;
+    @apply nt-bg-white dark:nt-bg-gray-800 nt-rounded-b-lg nt-shadow nt-py-2 nt-px-6;
 }
 .tab-group .tab.relationship-tab {
-    @apply bg-white dark:bg-gray-800 rounded-b-lg shadow;
+    @apply nt-bg-white dark:nt-bg-gray-800 nt-rounded-b-lg nt-shadow;
 }
 .tab-group .tab h1 {
-    @apply hidden;
+    @apply nt-hidden;
 }
 .tab-group h1 + .flex {
-    @apply px-4 pt-4 pb-0;
+    @apply nt-px-4 nt-pt-4 nt-pb-0;
 }
 .tab-group h1 + .flex > div.mb-6,
 .tab-group h1 + .flex > div > div.mb-6 {
-    @apply mb-0;
+    @apply nt-mb-0;
 }
 .tab-group h1 + .flex + div {
-    @apply shadow-none rounded-t-none rounded-b-lg;
+    @apply nt-shadow-none nt-rounded-t-none nt-rounded-b-lg;
 }

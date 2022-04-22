@@ -7,7 +7,8 @@ module.exports = {
     path.resolve(__dirname, 'resources/**/*.{vue,js,ts,jsx,tsx,scss}'),
   ],
   darkMode: 'class',
-  important: '#tabs',
+  prefix: 'nt-',
+  important: true,
   plugins: [],
   safelist: [
     'grid-cols-1',
