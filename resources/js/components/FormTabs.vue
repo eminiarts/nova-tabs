@@ -1,7 +1,7 @@
 <template>
   <div class="tab-group">
     <slot>
-      <Heading :level="1" v-text="panel.name" />
+      <Heading :level="1" v-text="panel.name" v-if="showTitle" />
 
       <p
           v-if="panel.helpText"
@@ -121,6 +121,10 @@ export default {
     panel: {
       type: Object,
       required: true,
+    },
+
+    showTitle: {
+      type: Boolean,
     },
 
     name: {
