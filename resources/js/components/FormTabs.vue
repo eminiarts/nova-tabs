@@ -7,7 +7,7 @@
         <p
             v-if="panel.helpText"
             :class="panel.helpText ? 'mt-2' : 'mt-3'"
-            class="text-gray-500 text-sm font-semibold italic"
+            class="text-gray-500 text-sm fotabs-semibold italic"
             v-html="panel.helpText"
         ></p>
       </slot>
@@ -22,7 +22,7 @@
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
                 :dusk="tab.slug + '-tab'"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'nt-text-gray-800 dark:nt-text-gray-50'"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
                 class="tab-item"
                 @click.prevent="handleTabClick(tab)"
             >
@@ -30,12 +30,12 @@
               <span
                   v-if="getIsTabCurrent(tab)"
                   aria-hidden="true"
-                  class="bg-primary-500 nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+                  class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
               ></span>
               <span
                   v-else
                   aria-hidden="true"
-                  class="nt-bg-transparent nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+                  class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
               ></span>
             </Button>
           </nav>
@@ -190,7 +190,7 @@ export default {
       for (const m of mutations) {
         const newValue = m.target.getAttribute(m.attributeName);
         this.$nextTick(() => {
-          this.darkModeClass = newValue.includes('dark') ? 'nt-dark' : ''
+          this.darkModeClass = newValue.includes('dark') ? 'tabs-dark' : ''
         });
       }
     });
@@ -201,7 +201,7 @@ export default {
       attributeFilter: ['class'],
     });
 
-    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'nt-dark' : '';
+    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'tabs-dark' : '';
 
     const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
       if (!(field.tabSlug in tabs)) {
