@@ -35,15 +35,25 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     /** @var string[] */
     protected $bodyClass = [];
 
-    public function __construct($title, array $fields)
+    protected $position;
+
+    public function __construct($title, array $fields, $position = 0)
     {
         $this->title = $title;
         $this->fields = $fields;
+        $this->position = $position;
     }
 
     public static function make($title, array $fields): self
     {
         return new static($title, $fields);
+    }
+
+    public function position(int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
     }
 
     public function name(string $name): self
@@ -97,6 +107,7 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public function toArray(): array
     {
         return [
+            'position' => $this->getPosition(),
             'title' => $this->getTitle(),
             'fields' => $this->getFields(),
             'name' => $this->getName(),
@@ -104,6 +115,14 @@ class Tab implements TabContract, JsonSerializable, Arrayable
             'shouldShow' => $this->shouldShow(),
             'bodyClass' => $this->getBodyClass(),
         ];
+    }
+
+    /**
+     * @return Closure|string
+     */
+    public function getPosition(): int
+    {
+        return $this->position;
     }
 
     /**

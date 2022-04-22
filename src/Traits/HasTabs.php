@@ -20,6 +20,22 @@ trait HasTabs
      */
     protected function panelsWithDefaultLabel(Collection $panels, FieldCollection $fields, $label)
     {
+
+        [$relationshipUnderTabs, $panels] = $panels->partition(function ($panel) {
+            return $panel->component === 'relationship-panel' && $panel->meta['fields'][0]->assignedPanel instanceof Tabs;
+        });
+
+        $panels->transform(function($panel) use($relationshipUnderTabs) {
+
+            if ($panel->component === 'tabs') {
+                foreach ($relationshipUnderTabs as $rel) {
+                    $panel->meta['fields'][] = $rel->meta['fields'][0];
+                }
+            }
+
+            return $panel;
+        });
+
         return $panels->values()
             ->when($panels->where('component', 'tabs')->isEmpty(), function ($panels) use ($label, $fields) {
                 return $panels->prepend(

@@ -18,13 +18,13 @@
               aria-label="Tabs"
               class="tab-menu"
           >
-            <a
-                v-for="(tab, key) in tabs"
+            <Button
+                v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
                 :dusk="tab.slug + '-tab'"
                 :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'nt-text-gray-800 dark:nt-text-gray-50'"
                 class="tab-item"
-                @click="handleTabClick(tab)"
+                @click.prevent="handleTabClick(tab)"
             >
               <span class="capitalize">{{ tab.properties.title }}</span>
               <span
@@ -37,13 +37,13 @@
                   aria-hidden="true"
                   class="nt-bg-transparent nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
               ></span>
-            </a>
+            </Button>
           </nav>
         </div>
       </div>
 
       <div
-          v-for="(tab, index) in tabs"
+          v-for="(tab, index) in getSortedTabs(tabs)"
           v-show="getIsTabCurrent(tab)"
           :key="'related-tabs-fields' + index"
           :ref="getTabRefName(tab)"
@@ -55,29 +55,31 @@
           :label="tab.name"
       >
         <div :class="getBodyClass(tab)">
-          <component
-              :is="getComponentName(field)"
-              v-for="(field, index) in tab.fields"
-              :key="'tab-' + index"
-              ref="fields"
-              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-              :errors="validationErrors"
-              :resource-id="resourceId"
-              :resource-name="resourceName"
-              :related-resource-name="relatedResourceName"
-              :related-resource-id="relatedResourceId"
-              :field="field"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              :via-relationship="viaRelationship"
-              :shown-via-new-relation-modal="shownViaNewRelationModal"
-              :form-unique-id="formUniqueId"
-              @field-changed="$emit('field-changed')"
-              @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-              @file-upload-started="$emit('file-upload-started')"
-              @file-upload-finished="$emit('file-upload-finished')"
-              :show-help-text="field.helpText != null"
-          />
+          <KeepAlive>
+            <component
+                :is="getComponentName(field)"
+                v-for="(field, index) in tab.fields"
+                :key="'tab-' + index"
+                ref="fields"
+                :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                :errors="validationErrors"
+                :resource-id="resourceId"
+                :resource-name="resourceName"
+                :related-resource-name="relatedResourceName"
+                :related-resource-id="relatedResourceId"
+                :field="field"
+                :via-resource="viaResource"
+                :via-resource-id="viaResourceId"
+                :via-relationship="viaRelationship"
+                :shown-via-new-relation-modal="shownViaNewRelationModal"
+                :form-unique-id="formUniqueId"
+                @field-changed="$emit('field-changed')"
+                @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                @file-upload-started="$emit('file-upload-started')"
+                @file-upload-finished="$emit('file-upload-finished')"
+                :show-help-text="field.helpText != null"
+            />
+          </KeepAlive>
         </div>
       </div>
     </div>
@@ -88,6 +90,7 @@
 import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
+import _ from "lodash";
 
 export default {
   mixins: [BehavesAsPanel],
@@ -223,6 +226,9 @@ export default {
 
     /**
      * Handle tabs being clicked
+     *
+     * @param tab
+     * @param updateUri
      */
     handleTabClick(tab, updateUri = true) {
       this.selectedTab = tab;
@@ -230,6 +236,9 @@ export default {
 
     /**
      * Get the component name.
+     *
+     * @param field
+     * @returns {string}
      */
     getComponentName(field) {
       return field.prefixComponent
@@ -239,6 +248,9 @@ export default {
 
     /**
      * Get body class for tabbed field panel
+     *
+     * @param tab
+     * @returns {string}
      */
     getBodyClass(tab) {
       return tab.properties.bodyClass;
@@ -246,6 +258,9 @@ export default {
 
     /**
      * Get reference name for tab
+     *
+     * @param tab
+     * @returns {string}
      */
     getTabRefName(tab) {
       return `tab-${tab.slug}`;
@@ -253,9 +268,22 @@ export default {
 
     /**
      * Check if the specified tab is the current opened one
+     *
+     * @param tab
+     * @returns {boolean}
      */
     getIsTabCurrent(tab) {
       return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+    },
+
+    /**
+     * Sort the tabs object by their respective positions using lodash
+     *
+     * @param tabs
+     * @returns {object}
+     */
+    getSortedTabs(tabs) {
+      return _.orderBy(tabs, [c => c.position], ['asc']);
     }
 
   },

@@ -36,6 +36,8 @@ class Tabs extends Panel
      */
     private $tabs = [];
 
+    private $tabsCount = 0;
+
     /**
      * Create a new panel instance.
      *
@@ -97,8 +99,10 @@ class Tabs extends Panel
             return $fields;
         }
 
+        $this->tabsCount++;
+
         if ($fields instanceof Panel) {
-            return new Tab($fields->name, $fields->data);
+            return new Tab($fields->name, $fields->data, $this->tabsCount);
         }
 
         /**
@@ -108,10 +112,10 @@ class Tabs extends Panel
          * @link https://github.com/eminiarts/nova-tabs/issues/141
          */
         if (!is_array($fields)) {
-            return new Tab($fields->name, [$fields]);
+            return new Tab($fields->name, [$fields], $this->tabsCount);
         }
 
-        return new Tab($key, $fields);
+        return new Tab($key, $fields, $this->tabsCount);
     }
 
     /**
@@ -156,6 +160,7 @@ class Tabs extends Panel
             $meta = [
                 'tab' => $tab->getName(),
                 'tabSlug' => $tab->getSlug(),
+                'tabPosition' => $tab->getPosition(),
                 'tabInfo' => Arr::except($tab->toArray(), ['fields', 'slug'])
             ];
 
@@ -209,7 +214,6 @@ class Tabs extends Panel
     public function jsonSerialize(): array
     {
         $result = array_merge(parent::jsonSerialize(), [
-            'component' => 'detail-tabs',
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle
         ]);

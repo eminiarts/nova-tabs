@@ -200,6 +200,9 @@ export default {
 
     /**
      * Handle tabs being clicked
+     *
+     * @param tab
+     * @param updateUri
      */
     handleTabClick(tab, updateUri = true) {
       this.selectedTab = tab;
@@ -207,6 +210,9 @@ export default {
 
     /**
      * Get the component name.
+     *
+     * @param field
+     * @returns {string}
      */
     getComponentName(field) {
       return field.prefixComponent
@@ -216,6 +222,9 @@ export default {
 
     /**
      * Get body class for tabbed field panel
+     *
+     * @param tab
+     * @returns {string}
      */
     getBodyClass(tab) {
       return tab.properties.bodyClass;
@@ -223,6 +232,9 @@ export default {
 
     /**
      * Get reference name for tab
+     *
+     * @param tab
+     * @returns {string}
      */
     getTabRefName(tab) {
       return `tab-${tab.slug}`;
@@ -230,6 +242,9 @@ export default {
 
     /**
      * Check if the specified tab is the current opened one
+     *
+     * @param tab
+     * @returns {boolean}
      */
     getIsTabCurrent(tab) {
       return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)

@@ -103,14 +103,8 @@ These are a bit outdated, as the search and create buttons now show within the p
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\Fields\HasMany;
+use Laravel\Nova\Fields\HasMany;
 use Eminiarts\Tabs\Traits\HasTabs;
-
-//use Eminiarts\Tabs\Fields\BelongsToMany;
-//use Eminiarts\Tabs\Fields\HasManyThrough;
-//use Eminiarts\Tabs\Fields\HasOneThrough;
-//use Eminiarts\Tabs\Fields\MorphToMany;
-
 
 class User extends Resource
 {
@@ -139,7 +133,7 @@ class User extends Resource
 
 ```php
 use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\Fields\HasMany;
+use Laravel\Nova\Fields\HasMany;
 use Eminiarts\Tabs\Traits\HasTabs;
 
 use Laravel\Nova\Fields\ID;
@@ -232,7 +226,6 @@ By default, any `HasMany`, `BelongsToMany` and `MorphMany` fields show 5 items i
    - Even if you have other panels, tabs will always show up first and has the toolbar.
    - TabsOnEdit is gone and non relational tabs will simply always display on edit.
    - I don't use dusk, so didn't check the tests for it either, they might be broken.
-   - To make HasMany, BelongsToMany, HasManyThrough, HasOneThrough and MorphToMany work, you'd need to use their respective fields within this package to remove nova 4's AsPanel method from the fields.
    - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4's panelsWithDefaultLabel method in Laravel\Nova\ResolveFields to enable tabs on edit pages.
    - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs
 
