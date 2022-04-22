@@ -12,37 +12,17 @@
     </slot>
 
     <div id="tabs">
-      <div class="sm:hidden">
-        <label class="sr-only" for="tabs">Select a tab</label>
-
-        <select
-            id="tab"
-            v-model="selectedTab"
-            class="form-select block px-3 w-full focus:ring-sky-200 focus:border-sky-200 border-gray-300 rounded-md capitalize"
-            @change="handleTabClick(selectedTab)"
-        >
-          <option
-              v-for="(tab, key) in tabs"
-              :key="key"
-              :selected="getIsTabCurrent(tab)"
-              :value="tab"
-              class="p-2"
-          >
-            {{ tab.name }}
-          </option>
-        </select>
-      </div>
-      <div class="hidden sm:block">
+      <div class="block">
         <nav
             aria-label="Tabs"
-            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-t-lg border-gray-200 border-b mx-auto"
+            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-t-lg border-gray-200 border-b mx-auto overflow-x-auto"
         >
           <a
               v-for="(tab, key) in tabs"
               :key="key"
               :dusk="tab.slug + '-tab'"
               :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
-              class="first:rounded-tl-lg max-w-[350px] last:rounded-tr-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
+              class="first:rounded-tl-lg last:rounded-tr-lg group relative min-w-min flex-shrink-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
               @click="handleTabClick(tab)"
           >
             <span class="capitalize">{{ tab.properties.title }}</span>
