@@ -5,3 +5,22 @@
 .relationship-tabs-panel.card .flex-no-shrink.ml-auto.mb-6 {
     margin-bottom: 0;
 }
+.tab-group .tab.fields-tab {
+    @apply bg-white dark:bg-gray-800 rounded-b-lg shadow py-2 px-6;
+}
+.tab-group .tab.relationship-tab {
+    @apply bg-white dark:bg-gray-800 rounded-b-lg shadow;
+}
+.tab-group .tab h1 {
+    @apply hidden;
+}
+.tab-group h1 + .flex {
+    @apply px-4 pt-4 pb-0;
+}
+.tab-group h1 + .flex > div.mb-6,
+.tab-group h1 + .flex > div > div.mb-6 {
+    @apply mb-0;
+}
+.tab-group h1 + .flex + div {
+    @apply shadow-none rounded-t-none rounded-b-lg;
+}
