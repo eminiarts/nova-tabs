@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="tab-group">
     <slot>
       <Heading :level="1" v-text="panel.name" />
 
@@ -35,14 +35,14 @@
       <div class="hidden sm:block">
         <nav
             aria-label="Tabs"
-            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-lg shadow mx-auto"
+            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-t-lg border-gray-200 border-b mx-auto"
         >
           <a
               v-for="(tab, key) in tabs"
               :key="key"
               :dusk="tab.slug + '-tab'"
               :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
-              class="first:rounded-l-lg max-w-[350px] last:rounded-r-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
+              class="first:rounded-tl-lg max-w-[350px] last:rounded-tr-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
               @click="handleTabClick(tab)"
           >
             <span class="capitalize">{{ tab.properties.title }}</span>
@@ -61,17 +61,17 @@
       </div>
     </div>
 
-    <Card
+    <div
         v-for="(tab, index) in tabs"
         v-show="getIsTabCurrent(tab)"
         :key="'related-tabs-fields' + index"
         :ref="getTabRefName(tab)"
         :class="[
+                    'tab fields-tab',
                     getIsTabCurrent(tab) ? 'block' : 'hidden',
                     tab.slug,
                 ]"
         :label="tab.name"
-        class="mt-8 py-2 px-6"
     >
       <div :class="getBodyClass(tab)">
         <component
@@ -98,7 +98,7 @@
             :show-help-text="field.helpText != null"
         />
       </div>
-    </Card>
+    </div>
   </div>
 </template>
 
