@@ -1,92 +1,75 @@
 <template>
-  <div>
-    <slot>
-      <Heading :level="1" v-text="panel.name" />
+  <div :class="darkModeClass">
+    <div class="tab-group">
+      <slot>
+        <Heading :level="1" v-text="panel.name" v-if="showTitle"/>
 
-      <p
-          v-if="panel.helpText"
-          :class="panel.helpText ? 'mt-2' : 'mt-3'"
-          class="text-gray-500 text-sm font-semibold italic"
-          v-html="panel.helpText"
-      ></p>
-    </slot>
+        <p
+            v-if="panel.helpText"
+            :class="panel.helpText ? 'mt-2' : 'mt-3'"
+            class="nt-text-gray-500 nt-text-sm nt-font-semibold nt-italic"
+            v-html="panel.helpText"
+        ></p>
+      </slot>
 
-    <div id="tabs">
-      <div class="sm:hidden">
-        <label class="sr-only" for="tabs">Select a tab</label>
-
-        <select
-            id="tab"
-            v-model="selectedTab"
-            class="form-select block px-3 w-full focus:ring-sky-200 focus:border-sky-200 border-gray-300 rounded-md capitalize"
-            @change="handleTabClick(selectedTab)"
-        >
-          <option
-              v-for="(tab, key) in getSortedTabs(tabs)"
-              :key="key"
-              :selected="getIsTabCurrent(tab)"
-              :value="tab"
-              class="p-2"
+      <div id="tabs">
+        <div class="block">
+          <nav
+              aria-label="Tabs"
+              class="tab-menu"
           >
-            {{ tab.name }}
-          </option>
-        </select>
+            <Button
+                v-for="(tab, key) in getSortedTabs(tabs)"
+                :key="key"
+                :dusk="tab.slug + '-tab'"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'nt-text-gray-800 dark:nt-text-gray-50'"
+                class="tab-item"
+                @click.prevent="handleTabClick(tab)"
+            >
+              <span class="capitalize">{{ tab.properties.title }}</span>
+              <span
+                  v-if="getIsTabCurrent(tab)"
+                  aria-hidden="true"
+                  class="bg-primary-500 nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+              ></span>
+              <span
+                  v-else
+                  aria-hidden="true"
+                  class="nt-bg-transparent nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
+              ></span>
+            </Button>
+          </nav>
+        </div>
       </div>
-      <div class="hidden sm:block">
-        <nav
-            aria-label="Tabs"
-            class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-lg shadow mx-auto"
-        >
-          <Button
-              v-for="(tab, key) in getSortedTabs(tabs)"
-              :key="key"
-              :dusk="tab.slug + '-tab'"
-              :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
-              class="first:rounded-l-lg max-w-[350px] last:rounded-r-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
-              @click.prevent="handleTabClick(tab)"
-          >
-            <span class="capitalize">{{ tab.properties.title }}</span>
-            <span
-                v-if="getIsTabCurrent(tab)"
-                aria-hidden="true"
-                class="bg-primary-500 absolute inset-x-0 bottom-0 h-0.5"
-            ></span>
-            <span
-                v-else
-                aria-hidden="true"
-                class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"
-            ></span>
-          </Button>
-        </nav>
+
+      <div
+          v-for="(tab, index) in getSortedTabs(tabs)"
+          :key="'related-tabs-fields' + index"
+          :ref="getTabRefName(tab)"
+          :class="[
+                      'tab',
+                      tab.slug,
+                      tab.classes
+                  ]"
+          :label="tab.name"
+          v-show="getIsTabCurrent(tab)"
+      >
+        <div :class="getBodyClass(tab)">
+          <KeepAlive v-for="(field, index) in tab.fields" :key="index">
+            <component
+                :is="getComponentName(field)"
+                :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                :field="field"
+                :index="index"
+                :resource="resource"
+                :resource-id="resourceId"
+                :resource-name="resourceName"
+                @actionExecuted="actionExecuted"
+            />
+          </KeepAlive>
+        </div>
       </div>
     </div>
-
-    <Card
-        v-for="(tab, index) in tabs"
-        :key="'related-tabs-fields' + index"
-        :ref="getTabRefName(tab)"
-        :class="[
-                    tab.slug,
-                ]"
-        :label="tab.name"
-        v-show="getIsTabCurrent(tab)"
-        class="mt-8 py-2 px-6"
-    >
-      <div :class="getBodyClass(tab)">
-        <KeepAlive v-for="(field, index) in tab.fields" :key="index">
-          <component
-              :is="getComponentName(field)"
-              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-              :field="field"
-              :index="index"
-              :resource="resource"
-              :resource-id="resourceId"
-              :resource-name="resourceName"
-              @actionExecuted="actionExecuted"
-          />
-        </KeepAlive>
-      </div>
-    </Card>
   </div>
 </template>
 
@@ -109,6 +92,10 @@ export default {
 
     name: {
       default: 'Panel',
+    },
+
+    showTitle: {
+      type: Boolean,
     },
 
     mode: {
@@ -154,7 +141,8 @@ export default {
   data() {
     return {
       tabs: null,
-      selectedTab: {}
+      selectedTab: {},
+      darkModeClass: ''
     };
   },
 
@@ -163,6 +151,23 @@ export default {
    * and show the first tab by default.
    */
   mounted() {
+    this.observer = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        const newValue = m.target.getAttribute(m.attributeName);
+        this.$nextTick(() => {
+          this.darkModeClass = newValue.includes('dark') ? 'nt-dark' : ''
+        });
+      }
+    });
+
+    this.observer.observe(document.documentElement, {
+      attributes: true,
+      attributeOldValue : true,
+      attributeFilter: ['class'],
+    });
+
+    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'nt-dark' : '';
+
     const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
       if (!(field.tabSlug in tabs)) {
         tabs[field.tabSlug] = {
@@ -173,7 +178,11 @@ export default {
           listable: field.listableTab,
           fields: [],
           properties: field.tabInfo,
+          classes: 'fields-tab',
         };
+        if (['belongs-to-many-field', 'has-many-field', 'has-many-through-field', 'has-one-through-field', 'morph-to-many-field',].includes(field.component)) {
+          tabs[field.tabSlug].classes = 'relationship-tab';
+        }
       }
 
       tabs[field.tabSlug].fields.push(field);
@@ -248,6 +257,9 @@ export default {
       return _.orderBy(tabs, [c => c.position], ['asc']);
     }
 
+  },
+  beforeDestroy() {
+    this.observer.disconnect();
   },
 };
 </script>
