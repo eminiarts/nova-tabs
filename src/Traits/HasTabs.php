@@ -25,11 +25,13 @@ trait HasTabs
             return $panel->component === 'relationship-panel' && $panel->meta['fields'][0]->assignedPanel instanceof Tabs;
         });
 
-        $panels->transform(function($panel) use($relationshipUnderTabs) {
+        $panels->transform(function($panel, $key) use($relationshipUnderTabs) {
 
             if ($panel->component === 'tabs') {
                 foreach ($relationshipUnderTabs as $rel) {
-                    $panel->meta['fields'][] = $rel->meta['fields'][0];
+                    if ($panel->meta['fields'][0]->assignedPanel === $rel->meta['fields'][0]->assignedPanel) {
+                        $panel->meta['fields'][] = $rel->meta['fields'][0];
+                    }
                 }
             }
 
