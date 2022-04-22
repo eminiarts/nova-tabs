@@ -52,15 +52,12 @@
                       tab.classes
                   ]"
           :label="tab.name"
-
-
+          v-show="getIsTabCurrent(tab)"
       >
         <div :class="getBodyClass(tab)">
           <KeepAlive v-for="(field, index) in tab.fields" :key="index">
             <component
                 :is="getComponentName(field)"
-                v-for="(field, index) in tab.fields"
-                :key="index"
                 :class="{'remove-bottom-border': index === tab.fields.length - 1}"
                 :field="field"
                 :index="index"
