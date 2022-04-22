@@ -22,7 +22,7 @@
             @change="handleTabClick(selectedTab)"
         >
           <option
-              v-for="(tab, key) in tabs"
+              v-for="(tab, key) in getSortedTabs(tabs)"
               :key="key"
               :selected="getIsTabCurrent(tab)"
               :value="tab"
@@ -37,13 +37,13 @@
             aria-label="Tabs"
             class="relative z-0 flex divide-x divide-gray-200 bg-white dark:bg-gray-800 rounded-lg shadow mx-auto"
         >
-          <a
-              v-for="(tab, key) in tabs"
+          <Button
+              v-for="(tab, key) in getSortedTabs(tabs)"
               :key="key"
               :dusk="tab.slug + '-tab'"
               :class="getIsTabCurrent(tab) ? 'text-primary-500' : 'text-gray-800'"
               class="first:rounded-l-lg max-w-[350px] last:rounded-r-lg group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 font-semibold text-center hover:bg-gray-50 focus:z-10b cursor-pointer"
-              @click="handleTabClick(tab)"
+              @click.prevent="handleTabClick(tab)"
           >
             <span class="capitalize">{{ tab.properties.title }}</span>
             <span
@@ -56,35 +56,35 @@
                 aria-hidden="true"
                 class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"
             ></span>
-          </a>
+          </Button>
         </nav>
       </div>
     </div>
 
     <Card
         v-for="(tab, index) in tabs"
-        v-show="getIsTabCurrent(tab)"
         :key="'related-tabs-fields' + index"
         :ref="getTabRefName(tab)"
         :class="[
                     tab.slug,
                 ]"
         :label="tab.name"
+        v-show="getIsTabCurrent(tab)"
         class="mt-8 py-2 px-6"
     >
-      <div v-if="getIsTabCurrent(tab)" :class="getBodyClass(tab)">
-        <component
-            :is="getComponentName(field)"
-            v-for="(field, index) in tab.fields"
-            :key="index"
-            :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-            :field="field"
-            :index="index"
-            :resource="resource"
-            :resource-id="resourceId"
-            :resource-name="resourceName"
-            @actionExecuted="actionExecuted"
-        />
+      <div :class="getBodyClass(tab)">
+        <KeepAlive v-for="(field, index) in tab.fields" :key="index">
+          <component
+              :is="getComponentName(field)"
+              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+              :field="field"
+              :index="index"
+              :resource="resource"
+              :resource-id="resourceId"
+              :resource-name="resourceName"
+              @actionExecuted="actionExecuted"
+          />
+        </KeepAlive>
       </div>
     </Card>
   </div>
@@ -94,6 +94,7 @@
 import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
+import _ from "lodash";
 
 export default {
   mixins: [BehavesAsPanel],
@@ -167,6 +168,7 @@ export default {
         tabs[field.tabSlug] = {
           name: field.tab,
           slug: field.tabSlug,
+          position: field.tabPosition,
           init: false,
           listable: field.listableTab,
           fields: [],
@@ -186,6 +188,9 @@ export default {
 
     /**
      * Handle tabs being clicked
+     *
+     * @param tab
+     * @param updateUri
      */
     handleTabClick(tab, updateUri = true) {
       this.selectedTab = tab;
@@ -193,6 +198,9 @@ export default {
 
     /**
      * Get the component name.
+     *
+     * @param field
+     * @returns {string}
      */
     getComponentName(field) {
       return field.prefixComponent
@@ -202,6 +210,9 @@ export default {
 
     /**
      * Get body class for tabbed field panel
+     *
+     * @param tab
+     * @returns {string}
      */
     getBodyClass(tab) {
       return tab.properties.bodyClass;
@@ -209,6 +220,9 @@ export default {
 
     /**
      * Get reference name for tab
+     *
+     * @param tab
+     * @returns {string}
      */
     getTabRefName(tab) {
       return `tab-${tab.slug}`;
@@ -216,9 +230,22 @@ export default {
 
     /**
      * Check if the specified tab is the current opened one
+     *
+     * @param tab
+     * @returns {boolean}
      */
     getIsTabCurrent(tab) {
       return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+    },
+
+    /**
+     * Sort the tabs object by their respective positions using lodash
+     *
+     * @param tabs
+     * @returns {object}
+     */
+    getSortedTabs(tabs) {
+      return _.orderBy(tabs, [c => c.position], ['asc']);
     }
 
   },

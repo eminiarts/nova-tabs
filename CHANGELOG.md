@@ -8,7 +8,6 @@
   - Even if you have other panels, tabs will always show up first and has the toolbar.
   - TabsOnEdit is gone and non relational tabs will simply always display on edit.
   - I don't use dusk, so didn't check the tests for it either, they might be broken.
-  - To make HasMany, BelongsToMany, HasManyThrough, HasOneThrough and MorphToMany work, you'd need to use their respective fields within this package to remove nova 4's AsPanel method from the fields.
   - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4's panelsWithDefaultLabel method in Laravel\Nova\ResolveFields to enable tabs on edit pages.
   - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs 
 
