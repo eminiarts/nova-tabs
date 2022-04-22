@@ -1,6 +1,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.tab-group + div {
+    @apply tabs-bg-white;
+}
+
 .relationship-tabs-panel.card .flex-no-shrink.ml-auto.mb-6 {
     margin-bottom: 0;
 }
@@ -29,8 +33,4 @@
 }
 .tab-group h1 + .flex + div {
     @apply tabs-shadow-none tabs-rounded-t-none tabs-rounded-b-lg;
-}
-
-.tab-group + div {
-    @apply tabs-bg-white;
 }

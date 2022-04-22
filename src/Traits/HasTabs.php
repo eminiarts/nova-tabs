@@ -28,6 +28,7 @@ trait HasTabs
         $panels->transform(function($panel, $key) use($relationshipUnderTabs) {
 
             if ($panel->component === 'tabs') {
+
                 foreach ($relationshipUnderTabs as $rel) {
                     if ($panel->meta['fields'][0]->assignedPanel === $rel->meta['fields'][0]->assignedPanel) {
                         $panel->meta['fields'][] = $rel->meta['fields'][0];
@@ -38,13 +39,20 @@ trait HasTabs
             return $panel;
         });
 
+        $panels->where('component', 'tabs')->transform(function($panel, $key) use($relationshipUnderTabs) {
+            return $panel->withMeta([
+                'showToolbar' => $panel->meta['fields'][0]->assignedPanel->showToolbar,
+                'showTitle' => $panel->meta['fields'][0]->assignedPanel->showTitle,
+            ]);
+        });
+
         return $panels->values()
             ->when($panels->where('component', 'tabs')->isEmpty(), function ($panels) use ($label, $fields) {
                 return $panels->prepend(
-                    Tabs::make($label, $fields)->withMeta(['fields' => $fields])->withToolbar()
+                    Tabs::make($label, $fields)->withMeta(['fields' => $fields])
                 );
             })->tap(function ($panels) use ($label): void {
-                $panels->where('component', 'tabs')->first()->withToolbar();
+                $panels->where('component', 'tabs')->first();
             });
     }
 }

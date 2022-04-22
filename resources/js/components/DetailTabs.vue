@@ -1,8 +1,8 @@
 <template>
-  <div id="tabs" :class="darkModeClass">
+  <div :class="darkModeClass">
     <div class="tab-group">
       <slot>
-        <Heading :level="1" v-text="panel.name" v-if="showTitle"/>
+        <Heading :level="1" v-text="panel.name" v-if="panel.showTitle"/>
 
         <p
             v-if="panel.helpText"
@@ -12,7 +12,7 @@
         ></p>
       </slot>
 
-      <div>
+      <div id="tabs">
         <div class="block">
           <nav
               aria-label="Tabs"
@@ -92,10 +92,6 @@ export default {
 
     name: {
       default: 'Panel',
-    },
-
-    showTitle: {
-      type: Boolean,
     },
 
     mode: {

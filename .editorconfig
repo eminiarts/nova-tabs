@@ -8,7 +8,7 @@ indent_style = space
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{yaml,yml}]
+[*.{yaml,yml,vue,js}]
 indent_size = 2
 
 [*.md]

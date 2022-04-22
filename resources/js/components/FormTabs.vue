@@ -2,40 +2,40 @@
   <div :class="darkModeClass">
     <div class="tab-group">
       <slot>
-        <Heading :level="1" v-text="panel.name" v-if="showTitle" />
+        <Heading v-if="panel.showTitle" :level="1" v-text="panel.name"/>
 
         <p
-            v-if="panel.helpText"
-            :class="panel.helpText ? 'mt-2' : 'mt-3'"
-            class="text-gray-500 text-sm fotabs-semibold italic"
-            v-html="panel.helpText"
+          v-if="panel.helpText"
+          :class="panel.helpText ? 'tabs-mt-2' : 'tabs-mt-3'"
+          class="tabs-text-gray-500 tabs-text-sm tabs-fotabs-semibold tabs-italic"
+          v-html="panel.helpText"
         ></p>
       </slot>
 
       <div id="tabs">
         <div class="block">
           <nav
-              aria-label="Tabs"
-              class="tab-menu"
+            aria-label="Tabs"
+            class="tab-menu"
           >
             <Button
-                v-for="(tab, key) in getSortedTabs(tabs)"
-                :key="key"
-                :dusk="tab.slug + '-tab'"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
-                class="tab-item"
-                @click.prevent="handleTabClick(tab)"
+              v-for="(tab, key) in getSortedTabs(tabs)"
+              :key="key"
+              :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
+              :dusk="tab.slug + '-tab'"
+              class="tab-item"
+              @click.prevent="handleTabClick(tab)"
             >
               <span class="capitalize">{{ tab.properties.title }}</span>
               <span
-                  v-if="getIsTabCurrent(tab)"
-                  aria-hidden="true"
-                  class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
+                v-if="getIsTabCurrent(tab)"
+                aria-hidden="true"
+                class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
               ></span>
               <span
-                  v-else
-                  aria-hidden="true"
-                  class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
+                v-else
+                aria-hidden="true"
+                class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
               ></span>
             </Button>
           </nav>
@@ -43,41 +43,41 @@
       </div>
 
       <div
-          v-for="(tab, index) in getSortedTabs(tabs)"
-          v-show="getIsTabCurrent(tab)"
-          :key="'related-tabs-fields' + index"
-          :ref="getTabRefName(tab)"
-          :class="[
+        v-for="(tab, index) in getSortedTabs(tabs)"
+        v-show="getIsTabCurrent(tab)"
+        :key="'related-tabs-fields' + index"
+        :ref="getTabRefName(tab)"
+        :class="[
                       'tab fields-tab',
                       getIsTabCurrent(tab) ? 'block' : 'hidden',
                       tab.slug,
                   ]"
-          :label="tab.name"
+        :label="tab.name"
       >
         <div :class="getBodyClass(tab)">
           <KeepAlive>
             <component
-                :is="getComponentName(field)"
-                v-for="(field, index) in tab.fields"
-                :key="'tab-' + index"
-                ref="fields"
-                :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-                :errors="validationErrors"
-                :resource-id="resourceId"
-                :resource-name="resourceName"
-                :related-resource-name="relatedResourceName"
-                :related-resource-id="relatedResourceId"
-                :field="field"
-                :via-resource="viaResource"
-                :via-resource-id="viaResourceId"
-                :via-relationship="viaRelationship"
-                :shown-via-new-relation-modal="shownViaNewRelationModal"
-                :form-unique-id="formUniqueId"
-                @field-changed="$emit('field-changed')"
-                @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-                @file-upload-started="$emit('file-upload-started')"
-                @file-upload-finished="$emit('file-upload-finished')"
-                :show-help-text="field.helpText != null"
+              :is="getComponentName(field)"
+              v-for="(field, index) in tab.fields"
+              :key="'tab-' + index"
+              ref="fields"
+              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+              :errors="validationErrors"
+              :field="field"
+              :form-unique-id="formUniqueId"
+              :related-resource-id="relatedResourceId"
+              :related-resource-name="relatedResourceName"
+              :resource-id="resourceId"
+              :resource-name="resourceName"
+              :show-help-text="field.helpText != null"
+              :shown-via-new-relation-modal="shownViaNewRelationModal"
+              :via-relationship="viaRelationship"
+              :via-resource="viaResource"
+              :via-resource-id="viaResourceId"
+              @field-changed="$emit('field-changed')"
+              @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+              @file-upload-started="$emit('file-upload-started')"
+              @file-upload-finished="$emit('file-upload-finished')"
             />
           </KeepAlive>
         </div>
@@ -106,10 +106,6 @@ export default {
     panel: {
       type: Object,
       required: true,
-    },
-
-    showTitle: {
-      type: Boolean,
     },
 
     name: {
@@ -197,7 +193,7 @@ export default {
 
     this.observer.observe(document.documentElement, {
       attributes: true,
-      attributeOldValue : true,
+      attributeOldValue: true,
       attributeFilter: ['class'],
     });
 
@@ -242,8 +238,8 @@ export default {
      */
     getComponentName(field) {
       return field.prefixComponent
-          ? 'form-' + field.component
-          : field.component
+        ? 'form-' + field.component
+        : field.component
     },
 
     /**

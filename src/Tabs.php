@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Panel;
+use Laravel\Nova\ResourceToolElement;
 use function is_array;
 use function is_callable;
 
@@ -196,10 +197,10 @@ class Tabs extends Panel
     /**
      * Whether the show the title
      *
-     * @param  bool  $show
+     * @param bool $show
      * @return $this
      */
-    public function showTitle($show = true): self
+    public function showTitle(bool $show = true): self
     {
         $this->showTitle = $show;
 
@@ -215,7 +216,7 @@ class Tabs extends Panel
     {
         $result = array_merge(parent::jsonSerialize(), [
             'defaultSearch' => $this->defaultSearch,
-            'showTitle' => $this->showTitle
+            'showTitle' => $this->showTitle,
         ]);
 
         return $result;
