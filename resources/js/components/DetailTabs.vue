@@ -18,13 +18,13 @@
               aria-label="Tabs"
               class="tab-menu"
           >
-            <a
-                v-for="(tab, key) in tabs"
+            <Button
+                v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
                 :dusk="tab.slug + '-tab'"
                 :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'nt-text-gray-800 dark:nt-text-gray-50'"
                 class="tab-item"
-                @click="handleTabClick(tab)"
+                @click.prevent="handleTabClick(tab)"
             >
               <span class="capitalize">{{ tab.properties.title }}</span>
               <span
@@ -37,14 +37,13 @@
                   aria-hidden="true"
                   class="nt-bg-transparent nt-absolute nt-inset-x-0 nt-bottom-0 nt-h-0.5"
               ></span>
-            </a>
+            </Button>
           </nav>
         </div>
       </div>
 
       <div
-          v-for="(tab, index) in tabs"
-          v-show="getIsTabCurrent(tab)"
+          v-for="(tab, index) in getSortedTabs(tabs)"
           :key="'related-tabs-fields' + index"
           :ref="getTabRefName(tab)"
           :class="[
@@ -53,20 +52,24 @@
                       tab.classes
                   ]"
           :label="tab.name"
+
+
       >
-        <div v-if="getIsTabCurrent(tab)" :class="getBodyClass(tab)">
-          <component
-              :is="getComponentName(field)"
-              v-for="(field, index) in tab.fields"
-              :key="index"
-              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-              :field="field"
-              :index="index"
-              :resource="resource"
-              :resource-id="resourceId"
-              :resource-name="resourceName"
-              @actionExecuted="actionExecuted"
-          />
+        <div :class="getBodyClass(tab)">
+          <KeepAlive v-for="(field, index) in tab.fields" :key="index">
+            <component
+                :is="getComponentName(field)"
+                v-for="(field, index) in tab.fields"
+                :key="index"
+                :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                :field="field"
+                :index="index"
+                :resource="resource"
+                :resource-id="resourceId"
+                :resource-name="resourceName"
+                @actionExecuted="actionExecuted"
+            />
+          </KeepAlive>
         </div>
       </div>
     </div>
@@ -77,6 +80,7 @@
 import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
+import _ from "lodash";
 
 export default {
   mixins: [BehavesAsPanel],
@@ -172,6 +176,7 @@ export default {
         tabs[field.tabSlug] = {
           name: field.tab,
           slug: field.tabSlug,
+          position: field.tabPosition,
           init: false,
           listable: field.listableTab,
           fields: [],
@@ -229,6 +234,16 @@ export default {
     getIsTabCurrent(tab) {
       return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
     },
+
+    /**
+     * Sort the tabs object by their respective positions using lodash
+     *
+     * @param tabs
+     * @returns {object}
+     */
+    getSortedTabs(tabs) {
+      return _.orderBy(tabs, [c => c.position], ['asc']);
+    }
 
   },
   beforeDestroy() {
