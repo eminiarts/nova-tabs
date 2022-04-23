@@ -7,7 +7,7 @@
         <p
           v-if="panel.helpText"
           :class="panel.helpText ? 'tabs-mt-2' : 'tabs-mt-3'"
-          class="tabs-text-gray-500 tabs-text-sm tabs-fotabs-semibold tabs-italic"
+          class="tabs-text-gray-500 tabs-text-sm tabs-font-semibold tabs-italic"
           v-html="panel.helpText"
         ></p>
       </slot>
