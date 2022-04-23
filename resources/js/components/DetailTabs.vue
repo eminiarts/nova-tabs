@@ -77,7 +77,7 @@
 import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
-import _ from "lodash";
+import orderBy from 'lodash/orderBy';
 
 export default {
   mixins: [BehavesAsPanel],
