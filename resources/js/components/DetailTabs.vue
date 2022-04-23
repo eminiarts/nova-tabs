@@ -250,7 +250,7 @@ export default {
      * @returns {object}
      */
     getSortedTabs(tabs) {
-      return _.orderBy(tabs, [c => c.position], ['asc']);
+      return orderBy(tabs, [c => c.position], ['asc']);
     }
 
   },
