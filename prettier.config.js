@@ -22,7 +22,6 @@ module.exports = {
       files: [
         'resources/js/fields.js',
         'resources/js/components.js',
-        'resources/js/router/routes.js',
       ],
       options: {
         printWidth: 300,
