@@ -100,6 +100,7 @@
                   @file-upload-finished="$emit('file-upload-finished')"
                   :show-help-text="field.helpText != null"
               />
+            </div>
           </KeepAlive>
         </div>
       </div>
