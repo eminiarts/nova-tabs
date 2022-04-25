@@ -78,6 +78,7 @@ import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/Beh
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
 import orderBy from 'lodash/orderBy';
+import { parseLocationHash, updateLocationHash } from '../utils/hash.js';
 
 export default {
   mixins: [BehavesAsPanel],
@@ -186,7 +187,13 @@ export default {
       return tabs;
     }, {});
 
-    this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
+    const routeTabs = parseLocationHash()
+    const currentTabSlug = routeTabs[this.panel.name]
+    if (tabs[currentTabSlug]) {
+      this.handleTabClick(tabs[currentTabSlug])
+    } else {
+      this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
+    }
   },
 
   methods: {
@@ -199,6 +206,21 @@ export default {
      */
     handleTabClick(tab, updateUri = true) {
       this.selectedTab = tab;
+      if (updateUri) {
+        this.updateHash()
+      }
+    },
+
+    /**
+     * Update the location hash to persist route state
+     *
+     * @param tab
+     * @param updateUri
+     */
+    updateHash() {
+      const routeTabs = parseLocationHash()
+      routeTabs[this.panel.name] = this.selectedTab.slug
+      updateLocationHash(routeTabs)
     },
 
     /**
