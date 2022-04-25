@@ -56,29 +56,50 @@
       >
         <div :class="getBodyClass(tab)">
           <KeepAlive>
-            <component
-              :is="getComponentName(field)"
-              v-for="(field, index) in tab.fields"
-              :key="'tab-' + index"
-              ref="fields"
-              :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-              :errors="validationErrors"
-              :field="field"
-              :form-unique-id="formUniqueId"
-              :related-resource-id="relatedResourceId"
-              :related-resource-name="relatedResourceName"
-              :resource-id="resourceId"
-              :resource-name="resourceName"
-              :show-help-text="field.helpText != null"
-              :shown-via-new-relation-modal="shownViaNewRelationModal"
-              :via-relationship="viaRelationship"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              @field-changed="$emit('field-changed')"
-              @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-              @file-upload-started="$emit('file-upload-started')"
-              @file-upload-finished="$emit('file-upload-finished')"
-            />
+            <div
+                v-for="(field, index) in tab.fields"
+                :key="'tab-' + index"
+              >
+              <component
+                v-if="!field.from"
+                :is="getComponentName(field)"
+                ref="fields"
+                :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                :errors="validationErrors"
+                :field="field"
+                :form-unique-id="formUniqueId"
+                :related-resource-id="relatedResourceId"
+                :related-resource-name="relatedResourceName"
+                :resource-id="resourceId"
+                :resource-name="resourceName"
+                :show-help-text="field.helpText != null"
+                :shown-via-new-relation-modal="shownViaNewRelationModal"
+                :via-relationship="viaRelationship"
+                :via-resource="viaResource"
+                :via-resource-id="viaResourceId"
+                @field-changed="$emit('field-changed')"
+                @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                @file-upload-started="$emit('file-upload-started')"
+                @file-upload-finished="$emit('file-upload-finished')"
+              />
+            
+              <component
+                  v-if="field.from"
+                  :is="`${mode}-${field.component}`"
+                  :errors="validationErrors"
+                  :resource-id="getResourceId(field)"
+                  :resource-name="field.resourceName"
+                  :field="field"
+                  :via-resource="field.from.viaResource"
+                  :via-resource-id="field.from.viaResourceId"
+                  :via-relationship="field.from.viaRelationship"
+                  :form-unique-id="relationFormUniqueId"
+                  @field-changed="$emit('field-changed')"
+                  @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                  @file-upload-started="$emit('file-upload-started')"
+                  @file-upload-finished="$emit('file-upload-finished')"
+                  :show-help-text="field.helpText != null"
+              />
           </KeepAlive>
         </div>
       </div>
@@ -91,6 +112,7 @@ import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/Beh
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
 import orderBy from 'lodash/orderBy';
+import { uid } from 'uid/single'
 
 export default {
   mixins: [BehavesAsPanel],
@@ -173,7 +195,8 @@ export default {
       tabs: null,
       activeTab: '',
       selectedTab: {},
-      darkModeClass: ''
+      darkModeClass: '',
+      relationFormUniqueId: '',
     };
   },
 
@@ -219,7 +242,24 @@ export default {
     this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
   },
   methods: {
+    /**
+     * Get the resource ID we pass on to the field component
+     *
+     * @param field
+     * @returns {Number|String|*}
+     */
+    getResourceId(field) {
+      if (field.relationshipType === 'hasOne') {
+        return field.hasOneId
+      }
 
+      if (field.relationshipType === 'morphOne') {
+        return field.hasOneId
+      }
+
+      return this.resourceId;
+    },
+    
     /**
      * Handle tabs being clicked
      *
