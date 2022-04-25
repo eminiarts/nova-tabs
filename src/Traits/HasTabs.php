@@ -37,7 +37,7 @@ trait HasTabs
             return Panel::mutate($name, $fields);
         })->toBase();
 
-        if ($panels->whereIn('component', ['tabs', 'wizard'])->count() === 0) {
+        if ($panels->where('component', 'tabs')->count() === 0) {
             return parent::resolvePanelsFromFields($request, $fields, $label);
         }
 
@@ -47,7 +47,7 @@ trait HasTabs
 
         $panels->transform(function($panel, $key) use($relationshipUnderTabs) {
 
-            if ($panel->component === 'tabs' || $panel->component === 'wizard') {
+            if ($panel->component === 'tabs') {
 
                 foreach ($relationshipUnderTabs as $rel) {
                     if ($panel->meta['fields'][0]->assignedPanel === $rel->meta['fields'][0]->assignedPanel) {
