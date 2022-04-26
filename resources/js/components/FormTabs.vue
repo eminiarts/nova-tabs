@@ -22,7 +22,7 @@
               <Button
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500 tabs-font-bold' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
                 :dusk="tab.slug + '-tab'"
                 class="tab-item"
                 @click.prevent="handleTabClick(tab)"
