@@ -4,6 +4,7 @@
 
 [![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
+1. [Requirements](#Requirements)
 1. [Installation](#Installation)
 2. [Usage](#Usage)
     1. [Tabs Panel](#tabs-panel)
@@ -17,6 +18,13 @@
     2. [Default search](#default-search)
     3. [Display more than 5 items](#display-more-than-5-items)
 5. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
+
+## Requirements
+
+- `php: ^8.0`
+- `laravel/nova: ^4.0`
+
+For Laravel Nova Version 3, please use nova-tabs v1 instead.
 
 ## Installation
 
@@ -201,7 +209,7 @@ class Client extends Resource
 ![image](https://user-images.githubusercontent.com/3426944/51790797-055a6080-219a-11e9-8da4-33a621093265.png)
 
 
-Tabs are always shown on edit view as of Nova 4.
+Tabs are always shown on edit view as of Nova 4 for now.
 
 ## Tab object
 
@@ -226,8 +234,9 @@ By default, any `HasMany`, `BelongsToMany` and `MorphMany` fields show 5 items i
    - Even if you have other panels, tabs will always show up first and has the toolbar.
    - TabsOnEdit is gone and non relational tabs will simply always display on edit.
    - I don't use dusk, so didn't check the tests for it either, they might be broken.
-   - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4's panelsWithDefaultLabel method in Laravel\Nova\ResolveFields to enable tabs on edit pages.
-   - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs
+   - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4 default panel methods in Laravel\Nova\ResolveFields.
+   - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs.
+   - Added position method to Tab to fix relational tabs showing up last.
 
 ## Credits
 Banner was created with https://banners.beyondco.de/
