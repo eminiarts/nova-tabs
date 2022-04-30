@@ -1,8 +1,8 @@
 
 export function parseLocationHash() {
-    var hash = window.location.hash.substr(1);
+    var hash = window.location.hash;
     return hash.split('&').reduce(function (res, item) {
-        var parts = item.split('=');
+        var parts = decodeURIComponent(item).split('=');
         if (parts[0].length) {
             res[parts[0]] = parts[1];
         }
