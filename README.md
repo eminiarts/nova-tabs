@@ -17,7 +17,7 @@
     1. [Tab](#tab)
     2. [Default search](#default-search)
     3. [Display more than 5 items](#display-more-than-5-items)
-5. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
+5. [Upgrade to 2.0.0](#upgrade-to-2.0.0)
 
 ## Requirements
 
