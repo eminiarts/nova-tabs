@@ -1,233 +1,333 @@
 <template>
-    <div class="relationship-tabs-panel card w-full">
-        <div class="flex flex-row overflow-x-auto">
-            <div
-                v-for="(tab, key) in tabs"
-                class="py-5 px-8 border-b-2 focus:outline-none tab cursor-pointer flex items-center"
-                :class="getTabClass(tab)"
+  <div :class="darkModeClass">
+    <div class="tab-group">
+      <slot>
+        <Heading v-if="panel.showTitle" :level="1" v-text="panel.name"/>
+
+        <p
+          v-if="panel.helpText"
+          :class="panel.helpText ? 'tabs-mt-2' : 'tabs-mt-3'"
+          class="tabs-text-gray-500 tabs-text-sm tabs-font-semibold tabs-italic"
+          v-html="panel.helpText"
+        ></p>
+      </slot>
+
+      <div class="tab-card">
+        <div id="tabs">
+          <div class="block">
+            <nav
+              aria-label="Tabs"
+              class="tab-menu"
+            >
+              <Button
+                v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
                 :dusk="tab.slug + '-tab'"
-                @click="handleTabClick(tab, $event)"
-            >
-                <tab-title :tab="tab" />
-            </div>
-            <div class="flex-1 border-b-2 border-40"></div>
+                class="tab-item"
+                @click.prevent="handleTabClick(tab)"
+              >
+                <span class="capitalize">{{ tab.properties.title }}</span>
+                <span
+                  v-if="getIsTabCurrent(tab)"
+                  aria-hidden="true"
+                  class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
+                ></span>
+                <span
+                  v-else
+                  aria-hidden="true"
+                  class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
+                ></span>
+              </Button>
+            </nav>
+          </div>
         </div>
+
         <div
-            v-for="(tab, index) in tabs"
-            v-show="tab.slug === activeTab"
-            :key="'related-tabs-fields' + index"
-            :label="tab.name"
+          v-for="(tab, index) in getSortedTabs(tabs)"
+          v-show="getIsTabCurrent(tab)"
+          :key="'related-tabs-fields' + index"
+          :ref="getTabRefName(tab)"
+          :class="[
+                        'tab fields-tab',
+                        getIsTabCurrent(tab) ? 'block' : 'hidden',
+                        tab.slug,
+                    ]"
+          :label="tab.name"
         >
-            <div
-                :class="getBodyClass(tab)"
-            >
+          <div :class="getBodyClass(tab)">
+            <KeepAlive>
+              <div
+                  v-for="(field, index) in tab.fields"
+                  :key="'tab-' + index"
+                >
                 <component
-                    ref="fields"
-                    v-for="(field, index) in tab.fields"
-                    :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-                    :key="'tab-' + index"
-                    :is="'form-' + field.component"
-                    :resource-name="resourceName"
-                    :resource-id="resourceId"
-                    :resource="resource"
-                    :errors="errors"
-                    :field="field"
-                    :via-resource="viaResource"
-                    :via-resource-id="viaResourceId"
-                    :via-relationship="viaRelationship"
-                    @actionExecuted="actionExecuted"
-                    :show-help-text="field.helpText !== null"
+                  v-if="!field.from"
+                  :is="getComponentName(field)"
+                  ref="fields"
+                  :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                  :errors="validationErrors"
+                  :field="field"
+                  :form-unique-id="formUniqueId"
+                  :related-resource-id="relatedResourceId"
+                  :related-resource-name="relatedResourceName"
+                  :resource-id="resourceId"
+                  :resource-name="resourceName"
+                  :show-help-text="field.helpText != null"
+                  :shown-via-new-relation-modal="shownViaNewRelationModal"
+                  :via-relationship="viaRelationship"
+                  :via-resource="viaResource"
+                  :via-resource-id="viaResourceId"
+                  @field-changed="$emit('field-changed')"
+                  @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                  @file-upload-started="$emit('file-upload-started')"
+                  @file-upload-finished="$emit('file-upload-finished')"
                 />
-            </div>
+
+                <component
+                    v-if="field.from"
+                    :is="`${mode}-${field.component}`"
+                    :errors="validationErrors"
+                    :resource-id="getResourceId(field)"
+                    :resource-name="field.resourceName"
+                    :field="field"
+                    :via-resource="field.from.viaResource"
+                    :via-resource-id="field.from.viaResourceId"
+                    :via-relationship="field.from.viaRelationship"
+                    :form-unique-id="relationFormUniqueId"
+                    @field-changed="$emit('field-changed')"
+                    @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                    @file-upload-started="$emit('file-upload-started')"
+                    @file-upload-finished="$emit('file-upload-finished')"
+                    :show-help-text="field.helpText != null"
+                />
+              </div>
+            </KeepAlive>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import {
-    FormField,
-    HandlesValidationErrors,
-    InteractsWithResourceInformation,
-} from 'laravel-nova';
-
-import {changeActiveTab} from '@/util/tab-updater';
-import TabTitle from './TabTitle';
+import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
+import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
+import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
+import orderBy from 'lodash/orderBy';
+import { uid } from 'uid/single'
 
 export default {
-    components: {
-        TabTitle,
+  mixins: [BehavesAsPanel],
+
+  components: {Card, Heading},
+
+  props: {
+    shownViaNewRelationModal: {
+      type: Boolean,
+      default: false,
     },
-    mixins: [
-        HandlesValidationErrors,
-        FormField,
-        InteractsWithResourceInformation,
-    ],
-    props: [
-        'resource',
-        'resourceName',
-        'resourceId',
-        'field',
-        'errors',
-        'viaResource',
-        'viaRelationship',
-        'viaResourceId',
-    ],
-    data() {
-        return {
-            tabs: null,
-            activeTab: '',
+
+    panel: {
+      type: Object,
+      required: true,
+    },
+
+    name: {
+      default: 'Panel',
+    },
+
+    mode: {
+      type: String,
+      default: 'form',
+    },
+
+    fields: {
+      type: Array,
+      default: [],
+    },
+
+    formUniqueId: {
+      type: String,
+    },
+
+    validationErrors: {
+      type: Object,
+      required: true,
+    },
+
+    resourceName: {
+      type: String,
+      required: true,
+    },
+
+    resourceId: {
+      type: [Number, String],
+    },
+
+    relatedResourceName: {
+      type: String,
+    },
+
+    relatedResourceId: {
+      type: [Number, String],
+    },
+
+    viaResource: {
+      type: String,
+    },
+
+    viaResourceId: {
+      type: [Number, String],
+    },
+
+    viaRelationship: {
+      type: String,
+    },
+  },
+
+  emits: [
+    'field-changed',
+    'update-last-retrieved-at-timestamp',
+    'file-upload-started',
+    'file-upload-finished',
+  ],
+
+  data() {
+    return {
+      tabs: null,
+      activeTab: '',
+      selectedTab: {},
+      darkModeClass: '',
+      relationFormUniqueId: '',
+    };
+  },
+
+  /**
+   * Get the tabs and their respective fields when mounted
+   * and show the first tab by default.
+   */
+  mounted() {
+    this.observer = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        const newValue = m.target.getAttribute(m.attributeName);
+        this.$nextTick(() => {
+          this.darkModeClass = newValue.includes('dark') ? 'tabs-dark' : ''
+        });
+      }
+    });
+
+    this.observer.observe(document.documentElement, {
+      attributes: true,
+      attributeOldValue: true,
+      attributeFilter: ['class'],
+    });
+
+    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'tabs-dark' : '';
+
+    const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
+      if (!(field.tabSlug in tabs)) {
+        tabs[field.tabSlug] = {
+          name: field.tab,
+          slug: field.tabSlug,
+          init: false,
+          listable: field.listableTab,
+          fields: [],
+          properties: field.tabInfo,
         };
+      }
+
+      tabs[field.tabSlug].fields.push(field);
+
+      return tabs;
+    }, {});
+
+    this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
+  },
+  methods: {
+    /**
+     * Get the resource ID we pass on to the field component
+     *
+     * @param field
+     * @returns {Number|String|*}
+     */
+    getResourceId(field) {
+      if (field.relationshipType === 'hasOne') {
+        return field.hasOneId
+      }
+
+      if (field.relationshipType === 'morphOne') {
+        return field.hasOneId
+      }
+
+      return this.resourceId;
     },
-    watch: {
-        errors: {
-            handler: function() {
-                for (const key of Object.keys(this.tabs)) {
-                    if (this.tabHasErrors(this.tabs[key])) {
-                        this.handleTabClick(this.tabs[key]);
-                        break;
-                    }
-                }
-            },
-            deep: true,
-        },
+
+    /**
+     * Handle tabs being clicked
+     *
+     * @param tab
+     * @param updateUri
+     */
+    handleTabClick(tab, updateUri = true) {
+      this.selectedTab = tab;
     },
-    mounted() {
-        const tabs = this.tabs = _.toArray(this.field.fields).reduce((tabs, field) => {
-            if (!Object.hasOwnProperty.call(tabs, field.tabSlug)) {
-                tabs[field.tabSlug] = {
-                    name: field.tab,
-                    slug: field.tabSlug,
-                    listable: field.listableTab,
-                    fields: [],
-                    properties: field.tabInfo,
-                };
-            }
 
-            tabs[field.tabSlug].fields.push(field);
-
-            return tabs;
-        }, {});
-
-        if (this.$route.query.tab !== undefined && tabs[this.$route.query.tab] !== undefined) {
-            this.handleTabClick({
-                slug: this.$route.query.tab,
-            });
-        } else {
-            this.handleTabClick(tabs[Object.keys(tabs)[0]], false);
-        }
+    /**
+     * Get the component name.
+     *
+     * @param field
+     * @returns {string}
+     */
+    getComponentName(field) {
+      return field.prefixComponent
+        ? 'form-' + field.component
+        : field.component
     },
-    methods: {
-        /**
-         * Fill the given FormData object with the field's internal value.
-         */
-        fill(formData) {
-            _.each(this.field.fields, field => {
-                field.fill(formData);
-            });
-        },
-        /**
-         * Handle the actionExecuted event and pass it up the chain.
-         */
-        actionExecuted() {
-            this.$emit('actionExecuted');
-        },
-        handleTabClick(tab, updateUri = true) {
-            const currentTab = this.$router.currentRoute.query;
 
-            tab.init = true;
-            this.activeTab = tab.slug;
-
-            if (updateUri && (!currentTab || currentTab.tab !== tab.slug)) {
-                changeActiveTab(this.$router, tab.slug);
-            }
-
-            // When code fields are not visible initially they are not loaded
-            // See https://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
-            setTimeout(this.refreshCodeFields, 1);
-        },
-        tabHasErrors(tab) {
-            const hasErrors = Object.keys(this.errors.errors).some(key => {
-                return _.includes(tab.fields.map(o => o.attribute), key);
-            });
-
-            tab.hasErrors = hasErrors;
-
-            return hasErrors;
-        },
-        getTabClass(tab) {
-            const classes = [];
-
-            if (this.activeTab === tab.slug) {
-                classes.push('text-grey-black font-bold border-primary');
-            } else {
-                classes.push('text-grey font-semibold border-40');
-            }
-
-            if (this.tabHasErrors(tab)) {
-                classes.push('text-error');
-            }
-
-            return classes.concat(tab.properties.tabClass);
-        },
-        getBodyClass(tab) {
-            const classes = [];
-
-            if (!tab.listable) {
-                classes.push('px-6 py-3');
-            }
-
-            return classes.concat(tab.properties.bodyClass);
-        },
-        refreshCodeFields() {
-            this.$refs.fields
-                .filter(field => 'codemirror' in field)
-                .forEach(field => field.codemirror.refresh());
-        },
+    /**
+     * Get body class for tabbed field panel
+     *
+     * @param tab
+     * @returns {string}
+     */
+    getBodyClass(tab) {
+      return tab.properties.bodyClass;
     },
+
+    /**
+     * Get reference name for tab
+     *
+     * @param tab
+     * @returns {string}
+     */
+    getTabRefName(tab) {
+      return `tab-${tab.slug}`;
+    },
+
+    /**
+     * Check if the specified tab is the current opened one
+     *
+     * @param tab
+     * @returns {boolean}
+     */
+    getIsTabCurrent(tab) {
+      return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+    },
+
+    /**
+     * Sort the tabs object by their respective positions using lodash
+     *
+     * @param tabs
+     * @returns {object}
+     */
+    getSortedTabs(tabs) {
+      return orderBy(tabs, [c => c.position], ['asc']);
+    }
+
+  },
+  beforeDestroy() {
+    this.observer.disconnect();
+  },
 };
 </script>
-
-<style lang="scss">
-.relationship-tabs-panel {
-    .text-error {
-        color: var(--danger);
-
-        &.border-primary {
-            border-color: var(--danger);
-        }
-    }
-
-    .card {
-        box-shadow: none;
-    }
-
-    .tab {
-        padding-top: 1.25rem;
-        padding-bottom: 1.25rem;
-    }
-
-    .tab-content > div > .relative > .flex {
-        justify-content: flex-end;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translateY(-100%);
-
-        align-items: center;
-        height: 62px;
-
-        > .mb-6 {
-            margin-bottom: 0;
-        }
-
-        > .w-full {
-            width: auto;
-            margin-left: 1.5rem;
-        }
-    }
-}
-</style>

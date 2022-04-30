@@ -1,0 +1,36 @@
+@tailwind components;
+@tailwind utilities;
+
+.tab-group + div {
+    @apply tabs-bg-white;
+}
+
+.relationship-tabs-panel.card .flex-no-shrink.ml-auto.mb-6 {
+    margin-bottom: 0;
+}
+.tab-group .tab-menu {
+    @apply tabs-relative tabs-z-0 tabs-divide-x tabs-divide-gray-200 tabs-border-gray-200 dark:tabs-border-gray-700 dark:tabs-divide-gray-700 tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-t-lg tabs-border-b tabs-mx-auto tabs-overflow-x-auto;
+    display: flex; /* Set flex display manually to circumvent tailwind circular dependency */
+}
+.tab-group .tab-item {
+    @apply tabs-relative tabs-min-w-min tabs-flex-shrink-0 tabs-flex-1 tabs-overflow-hidden tabs-bg-white dark:tabs-bg-gray-800 tabs-py-4 tabs-px-4 tabs-font-semibold tabs-text-center tabs-cursor-pointer hover:tabs-bg-gray-50 hover:dark:tabs-bg-gray-700 focus:tabs-z-10 first:tabs-rounded-tl-lg last:tabs-rounded-tr-lg;
+}
+.tab-group .tab.fields-tab {
+    @apply tabs-py-2 tabs-px-6;
+}
+.tab-group .tab-card {
+    @apply tabs-shadow tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-b-lg tabs-rounded-t-lg;
+}
+.tab-group .tab h1 {
+    @apply tabs-hidden;
+}
+.tab-group h1 + .flex {
+    @apply tabs-px-4 tabs-pt-4 tabs-pb-0;
+}
+.tab-group h1 + .flex > div.mb-6,
+.tab-group h1 + .flex > div > div.mb-6 {
+    @apply tabs-mb-0;
+}
+.tab-group h1 + .flex + div {
+    @apply tabs-shadow-none tabs-rounded-t-none tabs-rounded-b-lg;
+}

@@ -4,20 +4,27 @@
 
 [![Latest Version on Github](https://img.shields.io/packagist/v/eminiarts/nova-tabs.svg?style=flat)](https://packagist.org/packages/eminiarts/nova-tabs)
 
+1. [Requirements](#Requirements)
 1. [Installation](#Installation)
 2. [Usage](#Usage)
     1. [Tabs Panel](#tabs-panel)
-    2. [Tabs Panel with Toolbar](#tabs-panel-with-toolbar)
-    3. [Relationship Tabs](#relationship-tabs)
-    4. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
-    5. [Actions in Tabs](#actions-in-tabs)
-    6. [Tabs on Edit View](#tabs-on-edit-view)
+    2. [Relationship Tabs](#relationship-tabs)
+    3. [Combine Fields and Relations in Tabs](#combine-fields-and-relations-in-tabs)
+    4. [Actions in Tabs](#actions-in-tabs)
+    5. [Tabs on Edit View](#tabs-on-edit-view)
 3. [Tab object](#tab-object)
 4. [Customization](#customization)
     1. [Tab](#tab)
     2. [Default search](#default-search)
     3. [Display more than 5 items](#display-more-than-5-items)
 5. [Upgrade to 1.0.0](#upgrade-to-1.0.0)
+
+## Requirements
+
+- `php: ^8.0`
+- `laravel/nova: ^4.0`
+
+For Laravel Nova Version 3, please use nova-tabs v1 instead.
 
 ## Installation
 
@@ -38,23 +45,28 @@ You can group fields of a resource into tabs, you can use an array or a Tab obje
 ```php
 // in app/Nova/Resource.php
 
+use Eminiarts\Tabs\Traits\HasTabs;
 use Eminiarts\Tabs\Tabs;
 
-public function fields()
+class User extends Resource
 {
-    return [
-
-        new Tabs('Tabs', [
-            'Balance'    => [
-                Number::make('Balance', 'balance'),
-                Number::make('Total', 'total'),
-            ],
-            'Other Info' => [
-                Number::make('Paid To Date', 'paid_to_date'),
-            ],
-        ]),
-
-    ];
+    use HasTabs;
+    
+    public function fields(Request $request)
+    {
+       return [
+   
+           new Tabs('Some Title', [
+               'Balance'    => [
+                   Number::make('Balance', 'balance'),
+                   Number::make('Total', 'total'),
+               ],
+               'Other Info' => [
+                   Number::make('Paid To Date', 'paid_to_date'),
+               ],
+           ]),
+       ];
+   }
 }
 ```
 
@@ -63,13 +75,18 @@ or
 ```php
 // in app/Nova/Resource.php
 
+use Eminiarts\Tabs\Traits\HasTabs;
 use Eminiarts\Tabs\Tabs;
 use Eminiarts\Tabs\Tab;
 
-public function fields()
+class User extends Resource
 {
-    return [
-        Tabs::make('Tabs', [
+    use HasTabs;
+    
+    public function fields(Request $request)
+    {
+       return [
+         Tabs::make('Some Title', [
             Tab::make('Balance', [
                 Number::make('Balance', 'balance'),
                 Number::make('Total', 'total'),
@@ -77,77 +94,30 @@ public function fields()
             Tab::make('Other Info', [
                 Number::make('Paid To Date', 'paid_to_date')
             ]),
-        ]),
-
-    ];
-}
+         ]),
+      ];
+    }
+ }
 ```
 
-The first tab in every `Tabs` instance will be auto-selected. You can opt out from this by calling `selectFirstTab(false)` or `dontSelectFirstTab()` on it.
-
-```php
-public function fields()
-{
-    return [
-        Tabs::make('Tabs', [
-            Tab::make('Balance', [
-                Number::make('Balance', 'balance'),
-                Number::make('Total', 'total'),
-            ]),
-            Tab::make('Other Info', [
-                Number::make('Paid To Date', 'paid_to_date')
-            ]),
-        ])
-            ->selectFirstTab(false) // or ->dontSelectFirstTab(),
-    ];
-}
-```
-
-### Tabs with Toolbar
-
-If you are only using Tabs without another default Panel, you can set `withToolbar` to `true`.
-
-![image](https://user-images.githubusercontent.com/3426944/50448780-608efe00-0923-11e9-9d55-3dc3d8d896e1.png)
-
-
-```php
-// in app/Nova/Resource.php
-
-use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\Tab;
-
-public function fields(Request $request)
-{
-    return [
-        Tabs::make('Contact Details', [
-            Tab::make('Address', [
-                ID::make('Id', 'id')->rules('required'),
-                Text::make('Email', 'email')->sortable(),
-                Text::make('Phone', 'phone')->sortable(),
-            ]),
-            Tab::make('Relations', [
-                BelongsTo::make('User'),
-                MorphTo::make('Contactable')->types([
-                    Client::class,
-                    Invoice::class,
-                ]),
-            ]),
-        ])->withToolbar(),
-    ];
-}
-```
+The first tab in every `Tabs` instance will be auto-selected. 
 
 ### Relationship Tabs
 
 ![image](https://user-images.githubusercontent.com/3426944/50060715-a3b8d680-0197-11e9-8f98-1cac8cf3fd83.png)
+These are a bit outdated, as the search and create buttons now show within the panel down where the actual content is displayed, not in the tab panel.
 
 ```php
 // in app/Nova/Resource.php
 
 use Eminiarts\Tabs\Tabs;
+use Laravel\Nova\Fields\HasMany;
+use Eminiarts\Tabs\Traits\HasTabs;
 
 class User extends Resource
 {
+    use HasTabs;
+    
     public function fields(Request $request)
     {
         return [
@@ -166,22 +136,33 @@ class User extends Resource
 
 ![image](https://user-images.githubusercontent.com/3426944/51089909-b3b2de80-1774-11e9-9100-d323accda7db.png)
 
+
 ![image](https://user-images.githubusercontent.com/3426944/51089905-aa297680-1774-11e9-9611-4446ca13ab4a.png)
 
 ```php
 use Eminiarts\Tabs\Tabs;
+use Laravel\Nova\Fields\HasMany;
+use Eminiarts\Tabs\Traits\HasTabs;
 
-public function fields(Request $request)
+use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
+
+class User extends Resource
 {
-    return [
-        Tabs::make(__('Client Custom Details'), [
-            new Panel(__('Details'), [
-                    ID::make('Id', 'id')->rules('required')->hideFromIndex(),
-                    Text::make('Name', 'name'),
-            ]),
-            HasMany::make('Invoices')
-        ]),
-    ];
+    use HasTabs;
+    
+    public function fields(Request $request)
+    {
+          return [
+              Tabs::make(__('Client Custom Details'), [
+                  new Panel(__('Details'), [
+                          ID::make('Id', 'id')->rules('required')->hideFromIndex(),
+                          Text::make('Name', 'name'),
+                  ]),
+                  HasMany::make('Invoices')
+              ]),
+         ];
+    }
 }
 ```
 
@@ -194,11 +175,13 @@ If your Model uses the `Laravel\Nova\Actions\Actionable` Trait you can put the A
 
 use Eminiarts\Tabs\Tabs;
 use Eminiarts\Tabs\Tab;
-use Eminiarts\Tabs\ActionsInTabs; // Add this Trait
+use Eminiarts\Tabs\Traits\HasTabs;
+use Eminiarts\Tabs\Traits\HasActionsInTabs; // Add this Trait
 use Laravel\Nova\Actions\ActionResource; // Import the Resource
 
 class Client extends Resource
 {
+    use HasTabs;
     use ActionsInTabs; // Use this Trait
 
     public function fields(Request $request)
@@ -215,7 +198,7 @@ class Client extends Resource
                 Tab::make('Actions', [
                     $this->actionfield(), // Add Actions whererver you like.
                 ]),
-            ])->withToolbar(),
+            ]),
         ];
     }
 }
@@ -226,20 +209,7 @@ class Client extends Resource
 ![image](https://user-images.githubusercontent.com/3426944/51790797-055a6080-219a-11e9-8da4-33a621093265.png)
 
 
-If you want to show Tabs on the Edit View, use the `TabsOnEdit` Trait in your Resource.
-
-```php
-// in app/Nova/Resource.php
-
-use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\TabsOnEdit; // Add this Trait
-
-class Client extends Resource
-{
-    use TabsOnEdit; // Use this Trait
-    //...
-}
-```
+Tabs are always shown on edit view as of Nova 4 for now.
 
 ## Tab object
 
@@ -250,51 +220,23 @@ As of v1.4.0 it's possible to use a `Tab` class instead of an array to represent
 | name        | `string`            | `null`      | The name of the tab, used for the slug.  Defaults to the title if not set                                                                                              |
 | showIf      | `bool` or `Closure` | `null`      | If the result is truthy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                   |
 | showUnless  | `bool` or `Closure` | `null`      | If the result is falsy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                    |
-| titleAsHtml | `bool`              | `false`     | Whether the given title should be rendered as HTML.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.**                         |
-| beforeIcon  | `string`            | `null`      | An icon (or anything else really) you want to render in front of the title.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.** |
-| afterIcon   | `string`            | `null`      | An icon (or anything else really) you want to render behind the title.  **This potentially leaves you vulnerable for an XSS attack. Take precaution using this.**      |
-| tabClass    | `string` or `array` | Empty array | A string or string array of classes to add to the tab.  This sets the `tabClass` property, if you want to append you can use `addTabClass` instead.                    |
 | bodyClass   | `string` or `array` | Empty array | A string or string array of classes to add to the tab's body.  This sets the `bodyClass` property, if you want to append you can use `addBodyClass` instead.           |
 
 ## Customization
-
-### Default search
-
-By default, the Tabs component moves the search input and the create button to the tabs. If you have a lot of tabs, you can move them back down to its own line:
-
-```php
-// in app/Nova/Resource.php
-
-use Eminiarts\Tabs\Tabs;
-
-class User extends Resource
-{
-
-    public function fields(Request $request)
-    {
-        return [
-            Tabs::make('Relations', [
-                HasMany::make('Invoices')
-            ])->defaultSearch(true),
-        ];
-    }
-}
-```
-
-Set `->defaultSearch(true)` to revert it to its default.
-
-![image](https://user-images.githubusercontent.com/3426944/50060732-dbc01980-0197-11e9-8f0c-6014132539a2.png)
 
 ### Display more than 5 items
 
 By default, any `HasMany`, `BelongsToMany` and `MorphMany` fields show 5 items in their index. You can use Nova's built-in static property `$perPageViaRelationship` on the respective resource to show more (or less).
  
-## Upgrade to 1.0.0
-Thanks to [dkulyk/nova-tabs](https://github.com/dkulyk/nova-tabs) the Package got a lot simpler. 
-
-- No need to use a Trait anymore. Remove all `AvailableTabFields` Traits in your Resources.
-- Everything is in `Tabs` now. There is no `TabsPanel` anymore. Remove all `TabsPanels` and adjust your Fields according to this Readme.
+## Upgrade to 2.0.0
+- Breaking changes
+   - Removed selectFirstTab, first tab is always displayed first.
+   - Even if you have other panels, tabs will always show up first and has the toolbar.
+   - TabsOnEdit is gone and non relational tabs will simply always display on edit.
+   - I don't use dusk, so didn't check the tests for it either, they might be broken.
+   - Added Eminiarts\Tabs\Traits\HasTabs to overwrite Nova 4 default panel methods in Laravel\Nova\ResolveFields.
+   - Moved Eminiarts\Tabs\ActionsInTabs to Eminiaarts\Tabs\Traits\HasActionsInTabs.
+   - Added position method to Tab to fix relational tabs showing up last.
 
 ## Credits
-
 Banner was created with https://banners.beyondco.de/
