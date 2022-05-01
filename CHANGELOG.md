@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2 - 2022-05-01
+- Fixed a bug where padding was wrong when not showing toolbar
+
 ## 2.0.1 - 2022-05-01
 - Fixed a bug where clicking a tab would scroll the page to top
 - Fixed a bug with tab persistence supplying the wrong location has

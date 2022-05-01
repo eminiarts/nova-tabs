@@ -12,7 +12,11 @@
         ></p>
       </slot>
 
-      <div class="tab-card">
+      <div class="tab-card"
+           :class="[
+          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3 tabs-py-2' : ''
+        ]"
+      >
         <div id="tabs">
           <div class="block">
             <nav
