@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.3 - 2022-05-01
+- Fixed padding and removed console.log
+
 ## 2.0.2 - 2022-05-01
 - Fixed a bug where padding was wrong when not showing toolbar
 
