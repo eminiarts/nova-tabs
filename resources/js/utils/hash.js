@@ -11,7 +11,6 @@ export function parseLocationHash() {
 }
 export function updateLocationHash(data) {
   const out = [];
-  console.log(data);
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
         out.push(key + '=' + encodeURIComponent(data[key]));

@@ -14,7 +14,7 @@
 
       <div class="tab-card"
            :class="[
-          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3 tabs-py-2' : ''
+          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
         ]"
       >
         <div id="tabs">
