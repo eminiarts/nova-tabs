@@ -88,7 +88,7 @@ trait HasTabs
                 );
             })
             ->tap(function ($panels) use ($label): void {
-                $panels->where('component', 'tabs')->first();
+                $panels->where('component', 'tabs')->isEmpty() ? $panels->where('component', 'tabs')->first() : $panels->first()->withToolbar();
             });
     }
 }
