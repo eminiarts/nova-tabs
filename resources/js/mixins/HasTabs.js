@@ -26,6 +26,7 @@ export default {
     },
     formUniqueId: {
       type: String,
+      required: false
     },
     validationErrors: {
       type: Object,
@@ -121,7 +122,7 @@ export default {
         return tabs;
       }, {});
     },
-    
+
     /**
      * Set Observers
      * @returns void
@@ -135,7 +136,7 @@ export default {
           });
         }
       });
-  
+
       this.observer.observe(document.documentElement, {
         attributes: true,
         attributeOldValue : true,
@@ -176,9 +177,6 @@ export default {
 
     /**
      * Update the location hash to persist route state
-     *
-     * @param tab
-     * @param updateUri
      */
     setLocationHash() {
       const routeTabs = parseLocationHash()
