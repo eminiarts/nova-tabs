@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1 - 2022-05-01
+- Fixed a bug where clicking a tab would scroll the page to top
+- Fixed a bug with tab persistence supplying the wrong location has
+- Fixed a bug where relationship panels that aren't under tabs would show up wrong
+- Fixed a bug where showToolbar isn't utilized properly
+
 ## 2.0.0 - 2022-04-30
 - Nova 4 compatible
 - Removed selectFirstTab, first tab is always displayed first.
