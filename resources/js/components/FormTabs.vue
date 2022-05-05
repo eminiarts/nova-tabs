@@ -61,10 +61,10 @@
         >
           <div :class="getBodyClass(tab)">
             <KeepAlive>
-              <div
-                  v-for="(field, index) in tab.fields"
-                  :key="'tab-' + index"
-                >
+              <template
+                v-for="(field, index) in tab.fields"
+                :key="'tab-' + index"
+              >
                 <component
                   v-if="!field.from"
                   :is="getComponentName(field)"
@@ -105,7 +105,7 @@
                     @file-upload-finished="$emit('file-upload-finished')"
                     :show-help-text="field.helpText != null"
                 />
-              </div>
+              </template>
             </KeepAlive>
           </div>
         </div>
