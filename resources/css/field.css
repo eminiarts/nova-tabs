@@ -18,6 +18,9 @@
 .tab-group .tab.fields-tab {
     @apply tabs-py-2 tabs-px-6;
 }
+form .tab-group .tab.fields-tab {
+    @apply tabs-py-2 tabs-px-0;
+}
 .tab-group .tab-card {
     @apply tabs-shadow tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-b-lg tabs-rounded-t-lg;
 }

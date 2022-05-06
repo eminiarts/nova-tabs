@@ -168,11 +168,33 @@ export default {
      * @param tab
      * @param updateUri
      */
-    handleTabClick(tab, updateUri = true) {
+    handleTabClick(tab, updateUri = true, refreshCodeMirror = true) {
       this.selectedTab = tab;
+
       if (updateUri) {
         this.setLocationHash()
       }
+
+      if (refreshCodeMirror) {
+        this.refreshCodeMirror(tab);
+      }
+    },
+
+    refreshCodeMirror(tab) {
+      setTimeout(() => {
+        const tabRef = this.getTabRefName(tab);
+        if (!tabRef) return;
+
+        let refs = this.$refs[tabRef];
+        if (!refs.length) return;
+
+        refs.forEach(ref => {
+          const cmList = ref.querySelectorAll('.CodeMirror');
+          if (!cmList.length) return;
+
+          cmList.forEach(cm => cm.CodeMirror.refresh());
+        });
+      }, 1);
     },
 
     /**
