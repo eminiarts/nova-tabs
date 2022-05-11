@@ -69,7 +69,7 @@ class Tabs extends Panel
      */
     public function withSlug($slug) {
 
-        $this->slug = is_bool($slug) ? $slug = Str::slug($this->preservedName, '_') : $slug;
+        $this->slug = is_bool($slug) ? ($slug ? Str::slug($this->preservedName, '_') : null) : $slug;
 
         return $this;
     }
