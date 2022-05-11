@@ -43,6 +43,7 @@ class Tabs extends Panel
     public $slug = null;
 
     private $preservedName;
+    private $retainTabPosition = false;
 
     /**
      * Create a new panel instance.
@@ -71,6 +72,17 @@ class Tabs extends Panel
 
         $this->slug = is_bool($slug) ? ($slug ? Str::slug($this->preservedName, '_') : null) : $slug;
 
+        return $this;
+    }
+
+    /**
+     * Remember tab position across detail/edit
+     *
+     * @param  Boolean $retain
+     * @return $this
+     */
+    public function rememberTabs($retain) {
+        $this->retainTabPosition = $retain;
         return $this;
     }
 
