@@ -85,7 +85,7 @@ export default {
 
     const tabs = this.tabs = this.setTabs();
     const routeTabs = parseLocationHash();
-    const currentTabSlug = routeTabs[this.panel.name];
+    const currentTabSlug = routeTabs[this.panel.slug ?? this.panel.name];
 
     if (tabs[currentTabSlug]) {
       this.handleTabClick(tabs[currentTabSlug])
@@ -202,7 +202,7 @@ export default {
      */
     setLocationHash() {
       const routeTabs = parseLocationHash()
-      routeTabs[this.panel.name] = this.selectedTab.slug
+      routeTabs[this.panel.slug ?? this.panel.name] = this.selectedTab.slug
       updateLocationHash(routeTabs)
     },
 
