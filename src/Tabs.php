@@ -250,7 +250,8 @@ class Tabs extends Panel
         $result = array_merge(parent::jsonSerialize(), [
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
-            'slug' => $this->slug
+            'slug' => $this->slug,
+            'retainTabPosition' => $this->retainTabPosition
         ]);
 
         return $result;
