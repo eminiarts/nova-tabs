@@ -43,7 +43,8 @@ class Tabs extends Panel
     public $slug = null;
 
     private $preservedName;
-    private $retainTabPosition = false;
+    
+    public $retainTabPosition = false;
 
     /**
      * Create a new panel instance.
