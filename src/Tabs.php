@@ -39,7 +39,7 @@ class Tabs extends Panel
 
     private $tabsCount = 0;
 
-    private $retainTabPosition = false;
+    public $retainTabPosition = false;
 
     /**
      * Create a new panel instance.
@@ -230,6 +230,7 @@ class Tabs extends Panel
         $result = array_merge(parent::jsonSerialize(), [
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
+            'retainTabPosition' => $this->retainTabPosition
         ]);
 
         return $result;
