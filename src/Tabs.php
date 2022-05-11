@@ -39,6 +39,8 @@ class Tabs extends Panel
 
     private $tabsCount = 0;
 
+    private $retainTabPosition = false;
+
     /**
      * Create a new panel instance.
      *
@@ -52,6 +54,17 @@ class Tabs extends Panel
         $this->withComponent('tabs');
 
         parent::__construct($this->prepareFields($fields));
+    }
+
+    /**
+     * Remember tab position across detail/edit
+     *
+     * @param  Boolean $retain
+     * @return $this
+     */
+    public function rememberTabs($retain) {
+        $this->retainTabPosition = $retain;
+        return $this;
     }
 
     /**
