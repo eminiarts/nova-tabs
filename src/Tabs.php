@@ -9,6 +9,7 @@ use Eminiarts\Tabs\Contracts\TabContract;
 use Illuminate\Http\Resources\MergeValue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Panel;
 use Laravel\Nova\ResourceToolElement;
@@ -39,6 +40,10 @@ class Tabs extends Panel
 
     private $tabsCount = 0;
 
+    public $slug = null;
+
+    private $preservedName;
+    
     public $retainTabPosition = false;
 
     /**
@@ -51,9 +56,24 @@ class Tabs extends Panel
     public function __construct($name, $fields = [])
     {
         $this->name = $name;
+        $this->preservedName = $name;
         $this->withComponent('tabs');
 
         parent::__construct($this->prepareFields($fields));
+    }
+
+
+    /**
+     * Set the tabs slug.
+     *
+     * @param  string|boolean $slug
+     * @return $this
+     */
+    public function withSlug($slug) {
+
+        $this->slug = is_bool($slug) ? ($slug ? Str::slug($this->preservedName, '_') : null) : $slug;
+
+        return $this;
     }
 
     /**
@@ -230,6 +250,7 @@ class Tabs extends Panel
         $result = array_merge(parent::jsonSerialize(), [
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
+            'slug' => $this->slug,
             'retainTabPosition' => $this->retainTabPosition
         ]);
 
