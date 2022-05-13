@@ -17,5 +17,5 @@ export function updateLocationHash(data) {
       }
     }
 
-    history.replaceState({}, '', '#' + out.join('&'));
+    history.replaceState(history.state, '', '#' + out.join('&'));
 }
