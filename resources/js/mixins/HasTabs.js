@@ -338,7 +338,7 @@ export default {
      * @returns {*|string}
      */
     getCurrentColor() {
-      return this.panel.currentColor ?? 'sky';
+      return this.panel.currentColor ?? 'primary';
     },
 
     /**
