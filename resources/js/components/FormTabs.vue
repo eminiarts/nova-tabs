@@ -26,25 +26,13 @@
               <a
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500 tabs-border-2 border-b-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
+                :class="getIsTabCurrent(tab) ? 'active tabs-text-' + getCurrentColor() + '-500 tabs-font-bold tabs-border-b-2 tabs-border-b-' + getCurrentColor() + '-500' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
                 :dusk="tab.slug + '-tab'"
                 :ref="tab.slug + '-tab'"
                 class="tab-item"
                 @click.prevent="handleTabClick(tab)"
               >
                 <span class="capitalize">{{ tab.properties.title }}</span>
-<!-- 
-               <span
-                  v-if="getIsTabCurrent(tab)"
-                  aria-hidden="true"
-                  class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
-                ></span>
-                <span
-                  v-else
-                  aria-hidden="true"
-                  class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
-                ></span>
--->
               </a>
             </nav>
           </div>
