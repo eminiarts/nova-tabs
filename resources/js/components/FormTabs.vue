@@ -2,7 +2,7 @@
   <div :class="darkModeClass">
     <div class="tab-group">
       <slot>
-        <Heading v-if="panel.showTitle" :level="1" v-text="panel.name"/>
+        <Heading v-if="panel.showTitle" :level="1" v-text="panel.name" />
 
         <p
           v-if="panel.helpText"
@@ -12,21 +12,24 @@
         ></p>
       </slot>
 
-      <div class="tab-card"
-           :class="[
-          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
-        ]"
+      <div
+        class="tab-card"
+        :class="[panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : '']"
       >
         <div id="tabs">
           <div class="block">
-            <nav
-              aria-label="Tabs"
-              class="tab-menu"
-            >
+            <nav aria-label="Tabs" class="tab-menu">
               <a
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
-                :class="getIsTabCurrent(tab) ? 'active tabs-text-' + getCurrentColor() + '-500 tabs-font-bold tabs-border-b-2 tabs-border-b-' + getCurrentColor() + '-500' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
+                :class="
+                  getIsTabCurrent(tab)
+                    ? 'active ' +
+                      getConfiguredColor('text', 500) +
+                      ' tabs-font-bold  tabs-border-x-gray-200 dark:tabs-border-x-gray-400 tabs-border-b-2 ' +
+                      getConfiguredColor('border', 500, 'b')
+                    : ' tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'
+                "
                 :dusk="tab.slug + '-tab'"
                 :ref="tab.slug + '-tab'"
                 class="tab-item"
@@ -44,10 +47,10 @@
           :key="'related-tabs-fields' + index"
           :ref="getTabRefName(tab)"
           :class="[
-                        'tab fields-tab',
-                        getIsTabCurrent(tab) ? 'block' : 'hidden',
-                        tab.slug,
-                    ]"
+            'tab fields-tab',
+            getIsTabCurrent(tab) ? 'block' : 'hidden',
+            tab.slug,
+          ]"
           :label="tab.name"
         >
           <div :class="getBodyClass(tab)">
@@ -60,7 +63,9 @@
                   v-if="!field.from"
                   :is="getComponentName(field)"
                   ref="fields"
-                  :class="{'remove-bottom-border': index === tab.fields.length - 1}"
+                  :class="{
+                    'remove-bottom-border': index === tab.fields.length - 1,
+                  }"
                   :errors="validationErrors"
                   :field="field"
                   :form-unique-id="formUniqueId"
@@ -80,21 +85,21 @@
                 />
 
                 <component
-                    v-if="field.from"
-                    :is="getComponentName(field)"
-                    :errors="validationErrors"
-                    :resource-id="getResourceId(field)"
-                    :resource-name="field.resourceName"
-                    :field="field"
-                    :via-resource="field.from.viaResource"
-                    :via-resource-id="field.from.viaResourceId"
-                    :via-relationship="field.from.viaRelationship"
-                    :form-unique-id="relationFormUniqueId"
-                    @field-changed="$emit('field-changed')"
-                    @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-                    @file-upload-started="$emit('file-upload-started')"
-                    @file-upload-finished="$emit('file-upload-finished')"
-                    :show-help-text="field.helpText != null"
+                  v-if="field.from"
+                  :is="getComponentName(field)"
+                  :errors="validationErrors"
+                  :resource-id="getResourceId(field)"
+                  :resource-name="field.resourceName"
+                  :field="field"
+                  :via-resource="field.from.viaResource"
+                  :via-resource-id="field.from.viaResourceId"
+                  :via-relationship="field.from.viaRelationship"
+                  :form-unique-id="relationFormUniqueId"
+                  @field-changed="$emit('field-changed')"
+                  @file-deleted="$emit('update-last-retrieved-at-timestamp')"
+                  @file-upload-started="$emit('file-upload-started')"
+                  @file-upload-finished="$emit('file-upload-finished')"
+                  :show-help-text="field.helpText != null"
                 />
               </template>
             </KeepAlive>
@@ -106,20 +111,22 @@
 </template>
 
 <script>
-import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
-import HasTabs from "../mixins/HasTabs";
+import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel'
+import HasTabs from '../mixins/HasTabs'
 
-import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
-import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
+import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue'
+import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue'
 
 export default {
   mixins: [BehavesAsPanel, HasTabs],
-  components: {Card, Heading},
+  components: { Card, Heading },
   props: {
     mode: {
       type: String,
       default: 'form',
     },
-  }
-};
+  },
+}
 </script>
+
+<style scoped></style>

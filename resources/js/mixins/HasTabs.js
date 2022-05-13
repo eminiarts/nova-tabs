@@ -1,9 +1,8 @@
-import { parseLocationHash, updateLocationHash } from "../utils/hash";
-import orderBy from "lodash/orderBy";
+import { parseLocationHash, updateLocationHash } from '../utils/hash'
+import orderBy from 'lodash/orderBy'
 import { uid } from 'uid/single'
 
 export default {
-
   props: {
     shownViaNewRelationModal: {
       type: Boolean,
@@ -26,7 +25,7 @@ export default {
     },
     formUniqueId: {
       type: String,
-      required: false
+      required: false,
     },
     validationErrors: {
       type: Object,
@@ -63,8 +62,8 @@ export default {
       selectedTab: {},
       darkModeClass: '',
       relationFormUniqueId: '',
-      errors: this.validationErrors
-    };
+      errors: this.validationErrors,
+    }
   },
 
   emits: [
@@ -79,58 +78,103 @@ export default {
    * and show the first tab by default.
    */
   mounted() {
+    this.setObservers()
+    this.darkModeClass = document.documentElement.classList.contains('dark')
+      ? 'tabs-dark'
+      : ''
 
-    this.setObservers();
-    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'tabs-dark' : '';
-
-    const tabs = this.tabs = this.setTabs();
-    const routeTabs = parseLocationHash();
-    const currentTabSlug = routeTabs[this.panel.slug ?? this.panel.name];
+    const tabs = (this.tabs = this.setTabs())
+    const routeTabs = parseLocationHash()
+    const currentTabSlug = routeTabs[this.panel.slug ?? this.panel.name]
 
     if (tabs[currentTabSlug]) {
       this.handleTabClick(tabs[currentTabSlug])
     } else {
-      this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
+      this.handleTabClick(tabs[Object.keys(tabs)[0]], true)
     }
 
-    if (this.panel.retainTabPosition === true && Nova?.store?.tabsListenerRegistered !== true) {
-      document.addEventListener('inertia:before', (event) => {
+    if (
+      this.panel.retainTabPosition === true &&
+      Nova?.store?.tabsListenerRegistered !== true
+    ) {
+      document.addEventListener('inertia:before', event => {
         if (event?.detail?.visit?.url) {
-          let currPath = window.location.pathname;
-          let newPath  = event?.detail?.visit?.url?.pathname;
+          let currPath = window.location.pathname
+          let newPath = event?.detail?.visit?.url?.pathname
 
-          currPath = currPath.substring(currPath.length - 5) === "/edit" ? currPath.substring(0, currPath.length - 5) : currPath;
-          newPath = newPath.substring(newPath.length - 5) === "/edit" ? newPath.substring(0, newPath.length - 5) : newPath;
+          currPath =
+            currPath.substring(currPath.length - 5) === '/edit'
+              ? currPath.substring(0, currPath.length - 5)
+              : currPath
+          newPath =
+            newPath.substring(newPath.length - 5) === '/edit'
+              ? newPath.substring(0, newPath.length - 5)
+              : newPath
 
           if (currPath === newPath) {
-            event.detail.visit.url.hash = window.location.hash ?? "";
+            event.detail.visit.url.hash = window.location.hash ?? ''
           }
         }
-        return event;
-      });
-      Nova.store.tabsListenerRegistered = true;
+        return event
+      })
+      Nova.store.tabsListenerRegistered = true
     }
 
     if (this.mode === 'form') {
-      this.$watch('validationErrors', (newErrors) => {
+      this.$watch('validationErrors', newErrors => {
         if (newErrors.errors) {
           Object.entries(newErrors.errors).forEach(error => {
             if (error[0] && this.fields.find(x => x.attribute === error[0])) {
-              let field = this.getNestedObject(this.fields, 'attribute', error[0]);
-              let slug = this.getNestedObject(this.fields, 'attribute', error[0]).tabSlug + '-tab';
-              let addClasses = ['tabs-text-' + this.getErrorColor() + '-500', 'tabs-border-b-2', 'tabs-border-b-' + this.getErrorColor() + '-500', 'tab-has-error']
-              let removeClasses = ['tabs-text-gray-600', 'hover:tabs-text-gray-800', 'dark:tabs-text-gray-400', 'hover:dark:tabs-text-gray-200']
+              let field = this.getNestedObject(
+                this.fields,
+                'attribute',
+                error[0]
+              )
+              let slug =
+                this.getNestedObject(this.fields, 'attribute', error[0])
+                  .tabSlug + '-tab'
+              let addClasses = [
+                'tabs-text-' + this.getErrorColor() + '-500',
+                'tabs-border-b-2',
+                'tabs-border-b-' + this.getErrorColor() + '-500',
+                'tab-has-error',
+              ]
+              let removeClasses = [
+                'tabs-text-gray-600',
+                'hover:tabs-text-gray-800',
+                'dark:tabs-text-gray-400',
+                'hover:dark:tabs-text-gray-200',
+              ]
               this.$refs[slug][0].classList.add(...addClasses)
               this.$refs[slug][0].classList.remove(...removeClasses)
             }
-          });
+          })
         }
       })
     }
   },
 
-  methods: {
+  computed: {
+    /**
+     * Check if there is a color set
+     *
+     * @returns {boolean}
+     */
+    hasCurrentColor() {
+      return this.panel.currentColor == 'primary' ? false : true
+    },
 
+    /**
+     * Get the color for the current tab
+     *
+     * @returns {*|string}
+     */
+    currentColor() {
+      return this.panel.currentColor ?? 'sky'
+    },
+  },
+
+  methods: {
     /**
      * Set Tabs
      * @returns Tabs Object
@@ -147,14 +191,22 @@ export default {
             fields: [],
             properties: field.tabInfo,
             classes: 'fields-tab',
-          };
-          if (['belongs-to-many-field', 'has-many-field', 'has-many-through-field', 'has-one-through-field', 'morph-to-many-field',].includes(field.component)) {
-            tabs[field.tabSlug].classes = 'relationship-tab';
+          }
+          if (
+            [
+              'belongs-to-many-field',
+              'has-many-field',
+              'has-many-through-field',
+              'has-one-through-field',
+              'morph-to-many-field',
+            ].includes(field.component)
+          ) {
+            tabs[field.tabSlug].classes = 'relationship-tab'
           }
         }
-        tabs[field.tabSlug].fields.push(field);
-        return tabs;
-      }, {});
+        tabs[field.tabSlug].fields.push(field)
+        return tabs
+      }, {})
     },
 
     /**
@@ -164,18 +216,18 @@ export default {
     setObservers() {
       this.observer = new MutationObserver(mutations => {
         for (const m of mutations) {
-          const newValue = m.target.getAttribute(m.attributeName);
+          const newValue = m.target.getAttribute(m.attributeName)
           this.$nextTick(() => {
             this.darkModeClass = newValue.includes('dark') ? 'tabs-dark' : ''
-          });
+          })
         }
-      });
+      })
 
       this.observer.observe(document.documentElement, {
         attributes: true,
         attributeOldValue: true,
         attributeFilter: ['class'],
-      });
+      })
     },
 
     /**
@@ -193,7 +245,7 @@ export default {
         return field.hasOneId
       }
 
-      return this.resourceId;
+      return this.resourceId
     },
 
     /**
@@ -203,32 +255,32 @@ export default {
      * @param updateUri
      */
     handleTabClick(tab, updateUri = true, refreshCodeMirror = true) {
-      this.selectedTab = tab;
+      this.selectedTab = tab
 
       if (updateUri) {
         this.setLocationHash()
       }
 
       if (refreshCodeMirror) {
-        this.refreshCodeMirror(tab);
+        this.refreshCodeMirror(tab)
       }
     },
 
     refreshCodeMirror(tab) {
       setTimeout(() => {
-        const tabRef = this.getTabRefName(tab);
-        if (!tabRef) return;
+        const tabRef = this.getTabRefName(tab)
+        if (!tabRef) return
 
-        let refs = this.$refs[tabRef];
-        if (!refs.length) return;
+        let refs = this.$refs[tabRef]
+        if (!refs.length) return
 
         refs.forEach(ref => {
-          const cmList = ref.querySelectorAll('.CodeMirror');
-          if (!cmList.length) return;
+          const cmList = ref.querySelectorAll('.CodeMirror')
+          if (!cmList.length) return
 
-          cmList.forEach(cm => cm.CodeMirror.refresh());
-        });
-      }, 1);
+          cmList.forEach(cm => cm.CodeMirror.refresh())
+        })
+      }, 1)
     },
 
     /**
@@ -259,7 +311,7 @@ export default {
      * @returns {string}
      */
     getBodyClass(tab) {
-      return tab.properties.bodyClass;
+      return tab.properties.bodyClass
     },
 
     /**
@@ -269,7 +321,7 @@ export default {
      * @returns {string}
      */
     getTabRefName(tab) {
-      return `tab-${tab.slug}`;
+      return `tab-${tab.slug}`
     },
 
     /**
@@ -279,7 +331,10 @@ export default {
      * @returns {boolean}
      */
     getIsTabCurrent(tab) {
-      return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+      return (
+        this.selectedTab === tab ||
+        (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
+      )
     },
 
     /**
@@ -289,7 +344,7 @@ export default {
      * @returns {object}
      */
     getSortedTabs(tabs) {
-      return orderBy(tabs, [c => c.position], ['asc']);
+      return orderBy(tabs, [c => c.position], ['asc'])
     },
 
     /**
@@ -301,14 +356,14 @@ export default {
      * @returns {*}
      */
     getNestedObject(entireObj, keyToFind, valToFind) {
-      let foundObj;
+      let foundObj
       JSON.stringify(entireObj, (_, nestedValue) => {
         if (nestedValue && nestedValue[keyToFind] === valToFind) {
-          foundObj = nestedValue;
+          foundObj = nestedValue
         }
-        return nestedValue;
-      });
-      return foundObj;
+        return nestedValue
+      })
+      return foundObj
     },
 
     /**
@@ -316,8 +371,16 @@ export default {
      *
      * @returns {*|string}
      */
-    getCurrentColor() {
-      return this.panel.currentColor ?? 'sky';
+    getConfiguredColor(prefix, suffix, extra = null) {
+      if (this.hasCurrentColor) {
+        prefix = 'tabs-' + prefix
+      }
+
+      if (extra && this.hasCurrentColor) {
+        prefix = prefix + '-' + extra
+      }
+
+      return prefix + '-' + this.currentColor + '-' + suffix
     },
 
     /**
@@ -326,13 +389,11 @@ export default {
      * @returns {*|string}
      */
     getErrorColor() {
-      return this.panel.errorColor ?? 'red';
-    }
-
+      return this.panel.errorColor ?? 'red'
+    },
   },
 
   beforeDestroy() {
-    this.observer.disconnect();
+    this.observer.disconnect()
   },
-
 }

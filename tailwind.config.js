@@ -1,12 +1,14 @@
-const path = require('path');
-const colors = require('tailwindcss/colors');
-const {fontFamily} = require('tailwindcss/defaultTheme');
+const path = require('path')
+const colors = require('tailwindcss/colors')
+const { fontFamily } = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  content: [
-    path.resolve(__dirname, 'resources/**/*.{vue,js,ts,jsx,tsx,scss}'),
-  ],
+  content: [path.resolve(__dirname, 'resources/**/*.{vue,js,ts,jsx,tsx,scss}')],
   safelist: [
+    'tabs-border-x-gray-500',
+    'tabs-border-x-gray-400',
+    'tabs-border-x-gray-200',
+
     'tabs-border-b-gray-500',
     'tabs-border-b-slate-500',
     'tabs-border-b-zinc-500',
@@ -58,11 +60,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        gray: colors.slate
-      }
-    }
+        gray: colors.slate,
+      },
+    },
   },
   important: true,
-  plugins: [],
-};
-
+}
