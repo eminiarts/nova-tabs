@@ -26,7 +26,7 @@
               <a
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500 tabs-border-2 border-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
+                :class="getIsTabCurrent(tab) ? 'active text-primary-500 tabs-border-2 border-b-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
                 :dusk="tab.slug + '-tab'"
                 :ref="tab.slug + '-tab'"
                 class="tab-item"
