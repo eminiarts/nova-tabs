@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.6 - 2022-05-13
+- Added functionality to specify the colors used for the current tab using Tabs::make()->withCurrentColor('sky') (default is sky)
+- Added functionality to specify the colors used for tabs with errors using Tabs::make()->withErrorColor('red') (default is red)
+- Color options for both are all the 500 variants based on the default tailwind colors, reference: https://tailwindcss.com/docs/customizing-colors
+
 ## 2.0.5 - 2022-05-13
 - Fixed that errors on form submissions are now reflected on tabs
 

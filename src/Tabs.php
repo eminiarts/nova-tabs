@@ -26,25 +26,23 @@ class Tabs extends Panel
     /**
      * @var bool
      */
-    public $showTitle = false;
+    public bool $showTitle = false;
 
     /**
      * @var bool
      */
-    public $selectFirstTab = true;
+    public bool $selectFirstTab = true;
 
-    /**
-     * @var TabContract[]
-     */
-    private $tabs = [];
-
-    private $tabsCount = 0;
+    private int $tabsCount = 0;
 
     public $slug = null;
 
-    private $preservedName;
-    
-    public $retainTabPosition = false;
+    private string $preservedName;
+
+    public bool $retainTabPosition = false;
+
+    public string $currentColor = 'sky';
+    public string $errorColor = 'red';
 
     /**
      * Create a new panel instance.
@@ -69,9 +67,38 @@ class Tabs extends Panel
      * @param  string|boolean $slug
      * @return $this
      */
-    public function withSlug($slug) {
+    public function withSlug($slug): Tabs
+    {
 
         $this->slug = is_bool($slug) ? ($slug ? Str::slug($this->preservedName, '_') : null) : $slug;
+
+        return $this;
+    }
+
+    /**
+     * Set the color for current tabs.
+     *
+     * @param string $color
+     * @return $this
+     */
+    public function withCurrentColor(string $color): Tabs
+    {
+
+        $this->currentColor = $color;
+
+        return $this;
+    }
+
+    /**
+     * Set the color for tabs with errors.
+     *
+     * @param  string $color
+     * @return $this
+     */
+    public function withErrorColor(string $color): Tabs
+    {
+
+        $this->errorColor = $color;
 
         return $this;
     }
@@ -82,7 +109,8 @@ class Tabs extends Panel
      * @param  Boolean $retain
      * @return $this
      */
-    public function rememberTabs($retain) {
+    public function rememberTabs($retain): Tabs
+    {
         $this->retainTabPosition = $retain;
         return $this;
     }
@@ -93,7 +121,7 @@ class Tabs extends Panel
      * @param  Closure|array  $fields
      * @return array
      */
-    protected function prepareFields($fields)
+    protected function prepareFields($fields): array
     {
         $this->convertFieldsToTabs($fields)
             ->filter(static function (Tab $tab): bool {
@@ -251,7 +279,9 @@ class Tabs extends Panel
             'defaultSearch' => $this->defaultSearch,
             'showTitle' => $this->showTitle,
             'slug' => $this->slug,
-            'retainTabPosition' => $this->retainTabPosition
+            'retainTabPosition' => $this->retainTabPosition,
+            'currentColor' => $this->currentColor,
+            'errorColor' => $this->errorColor
         ]);
 
         return $result;

@@ -65,6 +65,8 @@ trait HasTabs
                 $panel->showTitle = $panel->meta['fields'][0]->assignedPanel->showTitle;
                 $panel->showToolbar = $panel->meta['fields'][0]->assignedPanel->showToolbar;
                 $panel->slug = $panel->meta['fields'][0]->assignedPanel->slug;
+                $panel->currentColor = $panel->meta['fields'][0]->assignedPanel->currentColor;
+                $panel->errorColor = $panel->meta['fields'][0]->assignedPanel->errorColor;
                 $panel->retainTabPosition = $panel->meta['fields'][0]->assignedPanel->retainTabPosition;
             }
 
