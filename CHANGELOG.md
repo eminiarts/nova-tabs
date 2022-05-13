@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.4 - 2022-05-13
+- Fixed padding issues
+- Fixed codemirror fields and styles
+- Added withSlug function to Tabs panel
+  - withSlug takes a boolean/string parameter. If true will slugify the panel name, if a string it will use that string as the panel slug
+  - HasTabs mixin checks for non-null slug and uses it instead of name
+  - adds preservedName variable to retain the name after the parent panel is created
+  - HasTabs Trait gets slug on panel recreation
+- Fixed naming issue for mix.js conflicting with "mix" command in some environments
+- Added the ability to retain the current tab when swapping between detail and edit views using Tabs::make()->rememberTabs()
+
 ## 2.0.3 - 2022-05-01
 - Fixed padding and removed console.log
 
