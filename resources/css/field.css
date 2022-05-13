@@ -41,10 +41,6 @@ form .tab-group .tab.fields-tab {
     content: ' *';
 }
 
-.tabs-border-b-sky-500 {
-    border-bottom-color: rgba(var(--colors-primary-500));
-}
-
 .tabs-border-b-primary-500 {
     border-bottom-color: rgba(var(--colors-primary-500));
 }

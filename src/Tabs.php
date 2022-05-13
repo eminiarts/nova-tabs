@@ -41,7 +41,7 @@ class Tabs extends Panel
 
     public bool $retainTabPosition = false;
 
-    public string $currentColor = 'sky';
+    public string $currentColor = null;
     public string $errorColor = 'red';
 
     /**
