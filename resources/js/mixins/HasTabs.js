@@ -1,4 +1,4 @@
-import {parseLocationHash, updateLocationHash} from "../utils/hash";
+import { parseLocationHash, updateLocationHash } from "../utils/hash";
 import orderBy from "lodash/orderBy";
 import { uid } from 'uid/single'
 
@@ -85,7 +85,7 @@ export default {
 
     const tabs = this.tabs = this.setTabs();
     const routeTabs = parseLocationHash();
-    const currentTabSlug = routeTabs[this.panel.name];
+    const currentTabSlug = routeTabs[this.panel.slug ?? this.panel.name];
 
     if (tabs[currentTabSlug]) {
       this.handleTabClick(tabs[currentTabSlug])
@@ -93,6 +93,23 @@ export default {
       this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
     }
 
+    if (this.panel.retainTabPosition === true && Nova?.store?.tabsListenerRegistered !== true) {
+      document.addEventListener('inertia:before', (event) => {
+        if (event?.detail?.visit?.url) {
+          let currPath = window.location.pathname;
+          let newPath  = event?.detail?.visit?.url?.pathname;
+          
+          currPath = currPath.substring(currPath.length - 5) === "/edit" ? currPath.substring(0, currPath.length - 5) : currPath;
+          newPath = newPath.substring(newPath.length - 5) === "/edit" ? newPath.substring(0, newPath.length - 5) : newPath;
+
+          if (currPath === newPath) {
+            event.detail.visit.url.hash = window.location.hash ?? "";
+          }
+        }
+        return event;
+      });
+      Nova.store.tabsListenerRegistered = true;
+    }
   },
 
   methods: {
@@ -139,7 +156,7 @@ export default {
 
       this.observer.observe(document.documentElement, {
         attributes: true,
-        attributeOldValue : true,
+        attributeOldValue: true,
         attributeFilter: ['class'],
       });
     },
@@ -202,7 +219,7 @@ export default {
      */
     setLocationHash() {
       const routeTabs = parseLocationHash()
-      routeTabs[this.panel.name] = this.selectedTab.slug
+      routeTabs[this.panel.slug ?? this.panel.name] = this.selectedTab.slug
       updateLocationHash(routeTabs)
     },
 
