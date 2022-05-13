@@ -1,6 +1,7 @@
 import { parseLocationHash, updateLocationHash } from "../utils/hash";
 import orderBy from "lodash/orderBy";
 import { uid } from 'uid/single'
+import { unset } from "lodash";
 
 export default {
 
@@ -85,7 +86,7 @@ export default {
 
     const tabs = this.tabs = this.setTabs();
     const routeTabs = parseLocationHash();
-    const currentTabSlug = routeTabs[this.panel.slug ?? this.panel.name];
+    const currentTabSlug = routeTabs[this.getTabsReference()];
 
     if (tabs[currentTabSlug]) {
       this.handleTabClick(tabs[currentTabSlug])
@@ -94,20 +95,31 @@ export default {
     }
 
     if (this.panel.retainTabPosition === true && Nova?.store?.tabsListenerRegistered !== true) {
-      document.addEventListener('inertia:before', (event) => {
-        if (event?.detail?.visit?.url) {
-          let currPath = window.location.pathname;
-          let newPath  = event?.detail?.visit?.url?.pathname;
+        document.addEventListener('inertia:before', (event) => {
+          if (event?.detail?.visit?.url) {
+            let currPath = window.location.pathname;
+            let newPath = event?.detail?.visit?.url?.pathname;
 
-          currPath = currPath.substring(currPath.length - 5) === "/edit" ? currPath.substring(0, currPath.length - 5) : currPath;
-          newPath = newPath.substring(newPath.length - 5) === "/edit" ? newPath.substring(0, newPath.length - 5) : newPath;
+            currPath = currPath.substring(currPath.length - 5) === "/edit" ? currPath.substring(0, currPath.length - 5) : currPath;
+            newPath = newPath.substring(newPath.length - 5) === "/edit" ? newPath.substring(0, newPath.length - 5) : newPath;
 
-          if (currPath === newPath) {
-            event.detail.visit.url.hash = window.location.hash ?? "";
+            if (currPath === newPath) {
+              this.locationHash = parseLocationHash();
+              event.detail.visit.url.hash = window.location.hash ?? "";
+            }
           }
-        }
-        return event;
-      });
+          delete (Nova.store.tabsListenerRegistered);
+          return event;
+        }, { once: true });
+
+        // Fix issues with tab being cleared before navigation, and history.back() not working correctly
+        document.addEventListener('inertia:start', (event) => {
+          if (this.locationHash) {
+            updateLocationHash(this.locationHash);
+            this.locationHash = null;
+          }
+        }, { once: true });
+      
       Nova.store.tabsListenerRegistered = true;
     }
 
@@ -236,7 +248,7 @@ export default {
      */
     setLocationHash() {
       const routeTabs = parseLocationHash()
-      routeTabs[this.panel.slug ?? this.panel.name] = this.selectedTab.slug
+      routeTabs[this.getTabsReference()] = this.selectedTab.slug;
       updateLocationHash(routeTabs)
     },
 
@@ -250,6 +262,15 @@ export default {
       return field.prefixComponent
         ? this.mode + '-' + field.component
         : field.component
+    },
+
+    /**
+     * Get the Tabs reference.
+     *
+     * @returns string;
+     */
+    getTabsReference() {
+      return this.panel.slug ?? this.panel.name;
     },
 
     /**
