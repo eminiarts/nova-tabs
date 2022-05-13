@@ -98,7 +98,7 @@ export default {
         if (event?.detail?.visit?.url) {
           let currPath = window.location.pathname;
           let newPath  = event?.detail?.visit?.url?.pathname;
-          
+
           currPath = currPath.substring(currPath.length - 5) === "/edit" ? currPath.substring(0, currPath.length - 5) : currPath;
           newPath = newPath.substring(newPath.length - 5) === "/edit" ? newPath.substring(0, newPath.length - 5) : newPath;
 
@@ -110,6 +110,18 @@ export default {
       });
       Nova.store.tabsListenerRegistered = true;
     }
+
+    this.$watch('validationErrors', (newErrors) => {
+      if (newErrors.errors) {
+        Object.entries(newErrors.errors).forEach(error => {
+          if (error[0] && this.fields.find(x => x.attribute === error[0])) {
+            let field = this.getNestedObject(this.fields, 'attribute', error[0]);
+            let slug = this.getNestedObject(this.fields, 'attribute', error[0]).tabSlug + '-tab';
+            this.$refs[slug][0].classList.add('tab-has-error')
+          }
+        });
+      }
+    })
   },
 
   methods: {
@@ -273,6 +285,25 @@ export default {
      */
     getSortedTabs(tabs) {
       return orderBy(tabs, [c => c.position], ['asc']);
+    },
+
+    /**
+     * Get nested object with specified key from object
+     *
+     * @param entireObj
+     * @param keyToFind
+     * @param valToFind
+     * @returns {*}
+     */
+    getNestedObject(entireObj, keyToFind, valToFind) {
+      let foundObj;
+      JSON.stringify(entireObj, (_, nestedValue) => {
+        if (nestedValue && nestedValue[keyToFind] === valToFind) {
+          foundObj = nestedValue;
+        }
+        return nestedValue;
+      });
+      return foundObj;
     }
 
   },

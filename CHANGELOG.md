@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.5 - 2022-05-13
+- Fixed that errors on form submissions are now reflected on tabs
+
 ## 2.0.4 - 2022-05-13
 - Fixed padding issues
 - Fixed codemirror fields and styles

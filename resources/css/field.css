@@ -37,3 +37,9 @@ form .tab-group .tab.fields-tab {
 .tab-group h1 + .flex + div {
     @apply tabs-shadow-none tabs-rounded-t-none tabs-rounded-b-lg;
 }
+.tab-has-error {
+    @apply tabs-text-red-500 tabs-border-b-2 tabs-border-b-red-500 !important
+}
+.tab-has-error:after {
+    content: ' *';
+}
