@@ -40,3 +40,11 @@ form .tab-group .tab.fields-tab {
 .tab-has-error:after {
     content: ' *';
 }
+
+.tabs-border-b-primary-500 {
+    border-bottom-color: rgba(var(--colors-primary-500));
+}
+
+.tabs-text-primary-500 {
+    color:rgba(var(--colors-primary-500));
+}
