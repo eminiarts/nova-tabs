@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.7 - 2022-05-16
+- Fixed that primary color is used if none is specified
+
 ## 2.0.6 - 2022-05-13
 - Added functionality to specify the colors used for the current tab using Tabs::make()->withCurrentColor('sky') (default is sky)
 - Added functionality to specify the colors used for tabs with errors using Tabs::make()->withErrorColor('red') (default is red)
