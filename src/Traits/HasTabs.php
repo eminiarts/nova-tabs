@@ -79,4 +79,25 @@ trait HasTabs
             $label
         );
     }
+
+    /**
+     * Return the panels for this request with the default label.
+     *
+     * @param  \Illuminate\Support\Collection<int, \Laravel\Nova\Panel>  $panels
+     * @param  \Laravel\Nova\Fields\FieldCollection<int, \Laravel\Nova\Fields\Field>  $fields
+     * @param  string  $label
+     * @return \Illuminate\Support\Collection<int, \Laravel\Nova\Panel>
+     */
+    protected function panelsWithDefaultLabel(Collection $panels, FieldCollection $fields, $label)
+    {
+        return $panels->values()
+            ->when($panels->where('name', $label)->isEmpty(), function ($panels) use ($label, $fields) {
+                return $fields->isNotEmpty()
+                    ? $panels->prepend(Panel::make($label, $fields)->withMeta(['fields' => $fields]))
+                    : $panels;
+            })
+            ->tap(function ($panels) use ($label): void {
+                $panels->where('component', 'tabs')->isEmpty() ? $panels->first()->withToolbar() : $panels->where('component', 'tabs')->first();
+            });
+    }
 }
