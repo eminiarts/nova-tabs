@@ -88,7 +88,13 @@ trait HasTabs
                 );
             })
             ->tap(function ($panels) use ($label): void {
-                $panels->where('component', 'tabs')->isEmpty() ? $panels->where('component', 'tabs')->first() : $panels->first()->withToolbar();
+
+                /**
+                 * Default to ->withToolbar() if the first panel is not a Tabs
+                 * Otherwise, we show the tabs component with the settings configured within it
+                 * This check is necessary in case you ARE using Tabs component, but only for relation as a 2nd or 3rd instance
+                 */
+                $panels->first()->component !== 'tabs' ? $panels->first()->withToolbar() : $panels->where('component', 'tabs')->first();
             });
     }
 }
