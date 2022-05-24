@@ -12,33 +12,28 @@
         ></p>
       </slot>
 
-      <div class="tab-card">
+      <div class="tab-card"
+           :class="[
+          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
+        ]"
+      >
         <div id="tabs">
           <div class="block">
             <nav
               aria-label="Tabs"
               class="tab-menu"
             >
-              <Button
+              <a
                 v-for="(tab, key) in getSortedTabs(tabs)"
                 :key="key"
-                :class="getIsTabCurrent(tab) ? 'active text-primary-500' : 'tabs-text-gray-800 dark:tabs-text-gray-50'"
+                :class="getIsTabCurrent(tab) ? 'active tabs-text-' + getCurrentColor() + '-500 tabs-font-bold tabs-border-b-2 tabs-border-b-' + getCurrentColor() + '-500' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
                 :dusk="tab.slug + '-tab'"
+                :ref="tab.slug + '-tab'"
                 class="tab-item"
                 @click.prevent="handleTabClick(tab)"
               >
                 <span class="capitalize">{{ tab.properties.title }}</span>
-                <span
-                  v-if="getIsTabCurrent(tab)"
-                  aria-hidden="true"
-                  class="bg-primary-500 tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
-                ></span>
-                <span
-                  v-else
-                  aria-hidden="true"
-                  class="tabs-bg-transparent tabs-absolute tabs-inset-x-0 tabs-bottom-0 tabs-h-0.5"
-                ></span>
-              </Button>
+              </a>
             </nav>
           </div>
         </div>
@@ -57,10 +52,10 @@
         >
           <div :class="getBodyClass(tab)">
             <KeepAlive>
-              <div
-                  v-for="(field, index) in tab.fields"
-                  :key="'tab-' + index"
-                >
+              <template
+                v-for="(field, index) in tab.fields"
+                :key="'tab-' + index"
+              >
                 <component
                   v-if="!field.from"
                   :is="getComponentName(field)"
@@ -86,7 +81,7 @@
 
                 <component
                     v-if="field.from"
-                    :is="`${mode}-${field.component}`"
+                    :is="getComponentName(field)"
                     :errors="validationErrors"
                     :resource-id="getResourceId(field)"
                     :resource-name="field.resourceName"
@@ -101,7 +96,7 @@
                     @file-upload-finished="$emit('file-upload-finished')"
                     :show-help-text="field.helpText != null"
                 />
-              </div>
+              </template>
             </KeepAlive>
           </div>
         </div>
@@ -112,222 +107,19 @@
 
 <script>
 import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
+import HasTabs from "../mixins/HasTabs";
+
 import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
 import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
-import orderBy from 'lodash/orderBy';
-import { uid } from 'uid/single'
 
 export default {
-  mixins: [BehavesAsPanel],
-
+  mixins: [BehavesAsPanel, HasTabs],
   components: {Card, Heading},
-
   props: {
-    shownViaNewRelationModal: {
-      type: Boolean,
-      default: false,
-    },
-
-    panel: {
-      type: Object,
-      required: true,
-    },
-
-    name: {
-      default: 'Panel',
-    },
-
     mode: {
       type: String,
       default: 'form',
     },
-
-    fields: {
-      type: Array,
-      default: [],
-    },
-
-    formUniqueId: {
-      type: String,
-    },
-
-    validationErrors: {
-      type: Object,
-      required: true,
-    },
-
-    resourceName: {
-      type: String,
-      required: true,
-    },
-
-    resourceId: {
-      type: [Number, String],
-    },
-
-    relatedResourceName: {
-      type: String,
-    },
-
-    relatedResourceId: {
-      type: [Number, String],
-    },
-
-    viaResource: {
-      type: String,
-    },
-
-    viaResourceId: {
-      type: [Number, String],
-    },
-
-    viaRelationship: {
-      type: String,
-    },
-  },
-
-  emits: [
-    'field-changed',
-    'update-last-retrieved-at-timestamp',
-    'file-upload-started',
-    'file-upload-finished',
-  ],
-
-  data() {
-    return {
-      tabs: null,
-      activeTab: '',
-      selectedTab: {},
-      darkModeClass: '',
-      relationFormUniqueId: '',
-    };
-  },
-
-  /**
-   * Get the tabs and their respective fields when mounted
-   * and show the first tab by default.
-   */
-  mounted() {
-    this.observer = new MutationObserver(mutations => {
-      for (const m of mutations) {
-        const newValue = m.target.getAttribute(m.attributeName);
-        this.$nextTick(() => {
-          this.darkModeClass = newValue.includes('dark') ? 'tabs-dark' : ''
-        });
-      }
-    });
-
-    this.observer.observe(document.documentElement, {
-      attributes: true,
-      attributeOldValue: true,
-      attributeFilter: ['class'],
-    });
-
-    this.darkModeClass = document.documentElement.classList.contains('dark') ? 'tabs-dark' : '';
-
-    const tabs = this.tabs = this.panel.fields.reduce((tabs, field) => {
-      if (!(field.tabSlug in tabs)) {
-        tabs[field.tabSlug] = {
-          name: field.tab,
-          slug: field.tabSlug,
-          init: false,
-          listable: field.listableTab,
-          fields: [],
-          properties: field.tabInfo,
-        };
-      }
-
-      tabs[field.tabSlug].fields.push(field);
-
-      return tabs;
-    }, {});
-
-    this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
-  },
-  methods: {
-    /**
-     * Get the resource ID we pass on to the field component
-     *
-     * @param field
-     * @returns {Number|String|*}
-     */
-    getResourceId(field) {
-      if (field.relationshipType === 'hasOne') {
-        return field.hasOneId
-      }
-
-      if (field.relationshipType === 'morphOne') {
-        return field.hasOneId
-      }
-
-      return this.resourceId;
-    },
-
-    /**
-     * Handle tabs being clicked
-     *
-     * @param tab
-     * @param updateUri
-     */
-    handleTabClick(tab, updateUri = true) {
-      this.selectedTab = tab;
-    },
-
-    /**
-     * Get the component name.
-     *
-     * @param field
-     * @returns {string}
-     */
-    getComponentName(field) {
-      return field.prefixComponent
-        ? 'form-' + field.component
-        : field.component
-    },
-
-    /**
-     * Get body class for tabbed field panel
-     *
-     * @param tab
-     * @returns {string}
-     */
-    getBodyClass(tab) {
-      return tab.properties.bodyClass;
-    },
-
-    /**
-     * Get reference name for tab
-     *
-     * @param tab
-     * @returns {string}
-     */
-    getTabRefName(tab) {
-      return `tab-${tab.slug}`;
-    },
-
-    /**
-     * Check if the specified tab is the current opened one
-     *
-     * @param tab
-     * @returns {boolean}
-     */
-    getIsTabCurrent(tab) {
-      return this.selectedTab === tab || (!this.selectedTab && this.tabs[Object.keys(this.tabs)[0]] === tab)
-    },
-
-    /**
-     * Sort the tabs object by their respective positions using lodash
-     *
-     * @param tabs
-     * @returns {object}
-     */
-    getSortedTabs(tabs) {
-      return orderBy(tabs, [c => c.position], ['asc']);
-    }
-
-  },
-  beforeDestroy() {
-    this.observer.disconnect();
-  },
+  }
 };
 </script>

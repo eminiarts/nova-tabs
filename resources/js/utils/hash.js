@@ -1,20 +1,21 @@
 
 export function parseLocationHash() {
-    var hash = window.location.hash.substr(1);
-    return hash.split('&').reduce(function (res, item) {
-        var parts = item.split('=');
-        if (parts[0].length) {
-            res[parts[0]] = parts[1];
+  const hash = window.location.hash;
+  return hash.split('&').reduce(function (res, item) {
+    const parts = decodeURIComponent(item).split('=');
+    if (parts[0].length) {
+            res[parts[0].replace('#', '')] = parts[1];
         }
         return res;
     }, {});
 }
 export function updateLocationHash(data) {
-    var out = [];
-        for (var key in data) {
-        if (data.hasOwnProperty(key)) {
-            out.push(key + '=' + encodeURIComponent(data[key]));
-        }
+  const out = [];
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        out.push(key + '=' + encodeURIComponent(data[key]));
+      }
     }
-    window.location.hash = out.join('&')
+
+    history.replaceState(history.state, '', '#' + out.join('&'));
 }

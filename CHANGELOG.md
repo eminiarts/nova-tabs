@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.0.7 - 2022-05-16
+- Fixed that primary color is used if none is specified
+
+## 2.0.6 - 2022-05-13
+- Added functionality to specify the colors used for the current tab using Tabs::make()->withCurrentColor('sky') (default is sky)
+- Added functionality to specify the colors used for tabs with errors using Tabs::make()->withErrorColor('red') (default is red)
+- Color options for both are all the 500 variants based on the default tailwind colors, reference: https://tailwindcss.com/docs/customizing-colors
+
+## 2.0.5 - 2022-05-13
+- Fixed that errors on form submissions are now reflected on tabs
+
+## 2.0.4 - 2022-05-13
+- Fixed padding issues
+- Fixed codemirror fields and styles
+- Added withSlug function to Tabs panel
+  - withSlug takes a boolean/string parameter. If true will slugify the panel name, if a string it will use that string as the panel slug
+  - HasTabs mixin checks for non-null slug and uses it instead of name
+  - adds preservedName variable to retain the name after the parent panel is created
+  - HasTabs Trait gets slug on panel recreation
+- Fixed naming issue for mix.js conflicting with "mix" command in some environments
+- Added the ability to retain the current tab when swapping between detail and edit views using Tabs::make()->rememberTabs()
+
+## 2.0.3 - 2022-05-01
+- Fixed padding and removed console.log
+
+## 2.0.2 - 2022-05-01
+- Fixed a bug where padding was wrong when not showing toolbar
+
+## 2.0.1 - 2022-05-01
+- Fixed a bug where clicking a tab would scroll the page to top
+- Fixed a bug with tab persistence supplying the wrong location has
+- Fixed a bug where relationship panels that aren't under tabs would show up wrong
+- Fixed a bug where showToolbar isn't utilized properly
+
 ## 2.0.0 - 2022-04-30
 - Nova 4 compatible
 - Removed selectFirstTab, first tab is always displayed first.

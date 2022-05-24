@@ -17,12 +17,12 @@
     1. [Tab](#tab)
     2. [Default search](#default-search)
     3. [Display more than 5 items](#display-more-than-5-items)
-5. [Upgrade to 2.0.0](#upgrade-to-2.0.0)
+5. [Upgrade to V2](#upgrade-to-v2)
 
 ## Requirements
 
-- `php: ^8.0`
-- `laravel/nova: ^4.0`
+- `php: ^7.4 | ^8`
+- `laravel/nova: ^4`
 
 For Laravel Nova Version 3, please use nova-tabs v1 instead.
 

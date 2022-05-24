@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Eminiarts\Tabs\Traits;
 
-use ConsultLive\Tabs\Tabs;
+use Eminiarts\Tabs\Tabs;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Contracts\BehavesAsPanel;
 use Laravel\Nova\Fields\FieldCollection;
@@ -23,6 +23,12 @@ trait HasTabs
      */
     protected function resolvePanelsFromFields(NovaRequest $request, FieldCollection $fields, $label)
     {
+        [$relationPanels, $fields] = $fields->transform(function ($field) {
+            return $field instanceof BehavesAsPanel && !$field->assignedPanel instanceof Tabs ? $field->asPanel() : $field;
+        })->partition(function ($field) {
+            return $field instanceof Panel;
+        });
+
         [$defaultFields, $fieldsWithPanels] = $fields->partition(function ($field) {
             return ! isset($field->panel) || blank($field->panel);
         });
@@ -37,7 +43,7 @@ trait HasTabs
             return Panel::mutate($name, $fields);
         })->toBase();
 
-        if ($panels->where('component', 'tabs')->count() === 0) {
+        if ($panels->where('component', 'tabs')->isEmpty()) {
             return parent::resolvePanelsFromFields($request, $fields, $label);
         }
 
@@ -55,19 +61,22 @@ trait HasTabs
                     }
                 }
 
-                return $panel->withMeta([
-                    'showToolbar' => $panel->meta['fields'][0]->assignedPanel->showToolbar,
-                    'showTitle' => $panel->meta['fields'][0]->assignedPanel->showTitle,
-                ]);
+                $panel->name = $panel->meta['fields'][0]->panel;
+                $panel->showTitle = $panel->meta['fields'][0]->assignedPanel->showTitle;
+                $panel->showToolbar = $panel->meta['fields'][0]->assignedPanel->showToolbar;
+                $panel->slug = $panel->meta['fields'][0]->assignedPanel->slug;
+                $panel->currentColor = $panel->meta['fields'][0]->assignedPanel->currentColor;
+                $panel->errorColor = $panel->meta['fields'][0]->assignedPanel->errorColor;
+                $panel->retainTabPosition = $panel->meta['fields'][0]->assignedPanel->retainTabPosition;
             }
 
             return $panel;
         });
 
-        $panels->first()->name = $panels->first()->meta['fields'][0]->panel;
-
         return $this->panelsWithDefaultLabel(
-            $panels, $defaultFields->values(), $label
+            $panels->merge($relationPanels),
+            $defaultFields->values(),
+            $label
         );
     }
 
@@ -82,10 +91,10 @@ trait HasTabs
     protected function panelsWithDefaultLabel(Collection $panels, FieldCollection $fields, $label)
     {
         return $panels->values()
-            ->when($panels->where('component', 'tabs')->isEmpty(), function ($panels) use ($label, $fields) {
-                return $panels->prepend(
-                    Tabs::make($label, $fields)->withMeta(['fields' => $fields])
-                );
+            ->when($panels->where('name', $label)->isEmpty(), function ($panels) use ($label, $fields) {
+                return $fields->isNotEmpty()
+                    ? $panels->prepend(Panel::make($label, $fields)->withMeta(['fields' => $fields]))
+                    : $panels;
             })
             ->tap(function ($panels) use ($label): void {
 
