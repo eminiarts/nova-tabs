@@ -57,7 +57,7 @@ class Tabs extends Panel
         $this->preservedName = $name;
         $this->withComponent('tabs');
 
-        parent::__construct($this->prepareFields($fields));
+        parent::__construct($name, $fields);
     }
 
 
