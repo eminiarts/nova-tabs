@@ -49,7 +49,7 @@
             :label="tab.name"
             v-show="getIsTabCurrent(tab)"
         >
-          <div :class="getBodyClass(tab)">
+          <div class="divide-y divide-gray-100 dark:divide-gray-700" :class="getBodyClass(tab)">
             <KeepAlive v-for="(field, index) in tab.fields" :key="index">
               <component
                   :is="getComponentName(field)"
