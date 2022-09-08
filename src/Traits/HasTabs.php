@@ -53,7 +53,7 @@ trait HasTabs
             return $panel->component === 'relationship-panel' && $panel->meta['fields'][0]->assignedPanel instanceof Tabs;
         });
 
-        $panels->transform(function($panel, $key) use($relationshipUnderTabs) {
+        $panels->transform(function($panel, $key) use ($relationshipUnderTabs) {
 
             if ($panel->component === 'tabs') {
 
@@ -76,7 +76,7 @@ trait HasTabs
         });
 
         return $this->panelsWithDefaultLabel(
-            $panels->merge($relationPanels),
+            $panels,
             $defaultFields->values(),
             $label
         );
