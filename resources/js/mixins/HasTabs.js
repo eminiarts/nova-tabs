@@ -81,8 +81,11 @@ export default {
    */
   mounted() {
 
-    this.setObservers();
     this.darkModeClass = document.documentElement.classList.contains('dark') ? 'tabs-dark' : '';
+
+    Nova.$on('nova-theme-switched', ({ theme }) => {
+      this.darkModeClass = theme === 'dark' ? 'tabs-dark' : '';
+    });
 
     const tabs = this.tabs = this.setTabs();
     const routeTabs = parseLocationHash();
@@ -167,27 +170,6 @@ export default {
         tabs[field.tabSlug].fields.push(field);
         return tabs;
       }, {});
-    },
-
-    /**
-     * Set Observers
-     * @returns void
-     */
-    setObservers() {
-      this.observer = new MutationObserver(mutations => {
-        for (const m of mutations) {
-          const newValue = m.target.getAttribute(m.attributeName);
-          this.$nextTick(() => {
-            this.darkModeClass = newValue.includes('dark') ? 'tabs-dark' : ''
-          });
-        }
-      });
-
-      this.observer.observe(document.documentElement, {
-        attributes: true,
-        attributeOldValue: true,
-        attributeFilter: ['class'],
-      });
     },
 
     /**
@@ -350,10 +332,6 @@ export default {
       return this.panel.errorColor ?? 'red';
     }
 
-  },
-
-  beforeDestroy() {
-    this.observer.disconnect();
   },
 
 }
