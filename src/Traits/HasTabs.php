@@ -23,13 +23,11 @@ trait HasTabs
      */
     protected function resolvePanelsFromFields(NovaRequest $request, FieldCollection $fields, $label)
     {
-        [$relationPanels, $fields] = $fields->transform(function ($field) {
-            return $field instanceof BehavesAsPanel && !$field->assignedPanel instanceof Tabs ? $field->asPanel() : $field;
+        [$defaultFields, $fieldsWithPanels] = $fields->each(function ($field) {
+            if ($field instanceof BehavesAsPanel && !$field->assignedPanel instanceof Tabs) {
+                $field->asPanel();
+            }
         })->partition(function ($field) {
-            return $field instanceof Panel;
-        });
-
-        [$defaultFields, $fieldsWithPanels] = $fields->partition(function ($field) {
             return ! isset($field->panel) || blank($field->panel);
         });
 
@@ -44,14 +42,18 @@ trait HasTabs
         })->toBase();
 
         if ($panels->where('component', 'tabs')->isEmpty()) {
-            return parent::resolvePanelsFromFields($request, $fields, $label);
+            return $this->panelsWithDefaultLabel(
+                $panels,
+                $defaultFields->values(),
+                $label
+            );
         }
 
         [$relationshipUnderTabs, $panels] = $panels->partition(function ($panel) {
             return $panel->component === 'relationship-panel' && $panel->meta['fields'][0]->assignedPanel instanceof Tabs;
         });
 
-        $panels->transform(function($panel, $key) use($relationshipUnderTabs) {
+        $panels->transform(function($panel, $key) use ($relationshipUnderTabs) {
 
             if ($panel->component === 'tabs') {
 
@@ -74,7 +76,7 @@ trait HasTabs
         });
 
         return $this->panelsWithDefaultLabel(
-            $panels->merge($relationPanels),
+            $panels,
             $defaultFields->values(),
             $label
         );

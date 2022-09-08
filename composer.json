@@ -15,7 +15,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8",
-        "laravel/nova": "^4.0",
+        "laravel/nova": "^4.12",
         "ext-json": "*"
     },
     "require-dev": {
