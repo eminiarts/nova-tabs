@@ -40,37 +40,7 @@ composer require eminiarts/nova-tabs
 
 ![image](https://user-images.githubusercontent.com/3426944/50060698-7835ec00-0197-11e9-8b9c-c7f1e67400db.png)
 
-You can group fields of a resource into tabs, you can use an array or a Tab object (as of 1.4.0)::
-
-```php
-// in app/Nova/Resource.php
-
-use Eminiarts\Tabs\Traits\HasTabs;
-use Eminiarts\Tabs\Tabs;
-
-class User extends Resource
-{
-    use HasTabs;
-    
-    public function fields(Request $request)
-    {
-       return [
-   
-           new Tabs('Some Title', [
-               'Balance'    => [
-                   Number::make('Balance', 'balance'),
-                   Number::make('Total', 'total'),
-               ],
-               'Other Info' => [
-                   Number::make('Paid To Date', 'paid_to_date'),
-               ],
-           ]),
-       ];
-   }
-}
-```
-
-or
+You can group fields of a resource into tabs.
 
 ```php
 // in app/Nova/Resource.php
