@@ -23,13 +23,11 @@ trait HasTabs
      */
     protected function resolvePanelsFromFields(NovaRequest $request, FieldCollection $fields, $label)
     {
-        [$relationPanels, $fields] = $fields->transform(function ($field) {
-            return $field instanceof BehavesAsPanel && !$field->assignedPanel instanceof Tabs ? $field->asPanel() : $field;
+        [$defaultFields, $fieldsWithPanels] = $fields->each(function ($field) {
+            if ($field instanceof BehavesAsPanel && !$field->assignedPanel instanceof Tabs) {
+                $field->asPanel();
+            }
         })->partition(function ($field) {
-            return $field instanceof Panel;
-        });
-
-        [$defaultFields, $fieldsWithPanels] = $fields->partition(function ($field) {
             return ! isset($field->panel) || blank($field->panel);
         });
 
@@ -44,7 +42,11 @@ trait HasTabs
         })->toBase();
 
         if ($panels->where('component', 'tabs')->isEmpty()) {
-            return parent::resolvePanelsFromFields($request, $fields, $label);
+            return $this->panelsWithDefaultLabel(
+                $panels,
+                $defaultFields->values(),
+                $label
+            );
         }
 
         [$relationshipUnderTabs, $panels] = $panels->partition(function ($panel) {
