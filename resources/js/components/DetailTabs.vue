@@ -70,15 +70,11 @@
 </template>
 
 <script>
-import BehavesAsPanel from '../../../vendor/laravel/nova/resources/js/mixins/BehavesAsPanel';
+import BehavesAsPanel from '../mixins/BehavesAsPanel';
 import HasTabs from "../mixins/HasTabs";
-
-import Heading from '../../../vendor/laravel/nova/resources/js/components/Heading.vue';
-import Card from '../../../vendor/laravel/nova/resources/js/components/Card.vue';
 
 export default {
   mixins: [BehavesAsPanel, HasTabs],
-  components: {Card, Heading},
   props: {
     mode: {
       type: String,
