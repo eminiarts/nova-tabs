@@ -182,7 +182,7 @@ use Laravel\Nova\Actions\ActionResource; // Import the Resource
 class Client extends Resource
 {
     use HasTabs;
-    use ActionsInTabs; // Use this Trait
+    use HasActionsInTabs; // Use this Trait
 
     public function fields(Request $request)
     {
