@@ -1,7 +1,7 @@
 import { parseLocationHash, updateLocationHash } from "../utils/hash";
-import orderBy from "lodash/orderBy";
-import { uid } from 'uid/single'
-import { unset } from "lodash";
+import orderBy from 'lodash/orderBy';
+import unset from 'lodash/unset';
+import { uid } from 'uid/single';
 
 export default {
 
