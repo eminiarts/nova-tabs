@@ -1,3 +1,4 @@
+import { mapProps } from 'laravel-nova';
 import { parseLocationHash, updateLocationHash } from "../utils/hash";
 import orderBy from 'lodash/orderBy';
 import unset from 'lodash/unset';
@@ -6,20 +7,12 @@ import { uid } from 'uid/single';
 export default {
 
   props: {
-    shownViaNewRelationModal: {
-      type: Boolean,
-      default: false,
-    },
     panel: {
       type: Object,
       required: true,
     },
     name: {
       default: 'Panel',
-    },
-    mode: {
-      type: String,
-      default: 'form',
     },
     fields: {
       type: Array,
@@ -33,28 +26,18 @@ export default {
       type: Object,
       required: false,
     },
-    resourceName: {
-      type: String,
-      required: true,
-    },
-    resourceId: {
-      type: [Number, String],
-    },
-    relatedResourceName: {
-      type: String,
-    },
-    relatedResourceId: {
-      type: [Number, String],
-    },
-    viaResource: {
-      type: String,
-    },
-    viaResourceId: {
-      type: [Number, String],
-    },
-    viaRelationship: {
-      type: String,
-    },
+    
+    ...mapProps([
+      'shownViaNewRelationModal',
+      'mode',
+      'resourceName',
+      'resourceId',
+      'relatedResourceName',
+      'relatedResourceId',
+      'viaResource',
+      'viaResourceId',
+      'viaRelationship',
+    ]),
   },
 
   data() {
