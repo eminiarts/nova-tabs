@@ -58,7 +58,7 @@
               >
                 <component
                   v-if="!field.from"
-                  :is="getComponentName(field)"
+                  :is="`form-${field.component}`"
                   ref="fields"
                   :class="{'remove-bottom-border': index === tab.fields.length - 1}"
                   :errors="validationErrors"

@@ -225,11 +225,11 @@ export default {
      * @param field
      * @returns {string}
      */
-    getComponentName(field) {
-      return field.prefixComponent
-        ? this.mode + '-' + field.component
-        : field.component
-    },
+    // getComponentName(field) {
+    //   return field.prefixComponent
+    //     ? this.mode + '-' + field.component
+    //     : field.component
+    // },
 
     /**
      * Get the Tabs reference.
