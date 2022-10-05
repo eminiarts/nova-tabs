@@ -17,6 +17,7 @@
     1. [Tab](#tab)
     2. [Default search](#default-search)
     3. [Display more than 5 items](#display-more-than-5-items)
+    4. [Tab change Global Event](#tab-change-global-event)
 5. [Upgrade to V2](#upgrade-to-v2)
 
 ## Requirements
@@ -197,7 +198,25 @@ As of v1.4.0 it's possible to use a `Tab` class instead of an array to represent
 ### Display more than 5 items
 
 By default, any `HasMany`, `BelongsToMany` and `MorphMany` fields show 5 items in their index. You can use Nova's built-in static property `$perPageViaRelationship` on the respective resource to show more (or less).
- 
+
+### Tab change Global Event
+
+Nova Tabs emits an event upon tabs loading and the user clicking on a tab, using [Nova Event Bus](https://nova.laravel.com/docs/4.0/customization/frontend.html#event-bus). Developers can listen to the event called ```nova-tabs-changed```, with 2 parameters as payload: The tab panel name and the tab name itself.
+
+Example of a component that subscribes to this event:
+
+```ES6
+export default {
+    mounted () {
+        Nova.$on('nova-tabs-changed', (panel, tab) => {
+            if (panel === 'Client Details' && tab === 'address') {
+                this.$nextTick(() => this.map.updateSize())
+            }
+        })
+    }
+}
+```
+
 ## Upgrade to 2.0.0
 - Breaking changes
    - Removed selectFirstTab, first tab is always displayed first.
