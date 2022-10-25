@@ -109,7 +109,7 @@ export default {
       Nova.store.tabsListenerRegistered = true;
     }
 
-    if (this.mode === 'form') {
+    if (this.tabMode === 'form') {
       this.$watch('validationErrors', (newErrors) => {
         if (newErrors.errors) {
           Object.entries(newErrors.errors).forEach(error => {
@@ -227,7 +227,7 @@ export default {
      */
     getComponentName(field) {
       return field.prefixComponent
-        ? this.mode + '-' + field.component
+        ? this.tabMode + '-' + field.component
         : field.component
     },
 

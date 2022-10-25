@@ -111,11 +111,8 @@ import HasTabs from "../mixins/HasTabs";
 
 export default {
   mixins: [BehavesAsPanel, HasTabs],
-  props: {
-    mode: {
-      type: String,
-      default: 'form',
-    },
-  }
+  data: () => ({
+    tabMode: 'form',
+  }),
 };
 </script>
