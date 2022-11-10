@@ -14,8 +14,8 @@
 
       <div class="tab-card"
            :class="[
-          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
-        ]"
+             panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
+           ]"
       >
         <div id="tabs">
           <div class="block">
@@ -42,14 +42,14 @@
             :key="'related-tabs-fields' + index"
             :ref="getTabRefName(tab)"
             :class="[
-                        'tab',
-                        tab.slug,
-                        tab.classes
-                    ]"
+                'tab',
+                tab.slug,
+                tab.classes
+            ]"
             :label="tab.name"
             v-show="getIsTabCurrent(tab)"
         >
-          <div class="divide-y divide-gray-100 dark:divide-gray-700" :class="getBodyClass(tab)">
+          <div class="divide-y divide-gray-100 dark:divide-gray-700" :class="getBodyClass(tab)" v-if="getIsTabCurrent(tab)">
             <KeepAlive v-for="(field, index) in tab.fields" :key="index">
               <component
                   :is="getComponentName(field)"
