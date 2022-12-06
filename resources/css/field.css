@@ -9,11 +9,11 @@
     margin-bottom: 0;
 }
 .tab-group .tab-menu {
-    @apply tabs-border-l-gray-200 tabs-border-r-gray-200 tabs-border-gray-200  tabs-relative tabs-z-0 tabs-divide-x dark:tabs-border-gray-700 dark:tabs-divide-gray-700 tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-t-lg tabs-border-b tabs-mx-auto tabs-overflow-x-auto;
+    @apply tabs-border-gray-200 tabs-relative tabs-z-0 tabs-divide-x dark:tabs-border-gray-700 tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-t-lg tabs-border-b tabs-mx-auto tabs-overflow-x-auto;
     display: flex; /* Set flex display manually to circumvent tailwind circular dependency */
 }
 .tab-group .tab-item {
-    @apply tabs-relative tabs-min-w-min tabs-flex-shrink-0 tabs-flex-1 tabs-overflow-hidden tabs-bg-white dark:tabs-bg-gray-800 tabs-py-4 tabs-px-4 tabs-font-semibold tabs-text-center tabs-cursor-pointer hover:tabs-bg-gray-50 hover:dark:tabs-bg-gray-700 focus:tabs-z-10 first:tabs-rounded-tl-lg last:tabs-rounded-tr-lg;
+    @apply tabs-relative tabs-min-w-min tabs-flex-shrink-0 tabs-flex-1 tabs-overflow-hidden tabs-bg-white dark:tabs-bg-gray-800 tabs-py-4 tabs-px-4 tabs-font-semibold tabs-text-center tabs-cursor-pointer hover:tabs-bg-gray-50 hover:dark:tabs-bg-gray-700 focus:tabs-z-10 first:tabs-rounded-tl-lg last:tabs-rounded-tr-lg tabs-border-l-gray-200 tabs-border-r-gray-200 dark:tabs-border-l-gray-700 dark:tabs-border-r-gray-700;
 }
 .tab-group .tab.fields-tab {
     @apply tabs-py-2 tabs-px-6;

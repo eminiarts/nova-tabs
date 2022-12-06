@@ -29,7 +29,7 @@
                 :class="getIsTabCurrent(tab) ? 'active tabs-text-' + getCurrentColor() + '-500 tabs-font-bold tabs-border-b-2 tabs-border-b-' + getCurrentColor() + '-500' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
                 :dusk="tab.slug + '-tab'"
                 :ref="tab.slug + '-tab'"
-                class="tab-item border-gray-200"
+                class="tab-item"
                 @click.prevent="handleTabClick(tab)"
               >
                 <span class="capitalize">{{ tab.properties.title }}</span>
