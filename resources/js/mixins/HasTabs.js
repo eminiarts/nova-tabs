@@ -128,6 +128,25 @@ export default {
   },
 
   methods: {
+    fieldShown(e) {
+      Object.keys(this.tabs).forEach(key => {
+        this.tabs[key].fields.forEach(field => {
+          if (field.attribute == e) {
+            field.visible = true
+          }
+        })
+      })
+    },
+
+    fieldHidden(e) {
+      Object.keys(this.tabs).forEach(key => {
+        this.tabs[key].fields.forEach(field => {
+          if (field.attribute == e) {
+            field.visible = false
+          }
+        })
+      })
+    },
 
     /**
      * Set Tabs

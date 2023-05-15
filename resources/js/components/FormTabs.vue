@@ -25,6 +25,7 @@
             >
               <a
                 v-for="(tab, key) in getSortedTabs(tabs)"
+                v-show="tab.fields.filter(e => e.visible).length > 0"
                 :key="key"
                 :class="getIsTabCurrent(tab) ? 'active tabs-text-' + getCurrentColor() + '-500 tabs-font-bold tabs-border-b-2 tabs-border-b-' + getCurrentColor() + '-500' : 'tabs-text-gray-600 hover:tabs-text-gray-800 dark:tabs-text-gray-400 hover:dark:tabs-text-gray-200'"
                 :dusk="tab.slug + '-tab'"
