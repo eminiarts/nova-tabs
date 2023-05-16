@@ -74,6 +74,8 @@
                   :via-relationship="viaRelationship"
                   :via-resource="viaResource"
                   :via-resource-id="viaResourceId"
+                  @field-shown="fieldShown"
+                  @field-hidden="fieldHidden"
                   @field-changed="$emit('field-changed')"
                   @file-deleted="$emit('update-last-retrieved-at-timestamp')"
                   @file-upload-started="$emit('file-upload-started')"
