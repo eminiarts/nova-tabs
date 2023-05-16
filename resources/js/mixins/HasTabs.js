@@ -74,7 +74,7 @@ export default {
     const routeTabs = parseLocationHash();
     const currentTabSlug = routeTabs[this.getTabsReference()];
 
-    if (tabs[currentTabSlug]) {
+    if (tabs[currentTabSlug] && this.hasVisibleFields(tabs[currentTabSlug])) {
       this.handleTabClick(tabs[currentTabSlug])
     } else {
       this.handleTabClick(tabs[Object.keys(tabs)[0]], true);
@@ -128,6 +128,10 @@ export default {
   },
 
   methods: {
+    hasVisibleFields(tab) {
+      return tab.fields?.filter(e => e.visible).length > 0
+    },
+
     fieldShown(e) {
       Object.keys(this.tabs).forEach(key => {
         this.tabs[key].fields.forEach(field => {
