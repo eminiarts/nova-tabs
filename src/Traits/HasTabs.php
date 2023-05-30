@@ -31,7 +31,9 @@ trait HasTabs
             return ! isset($field->panel) || blank($field->panel);
         });
 
-        $panels = $fieldsWithPanels->groupBy(function ($field) {
+        $panels = $fieldsWithPanels->filter(function($item) {
+            return gettype($item->panel) === 'string';
+        })->groupBy(function ($field) {
             return $field->panel;
         })->transform(function ($fields, $name) {
             if ($fields[0]->assignedPanel instanceof Tabs) {
