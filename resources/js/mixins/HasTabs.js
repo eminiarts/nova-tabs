@@ -26,7 +26,7 @@ export default {
       type: Object,
       required: false,
     },
-    
+
     ...mapProps([
       'shownViaNewRelationModal',
       'mode',
@@ -46,7 +46,7 @@ export default {
       activeTab: '',
       selectedTab: {},
       darkModeClass: '',
-      relationFormUniqueId: '',
+      relationFormUniqueId: uid(),
       errors: this.validationErrors
     };
   },
@@ -105,7 +105,7 @@ export default {
             this.locationHash = null;
           }
         }, { once: true });
-      
+
       Nova.store.tabsListenerRegistered = true;
     }
 
