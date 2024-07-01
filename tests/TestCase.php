@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs\Tests;
+namespace BBSLab\Tabs\Tests;
 
-use Eminiarts\Tabs\TabsServiceProvider;
+use BBSLab\Tabs\TabsServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase

@@ -10,7 +10,7 @@ mix
   .js('resources/js/field.js', 'js')
   .vue({ version: 3 })
   .postCss('resources/css/field.css', 'dist/css/', [postcssImport(), tailwindcss('tailwind.config.js'),])
-  .nova('eminiarts/tabs')
+  .nova('bbs-lab/nova-tabs')
 
 module.exports = {
   module: {

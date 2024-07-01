@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs;
+namespace BBSLab\Tabs;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
@@ -12,8 +12,6 @@ class TabsServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -25,10 +23,6 @@ class TabsServiceProvider extends ServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 }

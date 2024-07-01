@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs;
+namespace BBSLab\Tabs;
 
+use BBSLab\Tabs\Contracts\TabContract;
 use Closure;
-use Eminiarts\Tabs\Contracts\TabContract;
 use Illuminate\Http\Resources\MergeValue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Panel;
-use Laravel\Nova\ResourceToolElement;
+
 use function is_array;
 use function is_callable;
 
@@ -23,14 +23,8 @@ class Tabs extends Panel
      */
     public $defaultSearch = false;
 
-    /**
-     * @var bool
-     */
     public bool $showTitle = false;
 
-    /**
-     * @var bool
-     */
     public bool $selectFirstTab = true;
 
     private int $tabsCount = 0;
@@ -42,6 +36,7 @@ class Tabs extends Panel
     public bool $retainTabPosition = false;
 
     public $currentColor = null;
+
     public string $errorColor = 'red';
 
     /**
@@ -60,11 +55,10 @@ class Tabs extends Panel
         parent::__construct($name, $fields);
     }
 
-
     /**
      * Set the tabs slug.
      *
-     * @param  string|boolean $slug
+     * @param  string|bool  $slug
      * @return $this
      */
     public function withSlug($slug): Tabs
@@ -78,7 +72,6 @@ class Tabs extends Panel
     /**
      * Set the color for current tabs.
      *
-     * @param string $color
      * @return $this
      */
     public function withCurrentColor(string $color): Tabs
@@ -92,7 +85,6 @@ class Tabs extends Panel
     /**
      * Set the color for tabs with errors.
      *
-     * @param  string $color
      * @return $this
      */
     public function withErrorColor(string $color): Tabs
@@ -106,12 +98,13 @@ class Tabs extends Panel
     /**
      * Remember tab position across detail/edit
      *
-     * @param  Boolean $retain
+     * @param  bool  $retain
      * @return $this
      */
     public function rememberTabs($retain): Tabs
     {
         $this->retainTabPosition = $retain;
+
         return $this;
     }
 
@@ -119,7 +112,6 @@ class Tabs extends Panel
      * Prepare the given fields.
      *
      * @param  Closure|array  $fields
-     * @return array
      */
     protected function prepareFields($fields): array
     {
@@ -131,12 +123,10 @@ class Tabs extends Panel
                 $this->addFields($tab);
             });
 
-
         return $this->data ?? [];
     }
 
     /**
-     * @param $fields
      * @return Collection<TabContract>
      */
     private function convertFieldsToTabs($fields): Collection
@@ -183,7 +173,6 @@ class Tabs extends Panel
     /**
      * Add fields to the Tab.
      *
-     * @param  TabContract  $tab
      * @return $this
      */
     public function addFields(TabContract $tab): self
@@ -197,6 +186,7 @@ class Tabs extends Panel
                 $this->addFields(
                     new Tab($field->name, $field->data)
                 );
+
                 continue;
             }
 
@@ -213,6 +203,7 @@ class Tabs extends Panel
                         }
                     })
                 );
+
                 continue;
             }
 
@@ -223,7 +214,7 @@ class Tabs extends Panel
                 'tab' => $tab->getName(),
                 'tabSlug' => $tab->getSlug(),
                 'tabPosition' => $tab->getPosition(),
-                'tabInfo' => Arr::except($tab->toArray(), ['fields', 'slug'])
+                'tabInfo' => Arr::except($tab->toArray(), ['fields', 'slug']),
             ];
 
             if ($field instanceof ListableField) {
@@ -244,7 +235,6 @@ class Tabs extends Panel
     /**
      * Show default Search if you need more space
      *
-     * @param  bool  $value
      *
      * @return $this
      */
@@ -258,7 +248,6 @@ class Tabs extends Panel
     /**
      * Whether the show the title
      *
-     * @param bool $show
      * @return $this
      */
     public function showTitle(bool $show = true): self
@@ -270,8 +259,6 @@ class Tabs extends Panel
 
     /**
      * Prepare the panel for JSON serialization.
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {
@@ -281,7 +268,7 @@ class Tabs extends Panel
             'slug' => $this->slug,
             'retainTabPosition' => $this->retainTabPosition,
             'currentColor' => $this->currentColor,
-            'errorColor' => $this->errorColor
+            'errorColor' => $this->errorColor,
         ]);
 
         return $result;

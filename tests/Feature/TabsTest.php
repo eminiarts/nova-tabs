@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs\Tests\Feature;
+namespace BBSLab\Tabs\Tests\Feature;
 
-use Eminiarts\Tabs\Tabs;
-use Eminiarts\Tabs\Tests\TestCase;
+use BBSLab\Tabs\Tabs;
+use BBSLab\Tabs\Tests\TestCase;
 
 class TabsTest extends TestCase
 {

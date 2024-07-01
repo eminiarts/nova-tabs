@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs;
+namespace BBSLab\Tabs;
 
+use BBSLab\Tabs\Contracts\TabContract;
 use Closure;
-use Eminiarts\Tabs\Contracts\TabContract;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use JsonSerializable;
 use Laravel\Nova\Fields\Field;
+
 use function is_bool;
 use function is_callable;
 
-class Tab implements TabContract, JsonSerializable, Arrayable
+class Tab implements Arrayable, JsonSerializable, TabContract
 {
     /** @var string|Closure */
     protected $title;
