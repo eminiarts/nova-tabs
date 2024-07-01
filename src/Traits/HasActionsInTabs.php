@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs\Traits;
+namespace BBSLab\Tabs\Traits;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Laravel\Nova\Contracts\ListableField;
@@ -12,7 +12,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 trait HasActionsInTabs
 {
     /**
-     * @param  NovaRequest  $request
      * @return mixed
      */
     public function detailFields(NovaRequest $request)

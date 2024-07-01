@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs\Tests\Feature;
+namespace BBSLab\Tabs\Tests\Feature;
 
-use Eminiarts\Tabs\Tab;
+use BBSLab\Tabs\Tab;
 use PHPUnit\Framework\TestCase;
 
 class TabTest extends TestCase
@@ -64,7 +64,7 @@ class TabTest extends TestCase
 
         $tab->tabClass('bg-blue-400');
 
-        self::assertEquals([ 'bg-blue-400' ], $tab->toArray()['tabClass']);
+        self::assertEquals(['bg-blue-400'], $tab->toArray()['tabClass']);
 
         $tab->tabClass([
             'bg-red-600',
@@ -99,7 +99,7 @@ class TabTest extends TestCase
 
         $tab->bodyClass('bg-blue-400');
 
-        self::assertEquals([ 'bg-blue-400' ], $tab->toArray()['bodyClass']);
+        self::assertEquals(['bg-blue-400'], $tab->toArray()['bodyClass']);
 
         $tab->bodyClass([
             'bg-red-600',
@@ -145,9 +145,9 @@ class TabTest extends TestCase
      */
     public function multibyteTitleProvider(): iterable
     {
-        yield 'Traditional Chinese' => [ '這是一個測試' ];
-        yield 'Simplified Chinese' => [ '这是一个测试' ];
-        yield 'Korean' => [ '이것은 테스트입니다' ];
-        yield 'Japanese' => [ 'これはテストです' ];
+        yield 'Traditional Chinese' => ['這是一個測試'];
+        yield 'Simplified Chinese' => ['这是一个测试'];
+        yield 'Korean' => ['이것은 테스트입니다'];
+        yield 'Japanese' => ['これはテストです'];
     }
 }

@@ -2,21 +2,22 @@
   <div :class="darkModeClass">
     <div class="tab-group">
       <slot>
-        <Heading v-if="panel.showTitle" :level="1" v-text="panel.name"/>
+        <Heading
+          v-if="panel.showTitle"
+          :level="1"
+          :class="panel.helpText ? 'mb-2' : 'mb-3'"
+        >
+          {{ panel.name }}
+        </Heading>
 
         <p
           v-if="panel.helpText"
-          :class="panel.helpText ? 'tabs-mt-2' : 'tabs-mt-3'"
-          class="tabs-text-gray-500 tabs-text-sm tabs-font-semibold tabs-italic"
+          class="text-gray-500 text-sm font-semibold italic mb-3"
           v-html="panel.helpText"
-        ></p>
+        />
       </slot>
 
-      <div class="tab-card"
-           :class="[
-          panel.showTitle && !panel.showToolbar ? 'tabs-mt-3' : ''
-        ]"
-      >
+      <div class="tab-card">
         <div id="tabs">
           <div class="block">
             <nav
@@ -51,53 +52,31 @@
           :label="tab.name"
         >
           <div class="divide-y divide-gray-100 dark:divide-gray-700" :class="getBodyClass(tab)">
-            <KeepAlive>
-              <template
-                v-for="(field, index) in tab.fields"
-                :key="'tab-' + index"
-              >
-                <component
-                  v-if="!field.from"
-                  :is="getComponentName(field)"
-                  ref="fields"
-                  :class="{'remove-bottom-border': index === tab.fields.length - 1}"
-                  :errors="validationErrors"
-                  :field="field"
-                  :form-unique-id="formUniqueId"
-                  :related-resource-id="relatedResourceId"
-                  :related-resource-name="relatedResourceName"
-                  :resource-id="resourceId"
-                  :resource-name="resourceName"
-                  :show-help-text="field.helpText != null"
-                  :shown-via-new-relation-modal="shownViaNewRelationModal"
-                  :via-relationship="viaRelationship"
-                  :via-resource="viaResource"
-                  :via-resource-id="viaResourceId"
-                  @field-changed="$emit('field-changed')"
-                  @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-                  @file-upload-started="$emit('file-upload-started')"
-                  @file-upload-finished="$emit('file-upload-finished')"
-                />
-
-                <component
-                    v-if="field.from"
-                    :is="getComponentName(field)"
-                    :errors="validationErrors"
-                    :resource-id="getResourceId(field)"
-                    :resource-name="field.resourceName"
-                    :field="field"
-                    :via-resource="field.from.viaResource"
-                    :via-resource-id="field.from.viaResourceId"
-                    :via-relationship="field.from.viaRelationship"
-                    :form-unique-id="relationFormUniqueId"
-                    @field-changed="$emit('field-changed')"
-                    @file-deleted="$emit('update-last-retrieved-at-timestamp')"
-                    @file-upload-started="$emit('file-upload-started')"
-                    @file-upload-finished="$emit('file-upload-finished')"
-                    :show-help-text="field.helpText != null"
-                />
-              </template>
-            </KeepAlive>
+            <component
+              v-for="(field, index) in tab.fields"
+              :index="index"
+              :key="index"
+              :is="`form-${field.component}`"
+              :errors="validationErrors"
+              :resource-id="resourceId"
+              :resource-name="resourceName"
+              :related-resource-name="relatedResourceName"
+              :related-resource-id="relatedResourceId"
+              :field="field"
+              :via-resource="viaResource"
+              :via-resource-id="viaResourceId"
+              :via-relationship="viaRelationship"
+              :shown-via-new-relation-modal="shownViaNewRelationModal"
+              :form-unique-id="formUniqueId"
+              :mode="mode"
+              @field-shown="handleFieldShown"
+              @field-hidden="handleFieldHidden"
+              @field-changed="$emit('field-changed')"
+              @file-deleted="handleFileDeleted"
+              @file-upload-started="$emit('file-upload-started')"
+              @file-upload-finished="$emit('file-upload-finished')"
+              :show-help-text="showHelpText"
+            />
           </div>
         </div>
       </div>
@@ -106,13 +85,37 @@
 </template>
 
 <script>
-import BehavesAsPanel from '../mixins/BehavesAsPanel';
-import HasTabs from "../mixins/HasTabs";
+import {BehavesAsPanel, HasTabs, HandlesPanelVisibility} from "../mixins";
 
 export default {
-  mixins: [BehavesAsPanel, HasTabs],
+  mixins: [BehavesAsPanel, HasTabs, HandlesPanelVisibility],
+
+  props: {
+    shownViaNewRelationModal: { type: Boolean, default: false },
+    showHelpText: { type: Boolean, default: false },
+    panel: { type: Object, required: true },
+    name: { default: 'Panel' },
+    dusk: { type: String },
+    fields: { type: Array, default: [] },
+    formUniqueId: { type: String },
+    validationErrors: { type: Object, required: true },
+    resourceName: { type: String, required: true },
+    resourceId: { type: [Number, String] },
+    relatedResourceName: { type: String },
+    relatedResourceId: { type: [Number, String] },
+    viaResource: { type: String },
+    viaResourceId: { type: [Number, String] },
+    viaRelationship: { type: String },
+  },
+
   data: () => ({
     tabMode: 'form',
   }),
+
+  methods: {
+    handleFileDeleted() {
+      this.$emit('update-last-retrieved-at-timestamp')
+    },
+  },
 };
 </script>

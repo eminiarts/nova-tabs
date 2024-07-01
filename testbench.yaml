@@ -1,0 +1,31 @@
+providers:
+  - Laravel\Nova\NovaCoreServiceProvider
+  - Workbench\App\Providers\NovaServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: /nova
+  user: admin@laravel.com
+  build:
+    - asset-publish
+    - create-sqlite-db
+    - db:wipe
+    - migrate:refresh
+  assets:
+    - nova-assets
+  sync:
+    - from: ./workbench/config
+      to: config
+    - from: ray.php
+      to: ray.php
+purge:
+  directories:
+    - lang/*
+    - public/vendor/*
+    - database/migrations/*
+    - config/*

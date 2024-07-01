@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Eminiarts\Tabs\Traits;
+namespace BBSLab\Tabs\Traits;
 
-use Eminiarts\Tabs\Tabs;
+use BBSLab\Tabs\Tabs;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Contracts\BehavesAsPanel;
 use Laravel\Nova\Fields\FieldCollection;
@@ -16,7 +16,6 @@ trait HasTabs
     /**
      * Resolve available panels from fields.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
      * @param  \Laravel\Nova\Fields\FieldCollection<int, \Laravel\Nova\Fields\Field>  $fields
      * @param  string  $label
      * @return Collection
@@ -28,7 +27,7 @@ trait HasTabs
                 $field->asPanel();
             }
         })->partition(function ($field) {
-            return ! isset($field->panel) || blank($field->panel);
+            return !isset($field->panel) || blank($field->panel);
         });
 
         $panels = $fieldsWithPanels->groupBy(function ($field) {
@@ -53,7 +52,7 @@ trait HasTabs
             return $panel->component === 'relationship-panel' && $panel->meta['fields'][0]->assignedPanel instanceof Tabs;
         });
 
-        $panels->transform(function($panel, $key) use ($relationshipUnderTabs) {
+        $panels->transform(function ($panel, $key) use ($relationshipUnderTabs) {
 
             if ($panel->component === 'tabs') {
 
@@ -98,13 +97,13 @@ trait HasTabs
                     ? $panels->prepend(Panel::make($label, $fields)->withMeta(['fields' => $fields]))
                     : $panels;
             })
-            ->tap(function ($panels) use ($label): void {
+            ->tap(function ($panels): void {
 
                 /**
                  * There can be no panels
                  * Preventing ->component or ->withToolbar() on null error
                  */
-                if(!$panels->first()){
+                if (!$panels->first()) {
                     return;
                 }
 
