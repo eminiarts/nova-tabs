@@ -13,11 +13,17 @@ use Illuminate\Support\Str;
 use Laravel\Nova\Contracts\ListableField;
 use Laravel\Nova\Panel;
 use Laravel\Nova\ResourceToolElement;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use function is_array;
 use function is_callable;
 
 class Tabs extends Panel
 {
+    /**
+     * NovaRequest
+     */
+    protected NovaRequest $request;
+
     /**
      * @var mixed
      */
@@ -51,15 +57,23 @@ class Tabs extends Panel
      * @param  (\Closure():array|iterable)|array  $fields
      * @return void
      */
-    public function __construct($name, $fields = [])
+    public function __construct($name, $fields = [], NovaRequest $request = null)
     {
         $this->name = $name;
         $this->preservedName = $name;
+        $this->request = $request;
         $this->withComponent('tabs');
 
         parent::__construct($name, $fields);
     }
 
+    /**
+     * Wizard form enabled
+     */
+    public function asWizard()
+    {
+        return $this->withMeta(['wizardFormEnabled' => true]);
+    }
 
     /**
      * Set the tabs slug.
@@ -69,7 +83,6 @@ class Tabs extends Panel
      */
     public function withSlug($slug): Tabs
     {
-
         $this->slug = is_bool($slug) ? ($slug ? Str::slug($this->preservedName, '_') : null) : $slug;
 
         return $this;
@@ -83,7 +96,6 @@ class Tabs extends Panel
      */
     public function withCurrentColor(string $color): Tabs
     {
-
         $this->currentColor = $color;
 
         return $this;
@@ -97,7 +109,6 @@ class Tabs extends Panel
      */
     public function withErrorColor(string $color): Tabs
     {
-
         $this->errorColor = $color;
 
         return $this;
@@ -112,6 +123,7 @@ class Tabs extends Panel
     public function rememberTabs($retain): Tabs
     {
         $this->retainTabPosition = $retain;
+
         return $this;
     }
 
@@ -130,7 +142,6 @@ class Tabs extends Panel
             ->each(function (Tab $tab): void {
                 $this->addFields($tab);
             });
-
 
         return $this->data ?? [];
     }
@@ -223,7 +234,8 @@ class Tabs extends Panel
                 'tab' => $tab->getName(),
                 'tabSlug' => $tab->getSlug(),
                 'tabPosition' => $tab->getPosition(),
-                'tabInfo' => Arr::except($tab->toArray(), ['fields', 'slug'])
+                'tabInfo' => Arr::except($tab->toArray(), ['fields', 'slug']),
+                'validationRules' => $field->getRules($this->request),
             ];
 
             if ($field instanceof ListableField) {
