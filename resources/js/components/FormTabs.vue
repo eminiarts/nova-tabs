@@ -113,7 +113,7 @@
       type="button"
       class="border text-left appearance-none cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 relative disabled:cursor-not-allowed inline-flex items-center justify-center bg-transparent border-transparent h-9 px-3 text-gray-600 dark:text-gray-400 hover:[&amp;:not(:disabled)]:bg-gray-700/5 dark:hover:[&amp;:not(:disabled)]:bg-gray-950"
       dusk="prev-step-button">
-        <span class="flex items-center gap-1">Previus</span>
+        <span class="flex items-center gap-1">{{ __('Previus') }}</span>
       </button>
 
     <button
@@ -122,7 +122,7 @@
       type="button"
       class="border text-left appearance-none cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 relative disabled:cursor-not-allowed inline-flex items-center justify-center shadow h-9 px-3 bg-primary-500 border-primary-500 hover:[&amp;:not(:disabled)]:bg-primary-400 hover:[&amp;:not(:disabled)]:border-primary-400 text-white dark:text-gray-900"
       dusk="next-step-button">
-        <span class="flex items-center gap-1">Next</span>
+        <span class="flex items-center gap-1">{{ __('Next') }}</span>
     </button>
 
     <button
@@ -130,7 +130,7 @@
       type="submit"
       class="border text-left appearance-none cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 relative disabled:cursor-not-allowed inline-flex items-center justify-center shadow h-9 px-3 bg-primary-500 border-primary-500 hover:[&amp;:not(:disabled)]:bg-primary-400 hover:[&amp;:not(:disabled)]:border-primary-400 text-white dark:text-gray-900"
       dusk="next-step-button">
-        <span class="flex items-center gap-1">Submit</span>
+        <span class="flex items-center gap-1">{{ __('Save') }}</span>
     </button>
   </div>
 </template>
@@ -139,13 +139,13 @@
 import each from 'lodash/each';
 import isNil from 'lodash/isNil';
 import tap from 'lodash/tap';
-import { HandlesFormRequest } from 'laravel-nova';
+import { HandlesFormRequest, Localization } from 'laravel-nova';
 import { Errors } from 'form-backend-validation'
 import BehavesAsPanel from '../mixins/BehavesAsPanel';
 import HasTabs from "../mixins/HasTabs";
 
 export default {
-  mixins: [BehavesAsPanel, HasTabs, HandlesFormRequest],
+  mixins: [BehavesAsPanel, HasTabs, HandlesFormRequest, Localization],
 
   data: () => ({
     tabMode: 'form',
@@ -166,7 +166,6 @@ export default {
     tabClicked(tab) {
       this.handleTabClick(tab)
 
-      if (true) {}
       this.currentStep = this.steps.findIndex(item => item.slug === this.selectedTab.slug);
     },
 
@@ -232,7 +231,7 @@ export default {
     },
 
     isResourceCreatePage() {
-      return Nova.$router.page.component === 'Nova.Create'
+      return Nova.$router.page.component === 'Nova.Create';
     }
   },
 
