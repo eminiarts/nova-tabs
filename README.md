@@ -191,6 +191,7 @@ As of v1.4.0 it's possible to use a `Tab` class instead of an array to represent
 | name        | `string`            | `null`      | The name of the tab, used for the slug.  Defaults to the title if not set                                                                                              |
 | showIf      | `bool` or `Closure` | `null`      | If the result is truthy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                   |
 | showUnless  | `bool` or `Closure` | `null`      | If the result is falsy the tab will be shown.  `showIf` takes priority over `showUnless` and if neither are set, `true` is assumed.                                    |
+| preload  | `bool` or `Closure` | `null`      | If the result is truthy the tab will be rendered on the initial page load. This may affect initial page load performance, as any requests required by the tab's fields will also be executed.                                     |
 | bodyClass   | `string` or `array` | Empty array | A string or string array of classes to add to the tab's body.  This sets the `bodyClass` property, if you want to append you can use `addBodyClass` instead.           |
 
 ## Customization

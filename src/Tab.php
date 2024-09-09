@@ -32,6 +32,13 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     /** @var bool|Closure|null */
     protected $showUnless;
 
+    /**
+     * Whether to preload the contents of the tab on the initial page load
+     * 
+     * @var bool|Closure|null 
+     * */
+    protected $preload;
+
     /** @var string[] */
     protected $bodyClass = [];
 
@@ -59,6 +66,13 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public function name(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function preload(bool $preload = true): self
+    {
+        $this->preload = $preload;
 
         return $this;
     }
@@ -114,6 +128,7 @@ class Tab implements TabContract, JsonSerializable, Arrayable
             'slug' => $this->getSlug(),
             'shouldShow' => $this->shouldShow(),
             'bodyClass' => $this->getBodyClass(),
+            'preload' => $this->getPreload(),
         ];
     }
 
@@ -131,6 +146,14 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public function getTitle(): string
     {
         return (string) $this->resolve($this->title);
+    }
+
+    /**
+     * @return Closure|bool
+     */
+    public function getPreload(): bool
+    {
+        return (bool) $this->resolve($this->preload);
     }
 
     private function resolve($value)
