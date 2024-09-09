@@ -73,6 +73,25 @@ class User extends Resource
 
 The first tab in every `Tabs` instance will be auto-selected. 
 
+**Note**: If use non-ascii char as title(ex: chinese), you should define the tab name with ascii char to avoid get empty slug string.
+```php
+public function fields(Request $request)
+{
+    return [
+      Tabs::make('Some Title', [
+        Tab::make('頁籤一', [
+            Number::make('Balance', 'balance'),
+            Number::make('Total', 'total'),
+        ])->name('tab-1'),
+        
+        Tab::make('頁籤二', [
+            Number::make('Paid To Date', 'paid_to_date')
+        ])->name('tab-2'),
+      ]),
+    ];
+}
+```
+
 ### Relationship Tabs
 
 ![image](https://user-images.githubusercontent.com/3426944/50060715-a3b8d680-0197-11e9-8f98-1cac8cf3fd83.png)
