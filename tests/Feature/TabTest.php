@@ -6,6 +6,7 @@ namespace Eminiarts\Tabs\Tests\Feature;
 
 use Eminiarts\Tabs\Tab;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Str;
 
 class TabTest extends TestCase
 {
@@ -126,16 +127,29 @@ class TabTest extends TestCase
         ], $tab->toArray()['bodyClass']);
     }
 
+    public function testCanSetCustomSlugGenerationFunction(): void
+    {
+        Tab::createSlugUsing(fn (Tab $tab) => strrev(Str::slug($tab->getTitle())));
+
+        $tab = Tab::make('Test tab', []);
+
+        self::assertSame('bat-tset', $tab->getSlug());
+    }
+
     /**
      * @link https://github.com/eminiarts/nova-tabs/issues/145
+     * @link https://github.com/eminiarts/nova-tabs/issues/167
+     * @link https://github.com/eminiarts/nova-tabs/issues/275
      *
      * @dataProvider multibyteTitleProvider
      */
-    public function testDoesNotCrashWithMultibyteCharactersAsTitle(string $title): void
+    public function testCanHandleSlugsInNonAsciiCharacters(string $title): void
     {
+        Tab::createSlugUsing(fn (Tab $tab) => $tab->getTitle());
+
         $tab = Tab::make($title, []);
 
-        self::assertEmpty($tab->getSlug());
+        self::assertSame($title, $tab->getSlug());
     }
 
     /**

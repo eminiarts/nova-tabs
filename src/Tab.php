@@ -44,6 +44,9 @@ class Tab implements TabContract, JsonSerializable, Arrayable
 
     protected $position;
 
+    /** @var null|callable(\Eminiarts\Tabs\Contracts\TabContract $tab): string */
+    protected static $createSlugUsing = null;
+
     public function __construct($title, array $fields, $position = 0)
     {
         $this->title = $title;
@@ -54,6 +57,12 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public static function make($title, array $fields): self
     {
         return new static($title, $fields);
+    }
+
+    /** @param callable(\Eminiarts\Tabs\Contracts\TabContract $tab): string $createSlugUsingFunction */
+    public static function createSlugUsing(callable $createSlugUsingFunction): void
+    {
+        self::$createSlugUsing = $createSlugUsingFunction;
     }
 
     public function position(int $position): self
@@ -180,6 +189,10 @@ class Tab implements TabContract, JsonSerializable, Arrayable
 
     public function getSlug(): string
     {
+        if (null !== $makeSlug = static::$createSlugUsing) {
+            return $makeSlug($this);
+        }
+
         return Str::slug($this->getName());
     }
 
