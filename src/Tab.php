@@ -32,10 +32,20 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     /** @var bool|Closure|null */
     protected $showUnless;
 
+    /**
+     * Whether to preload the contents of the tab on the initial page load
+     * 
+     * @var bool|Closure|null 
+     * */
+    protected $preload;
+
     /** @var string[] */
     protected $bodyClass = [];
 
     protected $position;
+
+    /** @var null|callable(\Eminiarts\Tabs\Contracts\TabContract $tab): string */
+    protected static $createSlugUsing = null;
 
     public function __construct($title, array $fields, $position = 0)
     {
@@ -49,6 +59,12 @@ class Tab implements TabContract, JsonSerializable, Arrayable
         return new static($title, $fields);
     }
 
+    /** @param callable(\Eminiarts\Tabs\Contracts\TabContract $tab): string $createSlugUsingFunction */
+    public static function createSlugUsing(callable $createSlugUsingFunction): void
+    {
+        self::$createSlugUsing = $createSlugUsingFunction;
+    }
+
     public function position(int $position): self
     {
         $this->position = $position;
@@ -59,6 +75,13 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public function name(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function preload(bool $preload = true): self
+    {
+        $this->preload = $preload;
 
         return $this;
     }
@@ -114,6 +137,7 @@ class Tab implements TabContract, JsonSerializable, Arrayable
             'slug' => $this->getSlug(),
             'shouldShow' => $this->shouldShow(),
             'bodyClass' => $this->getBodyClass(),
+            'preload' => $this->getPreload(),
         ];
     }
 
@@ -131,6 +155,14 @@ class Tab implements TabContract, JsonSerializable, Arrayable
     public function getTitle(): string
     {
         return (string) $this->resolve($this->title);
+    }
+
+    /**
+     * @return Closure|bool
+     */
+    public function getPreload(): bool
+    {
+        return (bool) $this->resolve($this->preload);
     }
 
     private function resolve($value)
@@ -157,6 +189,10 @@ class Tab implements TabContract, JsonSerializable, Arrayable
 
     public function getSlug(): string
     {
+        if (null !== $makeSlug = static::$createSlugUsing) {
+            return $makeSlug($this);
+        }
+
         return Str::slug($this->getName());
     }
 
