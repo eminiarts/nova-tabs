@@ -16,10 +16,10 @@
     @apply tabs-relative tabs-min-w-min tabs-flex-shrink-0 tabs-flex-1 tabs-overflow-hidden tabs-bg-white dark:tabs-bg-gray-800 tabs-py-4 tabs-px-4 tabs-font-semibold tabs-text-center tabs-cursor-pointer hover:tabs-bg-gray-50 hover:dark:tabs-bg-gray-700 focus:tabs-z-10 first:tabs-rounded-tl-lg last:tabs-rounded-tr-lg;
 }
 .tab-group .tab.fields-tab {
-    @apply tabs-py-2 tabs-px-6;
+    @apply tabs-pb-2 tabs-px-6;
 }
 form .tab-group .tab.fields-tab {
-    @apply tabs-py-2 tabs-px-0;
+    @apply tabs-pb-2 tabs-px-0;
 }
 .tab-group .tab-card {
     @apply tabs-shadow tabs-bg-white dark:tabs-bg-gray-800 tabs-rounded-b-lg tabs-rounded-t-lg;
@@ -42,7 +42,7 @@ form .tab-group .tab.fields-tab {
 }
 
 .tabs-border-b-primary-500 {
-    border-bottom-color: rgba(var(--colors-primary-500));
+    border-bottom-color: rgba(var(--colors-primary-500)) !important;
 }
 
 .tabs-text-primary-500 {
