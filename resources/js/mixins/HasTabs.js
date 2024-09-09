@@ -72,7 +72,11 @@ export default {
 
     const tabs = this.tabs = this.setTabs();
     const routeTabs = parseLocationHash();
-    const currentTabSlug = routeTabs[this.getTabsReference()];
+    var currentTabSlug = routeTabs[this.getTabsReference()];
+
+    if(sessionStorage.hasOwnProperty(this.getTabsReference())){
+      currentTabSlug = sessionStorage.getItem(this.getTabsReference());
+    }
 
     if (tabs[currentTabSlug] && this.hasVisibleFields(tabs[currentTabSlug])) {
       this.handleTabClick(tabs[currentTabSlug])
@@ -239,6 +243,7 @@ export default {
     setLocationHash() {
       const routeTabs = parseLocationHash()
       routeTabs[this.getTabsReference()] = this.selectedTab.slug;
+      sessionStorage.setItem(this.getTabsReference(), this.selectedTab.slug)
       updateLocationHash(routeTabs)
     },
 
